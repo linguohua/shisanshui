@@ -74,7 +74,7 @@ func SendEnterTableResult(cl *log.Entry, ws *websocket.Conn, userID string, erro
 	var status32 = int32(errorCode)
 	msg.Status = &status32
 
-	buf, err := formatGameMsg(cl, msg, int32(xproto.MessageCode_OPPlayerEnterRoom))
+	buf, err := formatGameMsg(cl, msg, int32(xproto.MessageCode_OPPlayerEnterTable))
 	if err != nil {
 		cl.Println("SendEnterTableResult, failed, formatGameMsg error:", err)
 		return
