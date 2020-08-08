@@ -2,6 +2,7 @@ package tables
 
 import "github.com/sirupsen/logrus"
 
+// cardlist 玩家的牌列表
 type cardlist struct {
 	cl     *logrus.Entry
 	player *Player

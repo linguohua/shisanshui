@@ -1,3 +1,5 @@
+// 一些辅助函数
+
 package tables
 
 import (

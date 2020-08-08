@@ -15,6 +15,8 @@ const (
 )
 
 // Player game player
+// 玩家在牌桌服务器的实例，包含玩家客户端的webocket通讯连接对象，以及玩家所在的牌桌
+// 玩家的个人基本信息，游戏进行过程中需要的数据（例如牌列表，得分等等）
 type Player struct {
 	// context logger, print with player uuid, player name, table uuid, etc...
 	cl *logrus.Entry

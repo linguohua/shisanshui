@@ -1,3 +1,6 @@
+// 消息打包
+// 打包发送给客户端的消息
+
 package tables
 
 import (

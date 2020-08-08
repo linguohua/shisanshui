@@ -6,7 +6,8 @@ import (
 	"github.com/sirupsen/logrus"
 )
 
-// stateDestroy table idle state
+// stateDestroy table destroy state
+// 当牌桌被大厅销毁时，table进入destroy状态，此状态下不允许玩家操作
 type stateDestroy struct {
 	table *Table
 	cl    *logrus.Entry

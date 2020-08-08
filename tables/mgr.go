@@ -10,6 +10,8 @@ var (
 )
 
 // TableMgr table manager
+// 保存所有已经创建的牌桌，可以根据牌桌的uuid查找牌桌，也可以根据
+// 牌桌的数字编号查找牌桌
 type TableMgr struct {
 	tablesMap   sync.Map
 	tablesIDMap sync.Map

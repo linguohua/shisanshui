@@ -31,6 +31,15 @@ type state interface {
 }
 
 // Table hold players and rule the game
+// 牌桌是游戏服务器进程管理的最基本单元，所有玩家都必须归属于某一个牌桌，
+// 一个玩家不能在两个牌桌上。每一个table都有一个lock，用来保证多个goroutine
+// 操作table时的数据完整，因此，所有goroutine访问table，或者table所拥有的players
+// 时，都需要先持有这个lock，否则没法保证其他的goroutine是否并发访问这些数据。
+// 目前已知的需要访问table和其player的goroutine有：
+//     1. 每一个玩家的websocket接收goroutine，例如牌桌4个玩家，就有4个这样的goroutine
+//     2. table进入playing状态时，playing状态下有一个gameloop goroutine
+//     3. waiting状态下，启动的倒计时定时器的goroutine
+// 牌桌由大厅服务器下发创建牌桌的消息给游戏服务器，由后者创建。销毁目前也是大厅服务器下发指令销毁。
 type Table struct {
 	// lock when goroutine operate on table
 	lock sync.Mutex

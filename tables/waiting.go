@@ -7,6 +7,7 @@ import (
 )
 
 // stateWaiting table waiting state
+// 牌桌由初始的idle状态转入waiting状态，等待游戏开始
 type stateWaiting struct {
 	table *Table
 	cl    *logrus.Entry

@@ -7,6 +7,8 @@ import (
 )
 
 // stateIdle table idle state
+// 牌桌由大厅下发创建消息到牌桌服务器创建，牌桌的初始状态是idle状态
+// 当有玩家进入牌桌后转为等待状态
 type stateIdle struct {
 	table *Table
 	cl    *logrus.Entry

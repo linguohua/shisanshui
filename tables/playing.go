@@ -9,6 +9,8 @@ import (
 )
 
 // stateIdle table idle state
+// 牌桌游戏进行中，此时新玩家进入应该作为旁观者，等待下一手开始才作为参与者加入
+// 玩家重连进入时，需要进行恢复流程，也就是需要把玩家的手牌等数据重新发给客户端，以便他能继续游戏
 type statePlaying struct {
 	table *Table
 	cl    *logrus.Entry

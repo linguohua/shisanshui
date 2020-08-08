@@ -11,7 +11,7 @@ const (
 	drawCountEach = 13
 )
 
-// dealer
+// dealer 发牌员，发牌给所有玩家
 type dealer struct {
 	cl *logrus.Entry
 

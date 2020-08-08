@@ -2,6 +2,7 @@ package tables
 
 import "github.com/sirupsen/logrus"
 
+// actionWaiter 等待玩家响应
 type actionWaiter struct {
 	cl *logrus.Entry
 	s  *statePlaying
