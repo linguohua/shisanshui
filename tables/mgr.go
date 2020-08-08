@@ -6,7 +6,7 @@ import (
 
 var (
 	// Mgr table manager singleton instance
-	Mgr *TableMgr
+	mgr *TableMgr = &TableMgr{}
 )
 
 // TableMgr table manager
@@ -35,4 +35,9 @@ func (m *TableMgr) GetTable(tableID string) *Table {
 	}
 
 	return nil
+}
+
+// GetMgr retrieve table manager instance
+func GetMgr() *TableMgr {
+	return mgr
 }

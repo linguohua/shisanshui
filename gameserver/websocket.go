@@ -71,7 +71,7 @@ func acceptWebsocket(w http.ResponseWriter, r *http.Request, params httprouter.P
 				return
 			}
 
-			table := tables.Mgr.GetTableByNumber(tableNumber)
+			table := tables.GetMgr().GetTableByNumber(tableNumber)
 			if table != nil {
 				tableIDString = table.UUID
 			} else {
@@ -88,7 +88,7 @@ func acceptWebsocket(w http.ResponseWriter, r *http.Request, params httprouter.P
 
 func acceptPlayer(userID string, tableIDString string, ws *websocket.Conn, r *http.Request) {
 	// found target table
-	table := tables.Mgr.GetTable(tableIDString)
+	table := tables.GetMgr().GetTable(tableIDString)
 	if table == nil {
 		log.Printf("can't found table with ID:%s, Peer:%s\n", tableIDString, r.RemoteAddr)
 		// TODO: send error to client
