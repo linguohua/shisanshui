@@ -25,9 +25,11 @@ var (
 )
 
 func acceptWebsocket(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	cl := log.WithField("peer", r.RemoteAddr)
+
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		cl.Println(err)
 		return
 	}
 
@@ -39,21 +41,21 @@ func acceptWebsocket(w http.ResponseWriter, r *http.Request, params httprouter.P
 	// read limit
 	ws.SetReadLimit(wsReadLimit)
 
-	log.Println("accept websocket:", r.URL)
+	cl.Println("accept websocket:", r.URL)
 	switch pltyerType {
 	case "/play":
 		var tk = queryString.Get("tk")
 		userID, ok := token.ParseToken(tk)
 		if !ok {
-			log.Printf("invalid token, Peer: %s", r.RemoteAddr)
+			cl.Printf("invalid token, Peer: %s", r.RemoteAddr)
 			return
 		}
 
 		if config.RequiredAppModuleVer > 0 {
 			appModuleVer, err := strconv.Atoi(r.URL.Query().Get("amv"))
 			if err != nil || appModuleVer < config.RequiredAppModuleVer {
-				log.Printf("app module too old, ID:%s, Peer:%s\n", userID, r.RemoteAddr)
-				tables.SendEnterTableResult(ws, userID, xproto.EnterTableStatusAppModuleNeedUpgrade)
+				cl.Printf("app module too old, ID:%s, Peer:%s\n", userID, r.RemoteAddr)
+				tables.SendEnterTableResult(cl, ws, userID, xproto.EnterTableStatus_AppModuleNeedUpgrade)
 				return
 			}
 		}
@@ -67,7 +69,7 @@ func acceptWebsocket(w http.ResponseWriter, r *http.Request, params httprouter.P
 		if tableIDString == "" {
 			var tableNumber = r.URL.Query().Get("tnid")
 			if tableNumber == "" {
-				log.Println("monkey has no table uuid and table number id")
+				cl.Println("monkey has no table uuid and table number id")
 				return
 			}
 
@@ -75,7 +77,7 @@ func acceptWebsocket(w http.ResponseWriter, r *http.Request, params httprouter.P
 			if table != nil {
 				tableIDString = table.UUID
 			} else {
-				log.Println("no talbe found for table number:", tableNumber)
+				cl.Println("no talbe found for table number:", tableNumber)
 				return
 			}
 		}

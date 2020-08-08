@@ -114,14 +114,14 @@ func (t *Table) OnPlayerEnter(ws *websocket.Conn, userID string) *Player {
 	if t.isForceConsistent() && player == nil {
 		monkeyUserCardCfg := t.monkeyCfg.getMonkeyCardCfg(userID)
 		if monkeyUserCardCfg == nil {
-			SendEnterTableResult(ws, userID, xproto.EnterTableStatusMonkeyUserIDNotMatch)
+			SendEnterTableResult(t.cl, ws, userID, xproto.EnterTableStatus_MonkeyTableUserIDNotMatch)
 			return nil
 		}
 
 		// 而且玩家进入的顺序必须严格按照配置指定
 		loginSeq := len(t.players)
 		if loginSeq != monkeyUserCardCfg.chairID {
-			SendEnterTableResult(ws, userID, xproto.EnterTableStatusMonkeyUserLoginSeqNotMatch)
+			SendEnterTableResult(t.cl, ws, userID, xproto.EnterTableStatus_MonkeyTableUserLoginSeqNotMatch)
 			return nil
 		}
 	}
@@ -135,7 +135,7 @@ func (t *Table) OnPlayerEnter(ws *websocket.Conn, userID string) *Player {
 
 	if len(t.players) == t.config.playerNumMax {
 		// 已经满员
-		SendEnterTableResult(ws, userID, xproto.EnterTableStatusTableIsFulled)
+		SendEnterTableResult(t.cl, ws, userID, xproto.EnterTableStatus_TableIsFulled)
 		return nil
 	}
 
@@ -149,7 +149,7 @@ func (t *Table) OnPlayerEnter(ws *websocket.Conn, userID string) *Player {
 	sort.Sort(byChairID(t.players))
 
 	// 发送成功进入房间通知给客户端
-	SendEnterTableResult(ws, userID, xproto.EnterTableStatusTableSuccess)
+	SendEnterTableResult(t.cl, ws, userID, xproto.EnterTableStatus_Success)
 
 	// state handle
 	t.state.onPlayerEnter(player)
@@ -171,7 +171,7 @@ func (t *Table) onPlayerReconnect(p *Player, ws *websocket.Conn) *Player {
 	p.rebind(ws)
 
 	// 发送成功进入房间通知给客户端
-	SendEnterTableResult(ws, p.ID, xproto.EnterTableStatusTableSuccess)
+	SendEnterTableResult(t.cl, ws, p.ID, xproto.EnterTableStatus_Success)
 
 	// 通知状态机
 	t.state.onPlayerReConnect(p)

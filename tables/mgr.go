@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	// Mgr table manager singleton instance
+	// mgr table manager singleton instance
 	mgr *TableMgr = &TableMgr{}
 )
 
