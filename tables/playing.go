@@ -139,7 +139,7 @@ func (s *statePlaying) gameLoop() {
 
 	// 给所有客户端发牌
 	for _, player := range s.playingPlayers {
-		var msgDeal = serializeMsgDeal(s, player)
+		var msgDeal = serializeMsgDeal(s, player, s.playingPlayers)
 		player.sendGameMsg(msgDeal, int32(xproto.MessageCode_OPDeal))
 	}
 
@@ -178,7 +178,7 @@ func (s *statePlaying) waitPlayersAction() bool {
 
 	for _, p := range s.playingPlayers {
 		p.hcontext.expectedAction = actions
-		msgAllowPlayerAction := serializeMsgAllowedForDiscard(s, p, actions, qaIndex)
+		msgAllowPlayerAction := serializeMsgAllowedForDiscard(s, p, actions, qaIndex, 10)
 		p.sendGameMsg(msgAllowPlayerAction, int32(xproto.MessageCode_OPActionAllowed))
 
 		if s.table.isForceConsistent() {
