@@ -330,10 +330,9 @@ func (t *Table) onCountdownCompleted() {
 
 func (t *Table) yieldLock(func1 func()) {
 	t.lock.Unlock()
+	defer t.lock.Lock() // re-lock
 
 	func1()
-
-	t.lock.Lock()
 }
 
 // HoldLock hold table lock and execute func
