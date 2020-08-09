@@ -301,18 +301,17 @@ func (t *Table) startCountingDown() {
 			}
 		}()
 
-		// new goroutine call into here, so goroutineEntryCountdownCompleted
+		// new goroutine call into here, so onCountdownCompleted
 		// must be concurrent safe
-		t.goroutineEntryCountdownCompleted()
+		t.HoldLock(func() {
+			t.onCountdownCompleted()
+		})
 	})
 }
 
-// goroutineEntryCountdownCompleted countdown timer completed
+// onCountdownCompleted countdown timer completed
 // call by timer goroutine
-func (t *Table) goroutineEntryCountdownCompleted() {
-	t.lock.Lock()
-	defer t.lock.Unlock()
-
+func (t *Table) onCountdownCompleted() {
 	t.countingDown = false
 
 	oldState := t.state.(*stateWaiting)
