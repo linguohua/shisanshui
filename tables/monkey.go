@@ -17,7 +17,7 @@ func MonkeyKickout(tableNumber string, userID string, cl *log.Entry) error {
 		return err
 	}
 
-	table.holdLock(func() {
+	table.HoldLock(func() {
 		err = table.kickPlayer(userID)
 	})
 
@@ -53,7 +53,7 @@ func MonkeyDestroyMonkeyTable(tableID string, cl *log.Entry) error {
 		return fmt.Errorf("monkey table not found:%s", tableID)
 	}
 
-	table.holdLock(func() {
+	table.HoldLock(func() {
 		table.destroy(xproto.TableDeleteReason_DisbandBySystem)
 	})
 
@@ -79,7 +79,7 @@ func MonkeyAttachTableCfg2Table(tableNumber string, body string, cl *log.Entry) 
 
 	var err error
 
-	table.holdLock(func() {
+	table.HoldLock(func() {
 		var stateConst = table.state.name()
 		// 要求的玩家数量不一致
 		if cfg.playerCount() < table.config.PlayerNumAcquired || cfg.playerCount() > table.config.PlayerNumMax {
@@ -152,7 +152,7 @@ func MonkeyAttachDealCfg2Table(tableNumber string, body string, cl *log.Entry) e
 	}
 
 	cl.Printf("bind table cfg to table:%s, cfg:%+v\n", tableNumber, tableConfig)
-	table.holdLock(func() {
+	table.HoldLock(func() {
 		table.config = tableConfig
 	})
 
@@ -199,7 +199,7 @@ func MonkeyKickAll(tableNumber string, cl *log.Entry) error {
 		return err
 	}
 
-	table.holdLock(func() {
+	table.HoldLock(func() {
 		table.kickAll()
 	})
 

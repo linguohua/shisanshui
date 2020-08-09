@@ -111,7 +111,7 @@ func (s *statePlaying) onStateEnter() {
 	}
 
 	// 进入游戏循环
-	go s.table.holdLock(s.gameLoop)
+	go s.table.HoldLock(s.gameLoop)
 }
 
 func (s *statePlaying) onStateExit() {

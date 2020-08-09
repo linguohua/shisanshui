@@ -109,12 +109,9 @@ func (t *Table) initChair() {
 	}
 }
 
-// GoroutineEntryPlayerEnter handle player enter table event
+// OnPlayerEnter handle player enter table event
 // Note: concurrent safe
-func (t *Table) GoroutineEntryPlayerEnter(ws *websocket.Conn, userID string) *Player {
-	t.lock.Lock()
-	defer t.lock.Unlock()
-
+func (t *Table) OnPlayerEnter(ws *websocket.Conn, userID string) *Player {
 	t.cl.Printf("OnPlayerEnter table, userID:%s", userID)
 
 	player := t.getPlayerByUserID(userID)
@@ -191,14 +188,11 @@ func (t *Table) onPlayerReconnect(p *Player, ws *websocket.Conn) *Player {
 	return p
 }
 
-// goroutineEntryPlayerOffline 处理用户离线，不同的状态下，玩家离线表现不同
+// onPlayerOffline 处理用户离线，不同的状态下，玩家离线表现不同
 // 例如，如果是等待状态，且游戏并没有开始，那么玩家离线后，其player对象会被清除
 // 但是如果是游戏正在进行，那么玩家离线，其player对象不会被清除，而一直等待其上线
 // 或者直到其他玩家决定解散本局游戏
-func (t *Table) goroutineEntryPlayerOffline(player *Player) {
-	t.lock.Lock()
-	defer t.lock.Unlock()
-
+func (t *Table) onPlayerOffline(player *Player) {
 	// 让状态机处理用户离线
 	// 不同状态下对用户离线的处理是不同的，比如Waiting状态，用户离线会把Player删除
 	// 也即是Waiting状态下用户随意进出。但在Playing状态下，用户离线Player对象一直保留
@@ -206,12 +200,9 @@ func (t *Table) goroutineEntryPlayerOffline(player *Player) {
 	t.state.onPlayerOffline(player)
 }
 
-// goroutineEntryPlayerMsg handle player network message
+// onPlayerMsg handle player network message
 // Note: concurrent safe
-func (t *Table) goroutineEntryPlayerMsg(player *Player, msg []byte) {
-	t.lock.Lock()
-	defer t.lock.Unlock()
-
+func (t *Table) onPlayerMsg(player *Player, msg []byte) {
 	gmsg := &xproto.GameMessage{}
 	err := proto.Unmarshal(msg, gmsg)
 	if err != nil {
@@ -346,7 +337,8 @@ func (t *Table) yieldLock(func1 func()) {
 	t.lock.Lock()
 }
 
-func (t *Table) holdLock(func1 func()) {
+// HoldLock hold table lock and execute func
+func (t *Table) HoldLock(func1 func()) {
 	t.lock.Lock()
 	defer t.lock.Unlock()
 

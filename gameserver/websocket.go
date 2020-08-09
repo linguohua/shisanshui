@@ -98,7 +98,11 @@ func acceptPlayer(userID string, tableIDString string, ws *websocket.Conn, r *ht
 		return
 	}
 
-	player := table.GoroutineEntryPlayerEnter(ws, userID)
+	var player *tables.Player
+	table.HoldLock(func() {
+		player = table.OnPlayerEnter(ws, userID)
+	})
+
 	if player != nil {
 		drainPlayerWebsocket(player, ws)
 	}

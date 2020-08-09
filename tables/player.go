@@ -148,7 +148,9 @@ func (p *Player) OnExitMsgLoop(ws1 *websocket.Conn, err error) {
 
 	table := p.table
 	if table != nil {
-		table.goroutineEntryPlayerOffline(p)
+		table.HoldLock(func() {
+			table.onPlayerOffline(p)
+		})
 	}
 }
 
@@ -162,7 +164,9 @@ func (p *Player) OnWebsocketMessage(ws *websocket.Conn, msg []byte) {
 
 	table := p.table
 	if table != nil {
-		table.goroutineEntryPlayerMsg(p, msg)
+		table.HoldLock(func() {
+			table.onPlayerMsg(p, msg)
+		})
 	}
 }
 
