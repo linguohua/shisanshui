@@ -102,3 +102,8 @@ func formatGameMsg(cl *log.Entry, pb proto.Message, code int32) ([]byte, error) 
 
 	return proto.Marshal(gmsg)
 }
+
+// LoadTableConfigFromRedis load config string from redis
+func LoadTableConfigFromRedis(tableConfigID string, cl *log.Entry) string {
+	return ""
+}

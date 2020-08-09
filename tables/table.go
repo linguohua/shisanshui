@@ -1,6 +1,7 @@
 package tables
 
 import (
+	"fmt"
 	"math/rand"
 	"runtime/debug"
 	"shisanshui/xproto"
@@ -72,7 +73,7 @@ type Table struct {
 }
 
 // tableNew new a table
-func tableNew(uuid string, number string) *Table {
+func tableNew(uuid string, number string, cfg *tableConfig) *Table {
 	fields := make(logrus.Fields)
 	fields["src"] = "table"
 	fields["table uuid"] = uuid
@@ -85,8 +86,16 @@ func tableNew(uuid string, number string) *Table {
 		UUID:   uuid,
 		Number: number,
 		rand:   rand.New(rand.NewSource(time.Now().UnixNano())),
+		config: cfg,
 	}
 
+	return t
+}
+
+func newNewForMonkey(uuid string, number string, cfg *tableConfig) *Table {
+	t := tableNew(uuid, number, cfg)
+
+	t.isForMonkey = true
 	return t
 }
 
@@ -100,9 +109,9 @@ func (t *Table) initChair() {
 	}
 }
 
-// OnPlayerEnter handle player enter table event
+// GoroutineEntryPlayerEnter handle player enter table event
 // Note: concurrent safe
-func (t *Table) OnPlayerEnter(ws *websocket.Conn, userID string) *Player {
+func (t *Table) GoroutineEntryPlayerEnter(ws *websocket.Conn, userID string) *Player {
 	t.lock.Lock()
 	defer t.lock.Unlock()
 
@@ -133,7 +142,7 @@ func (t *Table) OnPlayerEnter(ws *websocket.Conn, userID string) *Player {
 		return t.onPlayerReconnect(player, ws)
 	}
 
-	if len(t.players) == t.config.playerNumMax {
+	if len(t.players) == t.config.PlayerNumMax {
 		// 已经满员
 		SendEnterTableResult(t.cl, ws, userID, xproto.EnterTableStatus_TableIsFulled)
 		return nil
@@ -182,11 +191,11 @@ func (t *Table) onPlayerReconnect(p *Player, ws *websocket.Conn) *Player {
 	return p
 }
 
-// onPlayerOffline 处理用户离线，不同的状态下，玩家离线表现不同
+// goroutineEntryPlayerOffline 处理用户离线，不同的状态下，玩家离线表现不同
 // 例如，如果是等待状态，且游戏并没有开始，那么玩家离线后，其player对象会被清除
 // 但是如果是游戏正在进行，那么玩家离线，其player对象不会被清除，而一直等待其上线
 // 或者直到其他玩家决定解散本局游戏
-func (t *Table) onPlayerOffline(player *Player) {
+func (t *Table) goroutineEntryPlayerOffline(player *Player) {
 	t.lock.Lock()
 	defer t.lock.Unlock()
 
@@ -197,9 +206,9 @@ func (t *Table) onPlayerOffline(player *Player) {
 	t.state.onPlayerOffline(player)
 }
 
-// OnPlayerMsg handle player network message
+// goroutineEntryPlayerMsg handle player network message
 // Note: concurrent safe
-func (t *Table) OnPlayerMsg(player *Player, msg []byte) {
+func (t *Table) goroutineEntryPlayerMsg(player *Player, msg []byte) {
 	t.lock.Lock()
 	defer t.lock.Unlock()
 
@@ -271,7 +280,7 @@ func (t *Table) allocChair(fixChairID int) int {
 
 // releaseChair 归还一个座位
 func (t *Table) releaseChair(chairID int) {
-	if len(t.chairs) == t.config.playerNumMax {
+	if len(t.chairs) == t.config.PlayerNumMax {
 		t.cl.Panic("releaseChair failed: chair array is fulled")
 		return
 	}
@@ -297,18 +306,19 @@ func (t *Table) startCountingDown() {
 			if r := recover(); r != nil {
 				debug.PrintStack()
 				t.cl.Printf("-----PANIC: This Table will die, STACK\n:%v", r)
+				mgr.IncExceptionCount()
 			}
 		}()
 
-		// new goroutine call into here, so onCountdownCompleted
+		// new goroutine call into here, so goroutineEntryCountdownCompleted
 		// must be concurrent safe
-		t.onCountdownCompleted()
+		t.goroutineEntryCountdownCompleted()
 	})
 }
 
-// onCountdownCompleted countdown timer completed
+// goroutineEntryCountdownCompleted countdown timer completed
 // call by timer goroutine
-func (t *Table) onCountdownCompleted() {
+func (t *Table) goroutineEntryCountdownCompleted() {
 	t.lock.Lock()
 	defer t.lock.Unlock()
 
@@ -319,16 +329,44 @@ func (t *Table) onCountdownCompleted() {
 		t.cl.Panic("state should be waiting when countdown completed")
 	}
 
-	if len(t.players) < t.config.playerNumAcquired {
+	if len(t.players) < t.config.PlayerNumAcquired {
 		t.cl.Printf("current player count %d < required(%d), continue waitig",
-			len(t.players), t.config.playerNumAcquired)
+			len(t.players), t.config.PlayerNumAcquired)
 		return
 	}
 
 	t.stateTo(playingStateNew(t))
 }
 
+func (t *Table) yieldLock(func1 func()) {
+	t.lock.Unlock()
+
+	func1()
+
+	t.lock.Lock()
+}
+
+func (t *Table) holdLock(func1 func()) {
+	t.lock.Lock()
+	defer t.lock.Unlock()
+
+	func1()
+}
+
 func (t *Table) nextQAIndex() int {
 	t.qaIndex++
 	return t.qaIndex
+}
+
+func (t *Table) destroy(reason xproto.TableDeleteReason) {
+	// TODO:
+}
+
+func (t *Table) kickAll() {
+	// TODO:
+}
+
+func (t *Table) kickPlayer(userID string) error {
+	// TODO:
+	return fmt.Errorf("not implement")
 }

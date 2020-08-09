@@ -25,7 +25,7 @@ var (
 )
 
 func acceptWebsocket(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
-	cl := log.WithField("peer", r.RemoteAddr)
+	cl := log.WithField("peer", retrieveClientAddr(r))
 
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -98,7 +98,7 @@ func acceptPlayer(userID string, tableIDString string, ws *websocket.Conn, r *ht
 		return
 	}
 
-	player := table.OnPlayerEnter(ws, userID)
+	player := table.GoroutineEntryPlayerEnter(ws, userID)
 	if player != nil {
 		drainPlayerWebsocket(player, ws)
 	}

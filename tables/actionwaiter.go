@@ -31,10 +31,10 @@ func (aw *actionWaiter) wait() bool {
 
 	// release table's lock, thus other goroutine can enter
 	// table's function
-	aw.s.table.lock.Unlock()
-	result := <-aw.chanWait
-	// re-lock table,to continue gameloop workflow
-	aw.s.table.lock.Lock()
+	var result bool
+	aw.s.table.yieldLock(func() {
+		result = <-aw.chanWait
+	})
 
 	if result == false {
 		return result

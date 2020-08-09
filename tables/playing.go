@@ -111,7 +111,7 @@ func (s *statePlaying) onStateEnter() {
 	}
 
 	// 进入游戏循环
-	go s.gameLoop()
+	go s.table.holdLock(s.gameLoop)
 }
 
 func (s *statePlaying) onStateExit() {
@@ -120,15 +120,12 @@ func (s *statePlaying) onStateExit() {
 
 func (s *statePlaying) gameLoop() {
 	s.cl.Println("gameloop begin")
-	// TODO: recover
-	s.table.lock.Lock()
-
 	// 如果gameLoop中的goroutine出错，则该房间挂死，但是不影响其他房间
 	defer func() {
-		s.table.lock.Unlock()
 		if r := recover(); r != nil {
 			debug.PrintStack()
 			s.cl.Printf("-----PANIC: This Table will die, STACK\n:%v", r)
+			mgr.IncExceptionCount()
 		}
 	}()
 

@@ -26,7 +26,7 @@ func (s *stateWaiting) name() string {
 
 func (s *stateWaiting) onPlayerEnter(p *Player) {
 	playerCount := len(s.table.players)
-	if playerCount >= s.table.config.playerNumAcquired {
+	if playerCount >= s.table.config.PlayerNumAcquired {
 		if !s.table.countingDown {
 			s.table.startCountingDown()
 		}
