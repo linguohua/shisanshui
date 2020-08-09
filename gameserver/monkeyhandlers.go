@@ -1,3 +1,5 @@
+// 用于支持配牌器操作服务器的函数
+
 package gameserver
 
 import (
@@ -14,6 +16,7 @@ import (
 
 type monkeyHandleFunc func(w http.ResponseWriter, r *http.Request, cl *log.Entry)
 
+// onCreateMonkeyTable 创建一个配牌器使用的牌桌
 func onCreateMonkeyTable(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	query := r.URL.Query()
 	tableID := query.Get("tableID")
@@ -25,6 +28,7 @@ func onCreateMonkeyTable(w http.ResponseWriter, r *http.Request, cl *log.Entry) 
 	}
 }
 
+// onDestroyMonkeyTable 销毁配牌器使用的牌桌
 func onDestroyMonkeyTable(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	query := r.URL.Query()
 	tableID := query.Get("tableID")
@@ -36,6 +40,7 @@ func onDestroyMonkeyTable(w http.ResponseWriter, r *http.Request, cl *log.Entry)
 	}
 }
 
+// onExportTableOperations 导出用户当前所在的牌桌的打牌记录
 func onExportTableOperations(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	// var userID = r.URL.Query().Get("userID")
 	// var recordSID = ""
@@ -55,6 +60,7 @@ func onExportTableOperations(w http.ResponseWriter, r *http.Request, cl *log.Ent
 	// }
 }
 
+// onExportTableReplayRecordsSIDs 导出某个牌桌所有的回播记录的ID列表
 func onExportTableReplayRecordsSIDs(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	// recordSID := r.URL.Query().Get("recordSID")
 	// if recordSID == "" {
@@ -93,6 +99,7 @@ func onExportTableReplayRecordsSIDs(w http.ResponseWriter, r *http.Request, cl *
 	// w.Write(buf)
 }
 
+// exportTableOperationsByRecordSID 导出某个回播记录
 func exportTableOperationsByRecordSID(w http.ResponseWriter, r *http.Request, recordSID string, cl *log.Entry) {
 	// conn := pool.Get()
 	// defer conn.Close()
@@ -125,6 +132,7 @@ func exportTableOperationsByRecordSID(w http.ResponseWriter, r *http.Request, re
 	// w.Write(buf)
 }
 
+// exportTableOperationsByUserID 导出某个玩家最新的回播记录
 func exportTableOperationsByUserID(w http.ResponseWriter, r *http.Request, userID string, cl *log.Entry) {
 	// var buf []byte
 	// user, ok := usersMap[userID]
@@ -163,6 +171,7 @@ func exportTableOperationsByUserID(w http.ResponseWriter, r *http.Request, userI
 	// w.Write(buf)
 }
 
+// onExportTableCfg 导出牌桌的配置
 func onExportTableCfg(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	var tableConfigID = r.URL.Query().Get("tableConfigID")
 	if tableConfigID == "" {
@@ -181,6 +190,7 @@ func onExportTableCfg(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	w.Write([]byte(buf))
 }
 
+// onTableKickAll 强制牌桌玩家退出
 func onTableKickAll(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	var tableNumber = r.URL.Query().Get("tableNumber")
 	if tableNumber == "" {
@@ -198,6 +208,7 @@ func onTableKickAll(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	}
 }
 
+// onTableReset 重置牌桌
 func onTableReset(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	// var tableNumber = r.URL.Query().Get("tableNumber")
 	// if tableNumber == "" {
@@ -218,6 +229,7 @@ func onTableReset(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	// w.Write([]byte("OK, reset table:" + tableNumber))
 }
 
+// onTableDisband 解散牌桌
 func onTableDisband(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	// log.Println("monkey try to disband table...")
 	// var tableNumber = r.URL.Query().Get("tableNumber")
@@ -239,6 +251,7 @@ func onTableDisband(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	// w.Write([]byte("OK, disband table:" + tableNumber))
 }
 
+// onExportUserLastRecord 导出某个玩家的最后回播记录
 func onExportUserLastRecord(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	// var userID = r.URL.Query().Get("userID")
 	// buf := loadMJLastRecordForUser(userID)
@@ -251,17 +264,20 @@ func onExportUserLastRecord(w http.ResponseWriter, r *http.Request, cl *log.Entr
 	// w.Write(buf)
 }
 
+// onQueryTableCount 查询房间个数
 func onQueryTableCount(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	str := tables.MonkeyQueryTableCount(cl)
 
 	w.Write([]byte(str))
 }
 
+// onQueryUserCount 查询玩家个数
 func onQueryUserCount(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	userCount := tables.GetMgr().PlayerCount()
 	w.Write([]byte(strconv.Itoa(int(userCount))))
 }
 
+// onAttachDealCfg2Table 附加发牌配置到牌桌
 func onAttachDealCfg2Table(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	body := make([]byte, r.ContentLength)
 	defer r.Body.Close()
@@ -279,6 +295,7 @@ func onAttachDealCfg2Table(w http.ResponseWriter, r *http.Request, cl *log.Entry
 	}
 }
 
+// onAttachTableCfg2Table 附加牌桌配置到牌桌
 func onAttachTableCfg2Table(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	body := make([]byte, r.ContentLength)
 	defer r.Body.Close()
@@ -297,6 +314,7 @@ func onAttachTableCfg2Table(w http.ResponseWriter, r *http.Request, cl *log.Entr
 	}
 }
 
+// onKickUser 强制某个玩家离开牌桌
 func onKickUser(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	query := r.URL.Query()
 	var userID = query.Get("userID")
@@ -310,14 +328,17 @@ func onKickUser(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	}
 }
 
+// onQueryTableExceptionCount 查询发生异常的房间个数
 func onQueryTableExceptionCount(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	w.Write([]byte(fmt.Sprintf("%d", tables.GetMgr().ExceptionCount())))
 }
 
+// onClearTableExceptionCount 重置异常计数为0
 func onClearTableExceptionCount(w http.ResponseWriter, r *http.Request, cl *log.Entry) {
 	tables.GetMgr().ClearExceptionCount()
 }
 
+// authMonkeyHandle 包装响应函数，加上账号密码验证，并初始化log entry
 func authMonkeyHandle(origin monkeyHandleFunc) httprouter.Handle {
 	return func(w http.ResponseWriter, r *http.Request, _ httprouter.Params) {
 		cl := log.WithField("peer", retrieveClientAddr(r))
