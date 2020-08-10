@@ -92,12 +92,12 @@ enum MessageCode {
   OPDeal = 6;
   // 本手牌结果
   OPHandOver = 7;
-  // 断线、奔溃恢复，注意恢复过程是由若干个消息构成，先是OPRoomUpdate，然后是OPRestore(消息体是MsgRestore)，然后是OPActionAllowed或者OPReActionAllowed
+  // 断线、奔溃恢复，注意恢复过程是由若干个消息构成，先是OPTableUpdate，然后是OPRestore(消息体是MsgRestore)，然后是OPActionAllowed或者OPReActionAllowed
   OPRestore = 8;
   // 玩家离开房间，客户端会请求服务器其离开房间
-  OPPlayerLeaveRoom = 9;
+  OPPlayerLeaveTable = 9;
   // 玩家进入房间，客户端不会发送该消息，仅用于通知客户端
-  OPPlayerEnterRoom = 10;
+  OPPlayerEnterTable = 10;
   // 解散牌局
   OPDisbandRequest = 11;
   // 解散牌局询问其他玩家是否同意，或者通告解散的当前状态（谁同意，谁拒绝，谁正在思考）
@@ -107,11 +107,11 @@ enum MessageCode {
   // 玩家准备好
   OPPlayerReady = 14;
   // 房间被删除，本消息没有消息体，仅一个命令字，客户端收到后退出房间
-  OPRoomDeleted = 15;
+  OPTableDeleted = 15;
   // 更新房间信息，主要是玩家状态变更
-  OPRoomUpdate = 16;
+  OPTableUpdate = 16;
   // 要求客户端显示一段提示信息
-  OPRoomShowTips = 17;
+  OPTableShowTips = 17;
   // 房间游戏结束
   OPGameOver = 18;
   // 踢玩家出房间

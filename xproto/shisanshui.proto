@@ -9,18 +9,20 @@ enum CardHandType {
   StraightFlush = 1;
   // 四条 Four of a Kind：四张同点牌 + 一张
   Four = 2;
+  // 葫芦
+  FullHouse = 3;
   // 同花(花)	Flush
-  Flush = 3;
+  Flush = 4;
   // 顺子(蛇)	Straight
-  Straight = 4;
+  Straight = 5;
   // 三条 Three of a kind
-  ThreeOfAKind= 5;
+  ThreeOfAKind= 6;
   // 两对牌：数值相同的两张牌
-  TwoPairs = 6;
+  TwoPairs = 7;
   // 对牌
-  OnePair = 7;
+  OnePair = 8;
   // 单张
-  HighCard = 8;
+  HighCard = 9;
 }
 
 // 一手牌局结束

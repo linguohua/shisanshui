@@ -25,62 +25,64 @@ var (
 )
 
 func acceptWebsocket(w http.ResponseWriter, r *http.Request, params httprouter.Params) {
+	cl := log.WithField("peer", retrieveClientAddr(r))
+
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		log.Println(err)
+		cl.Println(err)
 		return
 	}
 
-	pltyerType := params.ByName("playertype")
-	queryString := r.URL.Query()
+	playerType := params.ByName("playertype")
+	q := r.URL.Query()
 
 	// ensure websocket connection will be closed anyway
 	defer ws.Close()
 	// read limit
 	ws.SetReadLimit(wsReadLimit)
 
-	log.Println("accept websocket:", r.URL)
-	switch pltyerType {
+	cl.Println("accept websocket:", r.URL)
+	switch playerType {
 	case "/play":
-		var tk = queryString.Get("tk")
+		var tk = q.Get("tk")
 		userID, ok := token.ParseToken(tk)
 		if !ok {
-			log.Printf("invalid token, Peer: %s", r.RemoteAddr)
+			cl.Printf("invalid token, Peer: %s", r.RemoteAddr)
 			return
 		}
 
 		if config.RequiredAppModuleVer > 0 {
-			appModuleVer, err := strconv.Atoi(r.URL.Query().Get("amv"))
+			appModuleVer, err := strconv.Atoi(q.Get("amv"))
 			if err != nil || appModuleVer < config.RequiredAppModuleVer {
-				log.Printf("app module too old, ID:%s, Peer:%s\n", userID, r.RemoteAddr)
-				tables.SendEnterTableResult(ws, userID, xproto.EnterTableStatusAppModuleNeedUpgrade)
+				cl.Printf("app module too old, ID:%s, Peer:%s\n", userID, r.RemoteAddr)
+				tables.SendEnterTableResult(cl, ws, userID, xproto.EnterTableStatus_AppModuleNeedUpgrade)
 				return
 			}
 		}
 
 		// table uuid
-		var tableUID = r.URL.Query().Get("tuid")
+		var tableUID = q.Get("tuid")
 		acceptPlayer(userID, tableUID, ws, r)
 		break
 	case "/monkey":
-		var tableIDString = r.URL.Query().Get("tuid")
+		var tableIDString = q.Get("tuid")
 		if tableIDString == "" {
-			var tableNumber = r.URL.Query().Get("tnid")
+			var tableNumber = q.Get("tnid")
 			if tableNumber == "" {
-				log.Println("monkey has no table uuid and table number id")
+				cl.Println("monkey has no table uuid and table number id")
 				return
 			}
 
-			table := tables.Mgr.GetTableByNumber(tableNumber)
+			table := tables.GetMgr().GetTableByNumber(tableNumber)
 			if table != nil {
 				tableIDString = table.UUID
 			} else {
-				log.Println("no talbe found for table number:", tableNumber)
+				cl.Println("no talbe found for table number:", tableNumber)
 				return
 			}
 		}
 
-		var userID = queryString.Get("userID")
+		var userID = q.Get("userID")
 		acceptPlayer(userID, tableIDString, ws, r)
 		break
 	}
@@ -88,7 +90,7 @@ func acceptWebsocket(w http.ResponseWriter, r *http.Request, params httprouter.P
 
 func acceptPlayer(userID string, tableIDString string, ws *websocket.Conn, r *http.Request) {
 	// found target table
-	table := tables.Mgr.GetTable(tableIDString)
+	table := tables.GetMgr().GetTable(tableIDString)
 	if table == nil {
 		log.Printf("can't found table with ID:%s, Peer:%s\n", tableIDString, r.RemoteAddr)
 		// TODO: send error to client
@@ -96,7 +98,11 @@ func acceptPlayer(userID string, tableIDString string, ws *websocket.Conn, r *ht
 		return
 	}
 
-	player := table.OnPlayerEnter(ws, userID)
+	var player *tables.Player
+	table.HoldLock(func() {
+		player = table.OnPlayerEnter(ws, userID)
+	})
+
 	if player != nil {
 		drainPlayerWebsocket(player, ws)
 	}

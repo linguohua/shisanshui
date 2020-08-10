@@ -1,7 +1,6 @@
 package tables
 
 import (
-	"shisanshui/xproto"
 	"sync"
 	"time"
 
@@ -81,19 +80,7 @@ func (p *Player) send(bytes []byte) {
 }
 
 func (p *Player) sendGameMsg(pb proto.Message, code int32) {
-	gmsg := &xproto.GameMessage{}
-	gmsg.Code = &code
-
-	if pb != nil {
-		bytes, err := proto.Marshal(pb)
-
-		if err != nil {
-			p.cl.Panic("marshal msg failed:", err)
-		}
-		gmsg.Data = bytes
-	}
-
-	bytes, err := proto.Marshal(gmsg)
+	bytes, err := formatGameMsg(p.cl, pb, code)
 	if err != nil {
 		p.cl.Panic("marshal game msg failed:", err)
 	}
@@ -161,7 +148,9 @@ func (p *Player) OnExitMsgLoop(ws1 *websocket.Conn, err error) {
 
 	table := p.table
 	if table != nil {
-		table.onPlayerOffline(p)
+		table.HoldLock(func() {
+			table.onPlayerOffline(p)
+		})
 	}
 }
 
@@ -175,7 +164,9 @@ func (p *Player) OnWebsocketMessage(ws *websocket.Conn, msg []byte) {
 
 	table := p.table
 	if table != nil {
-		table.OnPlayerMsg(p, msg)
+		table.HoldLock(func() {
+			table.onPlayerMsg(p, msg)
+		})
 	}
 }
 

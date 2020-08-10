@@ -25,10 +25,20 @@ type Params struct {
 	AllowCrossOrigin bool
 }
 
+func retrieveClientAddr(r *http.Request) string {
+	addr := r.Header.Get("X-Forwarded-For")
+	if len(addr) < 1 {
+		addr = r.RemoteAddr
+	}
+
+	return addr
+}
+
 // registerHTTPHandlers add request handlers to router
 func registerHTTPHandlers() {
 	websocketPath := rootPath + "/ws/:playertype"
-	rootRouter.Handle("GET", websocketPath, acceptWebsocket)
+	rootRouter.GET(websocketPath, acceptWebsocket)
+	registerMonkeyHandlers()
 }
 
 // StartHTTPServer start http/websocket server

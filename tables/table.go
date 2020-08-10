@@ -1,6 +1,7 @@
 package tables
 
 import (
+	"fmt"
 	"math/rand"
 	"runtime/debug"
 	"shisanshui/xproto"
@@ -72,7 +73,7 @@ type Table struct {
 }
 
 // tableNew new a table
-func tableNew(uuid string, number string) *Table {
+func tableNew(uuid string, number string, cfg *tableConfig) *Table {
 	fields := make(logrus.Fields)
 	fields["src"] = "table"
 	fields["table uuid"] = uuid
@@ -85,8 +86,16 @@ func tableNew(uuid string, number string) *Table {
 		UUID:   uuid,
 		Number: number,
 		rand:   rand.New(rand.NewSource(time.Now().UnixNano())),
+		config: cfg,
 	}
 
+	return t
+}
+
+func newNewForMonkey(uuid string, number string, cfg *tableConfig) *Table {
+	t := tableNew(uuid, number, cfg)
+
+	t.isForMonkey = true
 	return t
 }
 
@@ -103,9 +112,6 @@ func (t *Table) initChair() {
 // OnPlayerEnter handle player enter table event
 // Note: concurrent safe
 func (t *Table) OnPlayerEnter(ws *websocket.Conn, userID string) *Player {
-	t.lock.Lock()
-	defer t.lock.Unlock()
-
 	t.cl.Printf("OnPlayerEnter table, userID:%s", userID)
 
 	player := t.getPlayerByUserID(userID)
@@ -114,14 +120,14 @@ func (t *Table) OnPlayerEnter(ws *websocket.Conn, userID string) *Player {
 	if t.isForceConsistent() && player == nil {
 		monkeyUserCardCfg := t.monkeyCfg.getMonkeyCardCfg(userID)
 		if monkeyUserCardCfg == nil {
-			SendEnterTableResult(ws, userID, xproto.EnterTableStatusMonkeyUserIDNotMatch)
+			SendEnterTableResult(t.cl, ws, userID, xproto.EnterTableStatus_MonkeyTableUserIDNotMatch)
 			return nil
 		}
 
 		// 而且玩家进入的顺序必须严格按照配置指定
 		loginSeq := len(t.players)
 		if loginSeq != monkeyUserCardCfg.chairID {
-			SendEnterTableResult(ws, userID, xproto.EnterTableStatusMonkeyUserLoginSeqNotMatch)
+			SendEnterTableResult(t.cl, ws, userID, xproto.EnterTableStatus_MonkeyTableUserLoginSeqNotMatch)
 			return nil
 		}
 	}
@@ -133,9 +139,9 @@ func (t *Table) OnPlayerEnter(ws *websocket.Conn, userID string) *Player {
 		return t.onPlayerReconnect(player, ws)
 	}
 
-	if len(t.players) == t.config.playerNumMax {
+	if len(t.players) == t.config.PlayerNumMax {
 		// 已经满员
-		SendEnterTableResult(ws, userID, xproto.EnterTableStatusTableIsFulled)
+		SendEnterTableResult(t.cl, ws, userID, xproto.EnterTableStatus_TableIsFulled)
 		return nil
 	}
 
@@ -149,7 +155,7 @@ func (t *Table) OnPlayerEnter(ws *websocket.Conn, userID string) *Player {
 	sort.Sort(byChairID(t.players))
 
 	// 发送成功进入房间通知给客户端
-	SendEnterTableResult(ws, userID, xproto.EnterTableStatusTableSuccess)
+	SendEnterTableResult(t.cl, ws, userID, xproto.EnterTableStatus_Success)
 
 	// state handle
 	t.state.onPlayerEnter(player)
@@ -171,7 +177,7 @@ func (t *Table) onPlayerReconnect(p *Player, ws *websocket.Conn) *Player {
 	p.rebind(ws)
 
 	// 发送成功进入房间通知给客户端
-	SendEnterTableResult(ws, p.ID, xproto.EnterTableStatusTableSuccess)
+	SendEnterTableResult(t.cl, ws, p.ID, xproto.EnterTableStatus_Success)
 
 	// 通知状态机
 	t.state.onPlayerReConnect(p)
@@ -187,9 +193,6 @@ func (t *Table) onPlayerReconnect(p *Player, ws *websocket.Conn) *Player {
 // 但是如果是游戏正在进行，那么玩家离线，其player对象不会被清除，而一直等待其上线
 // 或者直到其他玩家决定解散本局游戏
 func (t *Table) onPlayerOffline(player *Player) {
-	t.lock.Lock()
-	defer t.lock.Unlock()
-
 	// 让状态机处理用户离线
 	// 不同状态下对用户离线的处理是不同的，比如Waiting状态，用户离线会把Player删除
 	// 也即是Waiting状态下用户随意进出。但在Playing状态下，用户离线Player对象一直保留
@@ -197,12 +200,9 @@ func (t *Table) onPlayerOffline(player *Player) {
 	t.state.onPlayerOffline(player)
 }
 
-// OnPlayerMsg handle player network message
+// onPlayerMsg handle player network message
 // Note: concurrent safe
-func (t *Table) OnPlayerMsg(player *Player, msg []byte) {
-	t.lock.Lock()
-	defer t.lock.Unlock()
-
+func (t *Table) onPlayerMsg(player *Player, msg []byte) {
 	gmsg := &xproto.GameMessage{}
 	err := proto.Unmarshal(msg, gmsg)
 	if err != nil {
@@ -271,7 +271,7 @@ func (t *Table) allocChair(fixChairID int) int {
 
 // releaseChair 归还一个座位
 func (t *Table) releaseChair(chairID int) {
-	if len(t.chairs) == t.config.playerNumMax {
+	if len(t.chairs) == t.config.PlayerNumMax {
 		t.cl.Panic("releaseChair failed: chair array is fulled")
 		return
 	}
@@ -297,21 +297,21 @@ func (t *Table) startCountingDown() {
 			if r := recover(); r != nil {
 				debug.PrintStack()
 				t.cl.Printf("-----PANIC: This Table will die, STACK\n:%v", r)
+				mgr.IncExceptionCount()
 			}
 		}()
 
 		// new goroutine call into here, so onCountdownCompleted
 		// must be concurrent safe
-		t.onCountdownCompleted()
+		t.HoldLock(func() {
+			t.onCountdownCompleted()
+		})
 	})
 }
 
 // onCountdownCompleted countdown timer completed
 // call by timer goroutine
 func (t *Table) onCountdownCompleted() {
-	t.lock.Lock()
-	defer t.lock.Unlock()
-
 	t.countingDown = false
 
 	oldState := t.state.(*stateWaiting)
@@ -319,16 +319,44 @@ func (t *Table) onCountdownCompleted() {
 		t.cl.Panic("state should be waiting when countdown completed")
 	}
 
-	if len(t.players) < t.config.playerNumAcquired {
+	if len(t.players) < t.config.PlayerNumAcquired {
 		t.cl.Printf("current player count %d < required(%d), continue waitig",
-			len(t.players), t.config.playerNumAcquired)
+			len(t.players), t.config.PlayerNumAcquired)
 		return
 	}
 
 	t.stateTo(playingStateNew(t))
 }
 
+func (t *Table) yieldLock(func1 func()) {
+	t.lock.Unlock()
+	defer t.lock.Lock() // re-lock
+
+	func1()
+}
+
+// HoldLock hold table lock and execute func
+func (t *Table) HoldLock(func1 func()) {
+	t.lock.Lock()
+	defer t.lock.Unlock()
+
+	func1()
+}
+
 func (t *Table) nextQAIndex() int {
 	t.qaIndex++
 	return t.qaIndex
+}
+
+func (t *Table) destroy(reason xproto.TableDeleteReason) {
+	// TODO:
+}
+
+func (t *Table) kickAll() {
+	// TODO:
+}
+
+func (t *Table) kickPlayer(userID string) error {
+	// TODO:
+	return fmt.Errorf("not implement")
 }
