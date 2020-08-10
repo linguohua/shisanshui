@@ -1,6 +1,12 @@
 package tables
 
-import "github.com/sirupsen/logrus"
+import (
+	"container/list"
+
+	"shisanshui/xproto"
+
+	"github.com/sirupsen/logrus"
+)
 
 // actionWaiter 等待玩家响应
 type actionWaiter struct {
@@ -9,6 +15,16 @@ type actionWaiter struct {
 
 	isFinished bool
 	chanWait   chan bool
+
+	waitQueue *list.List
+}
+
+// TaskExchangeTilesQueueItem 等待队列项
+type TaskExchangeTilesQueueItem struct {
+	player     *Player
+	reply      bool
+	waitAction int
+	cardsList  []int
 }
 
 func actionWaiterNew(s *statePlaying) *actionWaiter {
@@ -18,6 +34,14 @@ func actionWaiterNew(s *statePlaying) *actionWaiter {
 	}
 
 	// TODO: construct players list
+	aw.waitQueue = list.New()
+	for _, p := range s.playingPlayers {
+		ti := &TaskExchangeTilesQueueItem{}
+		ti.player = p
+		ti.waitAction = int(xproto.ActionType_enumActionType_DISCARD)
+
+		aw.waitQueue.PushBack(ti)
+	}
 
 	aw.chanWait = make(chan bool, 1) // buffered channel,1 slots
 
@@ -41,4 +65,60 @@ func (aw *actionWaiter) wait() bool {
 	}
 
 	return result
+}
+
+// findWaitQueueItem 根据player找到wait item
+func (aw *actionWaiter) findWaitQueueItem(player *Player) *TaskExchangeTilesQueueItem {
+	for e := aw.waitQueue.Front(); e != nil; e = e.Next() {
+		qi := e.Value.(*TaskExchangeTilesQueueItem)
+		if qi.player == player {
+			return qi
+		}
+	}
+	return nil
+}
+
+// takeAction 玩家做了选择
+func (aw *actionWaiter) takeAction(player *Player, action int, cardIDs []int) {
+
+	wi := aw.findWaitQueueItem(player)
+	if wi == nil {
+		aw.cl.Printf("player %s not in TaskExchangeTiles queue", player.ID)
+		return
+	}
+
+	if wi.reply {
+		aw.cl.Printf("player %s ha already reply TaskExchangeTiles queue", player.ID)
+		return
+	}
+
+	wi.reply = true
+	wi.cardsList = cardIDs
+
+	allReply := true
+	for e := aw.waitQueue.Front(); e != nil; e = e.Next() {
+		qi := e.Value.(*TaskExchangeTilesQueueItem)
+		if !qi.reply {
+			allReply = false
+			break
+		}
+	}
+
+	if allReply {
+		aw.completed(true)
+	}
+}
+
+// completed 完成等待
+func (aw *actionWaiter) completed(result bool) {
+	if aw.isFinished {
+		return
+	}
+
+	aw.isFinished = true
+	if aw.chanWait == nil {
+		return
+	}
+
+	aw.chanWait <- result
 }

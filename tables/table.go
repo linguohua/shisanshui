@@ -27,6 +27,8 @@ type state interface {
 	onPlayerOffline(p *Player)
 	onPlayerMsg(p *Player, msg *xproto.GameMessage)
 
+	getStateConst() xproto.TableState
+
 	onStateEnter()
 	onStateExit()
 }
@@ -349,14 +351,69 @@ func (t *Table) nextQAIndex() int {
 }
 
 func (t *Table) destroy(reason xproto.TableDeleteReason) {
-	// TODO:
+	// 通知所有人房间已经被删除
+	msgDelete := &xproto.MsgTableDelete{}
+	var reason32 = int32(reason)
+	msgDelete.Reason = &reason32
+	for _, p := range t.players {
+		p.sendGameMsg(msgDelete, int32(xproto.MessageCode_OPTableDeleted))
+	}
+	// 强制停止游戏，状态转换到deleted状态
+	t.stateTo(destroyStateNew(t))
+
+	// 断开玩家的链接
+	t.kickAll()
 }
 
 func (t *Table) kickAll() {
-	// TODO:
+	// 断开玩家的链接
+	for _, p := range t.players {
+		t.releaseChair(p.chairID)
+		p.unbind()
+	}
 }
 
 func (t *Table) kickPlayer(userID string) error {
-	// TODO:
+
+	p := t.getPlayerByUserID(userID)
+	if p != nil {
+		t.releaseChair(p.chairID)
+		p.unbind()
+	}
+
 	return fmt.Errorf("not implement")
+}
+
+// updateRoomInfo2All 把房间当前状态和玩家数据发给所有用户
+func (t *Table) updateTableInfo2All() {
+	if len(t.players) > 0 {
+		var msgRoomInfo = serializeMsgRoomInfo(t)
+		for _, p := range t.players {
+			p.sendGameMsg(msgRoomInfo, int32(xproto.MessageCode_OPTableUpdate))
+		}
+	}
+
+	// r.pushState2RoomMgrServer()
+}
+
+// onHandOver 一手牌结局
+func (t *Table) onHandOver(msgHandOver *xproto.MsgHandOver) {
+
+	// 重置qaIndex
+	t.qaIndex = 0
+
+	// 下一手牌，所以直接进入等待状态而不是空闲状态
+	t.stateTo(waitingStateNew(t))
+
+	for _, p := range t.players {
+		p.resetForNextHand()
+		p.state = xproto.PlayerState_PSNone
+
+		// 确保状态已经切换到SWaiting后，才发送手牌结果给客户端
+		p.sendGameMsg(msgHandOver, int32(xproto.MessageCode_OPHandOver))
+	}
+
+	// 所有用户状态已经被改为PlayerState_PSNone
+	// 因此通知所有客户端更新用户状态
+	t.updateTableInfo2All()
 }

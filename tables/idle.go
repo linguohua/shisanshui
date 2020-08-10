@@ -49,3 +49,7 @@ func (s *stateIdle) onStateEnter() {
 func (s *stateIdle) onStateExit() {
 	s.cl.Println("onStateExit")
 }
+
+func (s *stateIdle) getStateConst() xproto.TableState {
+	return xproto.TableState_STableIdle
+}

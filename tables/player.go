@@ -1,6 +1,7 @@
 package tables
 
 import (
+	"shisanshui/xproto"
 	"sync"
 	"time"
 
@@ -40,6 +41,10 @@ type Player struct {
 	wsWriteLock *sync.Mutex
 
 	lastMsgTime time.Time
+
+	state xproto.PlayerState
+
+	score int32
 }
 
 func newPlayer(t *Table, chairID int, ws *websocket.Conn, userID string) *Player {
@@ -123,6 +128,8 @@ func (p *Player) rebind(ws *websocket.Conn) {
 
 // unbind close websocket instance
 func (p *Player) unbind() {
+	p.table = nil
+
 	old := p.ws
 	p.ws = nil
 
@@ -173,4 +180,10 @@ func (p *Player) OnWebsocketMessage(ws *websocket.Conn, msg []byte) {
 // pullinfo load personal info
 func (p *Player) pullinfo() {
 	// TODO: pull info fram redis
+}
+
+// resetForNextHand 新一手牌开始时，重设player对象中的相关变量
+func (p *Player) resetForNextHand() {
+	p.hcontext = &phandContext{}
+	p.cards.clear()
 }

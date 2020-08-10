@@ -34,6 +34,7 @@ func playingStateNew(t *Table) *statePlaying {
 	for i, p := range t.players {
 		s.playingPlayers[i] = p
 	}
+	s.watchingPlayers = make([]*Player, 0)
 
 	s.dealer = dealerNew(t, s.playingPlayers)
 	return s
@@ -44,15 +45,23 @@ func (s *statePlaying) name() string {
 }
 
 func (s *statePlaying) onPlayerEnter(p *Player) {
-	// TODO: add to watching player list
+	// add to watching player list
+	p.state = xproto.PlayerState_PSNone
+	s.watchingPlayers = append(s.watchingPlayers, p)
+	s.table.updateTableInfo2All()
 }
 
 func (s *statePlaying) onPlayerReConnect(p *Player) {
-	// TODO: restore
+	// restore
+	p.state = xproto.PlayerState_PSPlaying
+	s.table.updateTableInfo2All()
+	msgRestore := serializeMsgRestore(s, p)
+	p.sendGameMsg(msgRestore, int32(xproto.MessageCode_OPRestore))
 }
 
 func (s *statePlaying) onPlayerOffline(p *Player) {
-	// nothing to do
+	p.state = xproto.PlayerState_PSOffline
+	s.table.updateTableInfo2All()
 }
 
 func (s *statePlaying) onPlayerMsg(p *Player, gmsg *xproto.GameMessage) {
@@ -136,7 +145,7 @@ func (s *statePlaying) gameLoop() {
 
 	// 给所有客户端发牌
 	for _, player := range s.playingPlayers {
-		var msgDeal = serializeMsgDeal(s, player, s.playingPlayers)
+		var msgDeal = serializeMsgDeal(s, player)
 		player.sendGameMsg(msgDeal, int32(xproto.MessageCode_OPDeal))
 	}
 
@@ -175,6 +184,7 @@ func (s *statePlaying) waitPlayersAction() bool {
 
 	for _, p := range s.playingPlayers {
 		p.hcontext.expectedAction = actions
+		//TODO : 10要写到配置里
 		msgAllowPlayerAction := serializeMsgAllowedForDiscard(s, p, actions, qaIndex, 10)
 		p.sendGameMsg(msgAllowPlayerAction, int32(xproto.MessageCode_OPActionAllowed))
 
@@ -189,9 +199,14 @@ func (s *statePlaying) waitPlayersAction() bool {
 }
 
 func (s *statePlaying) handOver() {
-	// TODO:
+	msgHandOver := serializeMsgHandOver(s)
+	s.table.onHandOver(msgHandOver)
 }
 
 func (s *statePlaying) sendMonkeyTips(p *Player) {
 	// TODO:
+}
+
+func (s *statePlaying) getStateConst() xproto.TableState {
+	return xproto.TableState_STablePlaying
 }

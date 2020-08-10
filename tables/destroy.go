@@ -47,3 +47,7 @@ func (s *stateDestroy) onStateEnter() {
 func (s *stateDestroy) onStateExit() {
 	s.cl.Println("onStateExit")
 }
+
+func (s *stateDestroy) getStateConst() xproto.TableState {
+	return xproto.TableState_STableDeleted
+}
