@@ -6,23 +6,23 @@ option go_package = ".;xproto";
 enum CardHandType {
   None = 0;  // 无效牌型
   // 同花顺	Straight Flush 五张或更多的连续单牌（如： 45678 或 78910JQK ）
-  StraightFlush = 1;
+  StraightFlush = 9;
   // 四条 Four of a Kind：四张同点牌 + 一张
-  Four = 2;
+  Four = 8;
   // 葫芦
-  FullHouse = 3;
+  FullHouse = 7;
   // 同花(花)	Flush
-  Flush = 4;
+  Flush = 6;
   // 顺子(蛇)	Straight
   Straight = 5;
   // 三条 Three of a kind
-  ThreeOfAKind= 6;
+  ThreeOfAKind= 4;
   // 两对牌：数值相同的两张牌
-  TwoPairs = 7;
+  TwoPairs = 3;
   // 对牌
-  OnePair = 8;
+  OnePair = 2;
   // 单张
-  HighCard = 9;
+  HighCard = 1;
 }
 
 // 一手牌局结束

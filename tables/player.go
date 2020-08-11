@@ -93,6 +93,11 @@ func (p *Player) sendGameMsg(pb proto.Message, code int32) {
 	p.send(bytes)
 }
 
+// sendActionResultNotify 发送动作通知给玩家
+func (p *Player) sendActionResultNotify(msgActionResultNotify *xproto.MsgActionResultNotify) {
+	p.sendGameMsg(msgActionResultNotify, int32(xproto.MessageCode_OPActionResultNotify))
+}
+
 // OnPong handle pong message
 func (p *Player) OnPong(ws *websocket.Conn, msg string) {
 	if p.ws != ws {
@@ -180,10 +185,4 @@ func (p *Player) OnWebsocketMessage(ws *websocket.Conn, msg []byte) {
 // pullinfo load personal info
 func (p *Player) pullinfo() {
 	// TODO: pull info fram redis
-}
-
-// resetForNextHand 新一手牌开始时，重设player对象中的相关变量
-func (p *Player) resetForNextHand() {
-	p.hcontext = &phandContext{}
-	p.cards.clear()
 }

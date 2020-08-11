@@ -264,60 +264,30 @@ message MsgRestore {
   repeated int32 playersListA = 7;
 }
 
-// 大胡者的计分
-message MsgPlayerScoreGreatWin {
-  // 基本的赢牌分数，也即是trimGreatWinPoints乘以每个辣子对应的分数,
-  // NOTE: 废弃不用
-  required int32 baseWinScore = 1;
-  // 大胡类型（可以多种类型复合）
-  required int32 greatWinType = 2;
-  // 辣子数，服务器乘以10，客户端需要除以10后再使用
-  required int32 greatWinPoints = 3;
-  // 裁剪后的辣子数（因为有个封顶限制），服务器乘以10，客户端需要除以10后再使用,
-  // NOTE: 废弃不用
-  required int32 trimGreatWinPoints = 4;
-  // 因连庄得分, NOTE: 废弃不用
-  optional int32 continuousBankerExtra = 5;
-}
-
-// 小胡者的计分
-message MsgPlayerScoreMiniWin {
-  // 小胡类型（可以多种类型复合）
-  required int32 miniWinType = 1;
-  //  小胡底分, NOTE: 废弃不用
-  required int32 miniWinBasicScore = 2;
-  // 小胡花分, NOTE: 废弃不用
-  required int32 miniWinFlowerScore = 3;
-  // 翻倍倍数，服务器乘以10，客户端需要除以10后再使用
-  required int32 miniMultiple = 4;
-  // 裁剪后最终的小胡分数（注意并不计入墩子分）, NOTE: 废弃不用
-  required int32 miniWinTrimScore = 5;
-  // 因连庄得分, NOTE: 废弃不用
-  optional int32 continuousBankerExtra = 6;
+// 墩的计分
+message MsgPlayerScoreDun {
+  // 墩 1、2、3
+  required int32 dun = 1;
+  // 牌型
+  required int32 cardType = 2;
+  // 牌大小
+  required int32 cardNum = 3;
+  // 输赢分数
+  required int32 score = 4;
+	//牌型赢了谁
+	repeated int32 loserChairID = 5;
 }
 
 // 一手牌结束后每个玩家的计分
 message MsgPlayerScore {
   // 玩家
   required int32 targetChairID = 1;
-  // 赢牌类型自摸胡，吃铳胡，没胡
+  // 赢特殊牌类型 可以无效
   required int32 winType = 2;
-  // 以多少毛钱为单位
-  required int32 score = 3;
-  // 墩子分，或者杠分之类的
-  required int32 specialScore = 4;
-  // 如果是大胡，此项有效
-  optional MsgPlayerScoreGreatWin greatWin = 5;
-  // 如果是小胡，此项有效
-  optional MsgPlayerScoreMiniWin miniWin = 6;
-  // 由于包牌导致的收益/损失，或者韶关麻将中的歼牌损失
-  optional int32 fakeWinScore = 7;
-  // 有包牌关系的玩家 列表, NOTE: 废弃不用
-  repeated int32 fakeList = 8;
-  // 是否连庄，客户端根据此字段显示连庄字样
-  optional bool isContinuousBanker = 9;
-  // 连庄倍数
-  optional int32 continuousBankerMultiple = 10;
+  // 总赢 总输
+  required int32 totalScore = 3;
+  // 墩子具体信息
+  repeated MsgPlayerScoreDun scoreDun = 4;
 }
 
 // 一手牌结束后计分

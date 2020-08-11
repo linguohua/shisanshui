@@ -24,10 +24,11 @@ type TaskExchangeTilesQueueItem struct {
 	player     *Player
 	reply      bool
 	waitAction int
-	cardsList  []int
+	cardsList  []int32
 }
 
 func actionWaiterNew(s *statePlaying) *actionWaiter {
+	//此游戏只有这一个等待任务 所以waitAction只会是DISCARD
 	aw := &actionWaiter{
 		cl: s.cl.WithField("src", "action waiter"),
 		s:  s,
@@ -79,7 +80,7 @@ func (aw *actionWaiter) findWaitQueueItem(player *Player) *TaskExchangeTilesQueu
 }
 
 // takeAction 玩家做了选择
-func (aw *actionWaiter) takeAction(player *Player, action int, cardIDs []int) {
+func (aw *actionWaiter) takeAction(player *Player, action int, cardIDs []int32) {
 
 	wi := aw.findWaitQueueItem(player)
 	if wi == nil {
@@ -94,6 +95,9 @@ func (aw *actionWaiter) takeAction(player *Player, action int, cardIDs []int) {
 
 	wi.reply = true
 	wi.cardsList = cardIDs
+
+	//保存排序好的牌到player
+	wi.player.hcontext.sortCards = cardIDs
 
 	allReply := true
 	for e := aw.waitQueue.Front(); e != nil; e = e.Next() {

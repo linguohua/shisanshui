@@ -406,7 +406,6 @@ func (t *Table) onHandOver(msgHandOver *xproto.MsgHandOver) {
 	t.stateTo(waitingStateNew(t))
 
 	for _, p := range t.players {
-		p.resetForNextHand()
 		p.state = xproto.PlayerState_PSNone
 
 		// 确保状态已经切换到SWaiting后，才发送手牌结果给客户端

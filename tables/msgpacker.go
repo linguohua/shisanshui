@@ -128,7 +128,7 @@ func serializeMsgHandOver(s *statePlaying) *xproto.MsgHandOver {
 
 	for _, player := range s.playingPlayers {
 		var msgPlayerScore = &xproto.MsgPlayerScore{}
-		msgPlayerScore.Score = &player.score
+		msgPlayerScore.TotalScore = &player.score
 		playerScores = append(playerScores, msgPlayerScore)
 	}
 
@@ -154,4 +154,15 @@ func serializeCardListsForHandOver(s *statePlaying) []*xproto.MsgPlayerCardList 
 	}
 
 	return playerCardLists
+}
+
+func serializeMsgActionResultNotifyForNoTile(actoin int, player *Player) *xproto.MsgActionResultNotify {
+	// 序列化某个玩家的动作结果给其他玩家
+	var msg = &xproto.MsgActionResultNotify{}
+	var action32 = int32(actoin)
+	msg.Action = &action32
+	var chairID32 = int32(player.chairID)
+	msg.TargetChairID = &chairID32
+
+	return msg
 }

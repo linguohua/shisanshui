@@ -175,8 +175,6 @@ func (s *statePlaying) gameLoop() {
 }
 
 func (s *statePlaying) waitPlayersAction() bool {
-	// TODO:
-
 	// send request to all playing players
 	var qaIndex = s.table.nextQAIndex()
 	// 填写客户端可以操作的动作
@@ -199,6 +197,9 @@ func (s *statePlaying) waitPlayersAction() bool {
 }
 
 func (s *statePlaying) handOver() {
+	//计算结果
+	calcFinalResult(s)
+
 	msgHandOver := serializeMsgHandOver(s)
 	s.table.onHandOver(msgHandOver)
 }
