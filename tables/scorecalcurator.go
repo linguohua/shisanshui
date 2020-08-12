@@ -74,16 +74,19 @@ func calcFinalResult(s *statePlaying) {
 	//比较大小
 	for _, myP := range s.playingPlayers {
 		for _, otherP := range s.playingPlayers {
-			//我自己 跟其他人比较 输赢只记录我自己的就可以
+			//跟其他人比较 输赢只记录自己的就可以
 			if myP != otherP {
-				if myP.hcontext.specialCardType != int32(xproto.CardHandType_None) {
-					//先比较特殊牌型
-				} else {
-					//再比较墩
+				if myP.hcontext.specialCardType != otherP.hcontext.specialCardType {
+					//先比较特殊牌型（这里还要考虑 相同的特殊牌型）
+
 				}
+
 			}
 		}
 	}
+}
+
+func comparePlayerResult(p1 *Player, p2 *Player) {
 
 }
 
