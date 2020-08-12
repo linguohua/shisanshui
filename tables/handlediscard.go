@@ -20,4 +20,7 @@ func onMessageDiscardHandler(s *statePlaying, p *Player, msg *xproto.MsgPlayerAc
 		pP.sendActionResultNotify(msgActionNotifyResult)
 		// }
 	}
+
+	//计算牌型
+	calcFinalResult(p)
 }

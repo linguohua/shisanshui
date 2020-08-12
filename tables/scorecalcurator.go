@@ -34,50 +34,62 @@ var (
 		// 六对半
 		xproto.CardHandType_SixPairs_HighCard: 9,
 		// 五对 加 三条
-		xproto.CardHandType_FivePairs_ThreeOfAKind: 9,
+		xproto.CardHandType_FivePairs_ThreeOfAKind: 18,
 		// 一点黑
-		xproto.CardHandType_One_Black: 9,
+		xproto.CardHandType_One_Black: 24,
 		// 一点红
-		xproto.CardHandType_One_Red: 9,
+		xproto.CardHandType_One_Red: 24,
 		// 清一色 (全黑或全红 可以方块红桃混合)
-		xproto.CardHandType_Pure_One_Suit: 9,
+		xproto.CardHandType_Pure_One_Suit: 30,
 		// 一条龙
-		xproto.CardHandType_All_Straight: 9,
+		xproto.CardHandType_All_Straight: 39,
 		// 至尊清龙
-		xproto.CardHandType_All_StraightFlush: 9,
+		xproto.CardHandType_All_StraightFlush: 78,
 	}
 
 	//保存已经比较过的玩家
 	comparePlayers [][]int
+	//总参与人数
+	allPlayerNum int
 )
 
-func calcFinalResult(s *statePlaying) {
-	comparePlayers = make([][]int, 0)
+//计算结果入口
+func calcFinalResult(p *Player) {
 	//计算结果
-	for _, p := range s.playingPlayers {
-		p.hcontext.cardDuns = make(map[int32]*xproto.MsgPlayerScoreDun)
-		//TODO ：判断是否 倒墩(弃权) 是的话就不参与比较
-		cardHand := patternConvertMsgCardHand(p.hcontext.sortCards, p.cl)
-		if cardHand.GetCardHandType() != int32(xproto.CardHandType_None) {
-			//有特殊牌型
-			sd := &xproto.MsgPlayerScoreDun{}
-			sd.CardType = cardHand.CardHandType
-			sd.CardNum = &cardHand.Cards[0] //此处要保证最前面的牌是最大的
-			dun := int32(0)
-			sd.Dun = &dun
-			p.hcontext.cardDuns[dun] = sd
-		} else {
-			//没有特殊牌型 要每一墩都计算
-			if len(p.hcontext.sortCards) == 13 {
-				dun1 := p.hcontext.sortCards[0:5]
-				dun2 := p.hcontext.sortCards[5:10]
-				dun3 := p.hcontext.sortCards[10:13]
-				caleAndSaveScoreDun(1, dun1, p)
-				caleAndSaveScoreDun(2, dun2, p)
-				caleAndSaveScoreDun(3, dun3, p)
-			}
+	p.hcontext.cardDuns = make(map[int32]*xproto.MsgPlayerScoreDun)
+	for i := 0; i < 4; i++ {
+		ps := &xproto.MsgPlayerScoreDun{}
+		dun := int32(i)
+		ps.Dun = &dun
+		p.hcontext.cardDuns[dun] = ps
+	}
+	//TODO ：判断是否 倒墩(判断函数还没写)
+
+	//TODO : 判断是否是特殊牌型 (判断函数还没写)
+	cardHand := patternConvertMsgCardHand(p.hcontext.sortCards, p.cl)
+	if cardHand.GetCardHandType() != int32(xproto.CardHandType_None) {
+		//有特殊牌型
+		dun := int32(0)
+		sd := p.hcontext.cardDuns[dun]
+		sd.CardType = cardHand.CardHandType
+		sd.CardNum = &cardHand.Cards[0] //此处要保证最前面的牌是最大的
+	} else {
+		//没有特殊牌型 要每一墩都计算
+		if len(p.hcontext.sortCards) == 13 {
+			dun1 := p.hcontext.sortCards[0:5]
+			dun2 := p.hcontext.sortCards[5:10]
+			dun3 := p.hcontext.sortCards[10:13]
+			caleAndSaveScoreDun(1, dun1, p)
+			caleAndSaveScoreDun(2, dun2, p)
+			caleAndSaveScoreDun(3, dun3, p)
 		}
 	}
+}
+
+//比较大小
+func comparePlayerResults(s *statePlaying) {
+	allPlayerNum = len(s.playingPlayers)
+	comparePlayers = make([][]int, 0)
 	//比较大小
 	for _, myP := range s.playingPlayers {
 		for _, otherP := range s.playingPlayers {
@@ -86,24 +98,64 @@ func calcFinalResult(s *statePlaying) {
 			}
 		}
 	}
+	//计算最后总分数
+
+	//看看有没有加倍 倒墩(输分*2) 三墩皆输(输分*2、跟倒墩不重复计算) 三家皆赢(输分*2、跟倒墩重复计算*4)
+	for _, myP := range s.playingPlayers {
+		LoserChairIDs := make([]int32, 4)
+		//记录输给我的人数 达到3人 则又加倍
+		loserNum := 0
+		//特殊牌型不参与
+		for i := 1; i < 4; i++ {
+			cds := myP.hcontext.cardDuns[int32(i)]
+			for _, lcs := range cds.GetLoserChairID() {
+				//先判断倒墩（因为倒墩不跟三墩皆输 同时存在）
+				loseP := s.table.getPlayerByChairID(int(lcs))
+				if loseP.hcontext.isDaoDun {
+					loserNum++
+				} else {
+					LoserChairIDs[lcs]++
+					if LoserChairIDs[lcs] == 3 {
+						//这个人三墩皆输
+						loserNum++
+					}
+				}
+			}
+		}
+	}
 }
 
+//比较结果 比较成功返回true
 func comparePlayerScoreDun(dun int32, ps1, ps2 *xproto.MsgPlayerScoreDun, p1, p2 *Player) bool {
-	if ps1 != nil && ps2 != nil {
-		//先比较特殊牌型
-		ct1 := ps1.GetCardType()
-		ct2 := ps2.GetCardType()
+	isDaoDun1 := p1.hcontext.isDaoDun
+	isDaoDun2 := p2.hcontext.isDaoDun
+	if isDaoDun1 && !isDaoDun2 {
+		saveScoreAndLosePlayerInfo(dun, p2, p1)
+		return true
+	}
+	if isDaoDun2 && !isDaoDun1 {
+		saveScoreAndLosePlayerInfo(dun, p1, p2)
+		return true
+	}
+	if isDaoDun1 && isDaoDun2 {
+		//两个倒墩则不需要比较
+		return true
+	}
+	//两个都不是倒墩 则比牌型
+	ct1 := ps1.GetCardType()
+	ct2 := ps2.GetCardType()
+	if ct1 > int32(xproto.CardHandType_None) && ct2 > int32(xproto.CardHandType_None) {
 		if ct1 > ct2 {
-			saveScoreDunInfo(dun, p1, p2)
+			saveScoreAndLosePlayerInfo(dun, p1, p2)
 		} else if ct1 < ct2 {
-			saveScoreDunInfo(dun, p2, p1)
+			saveScoreAndLosePlayerInfo(dun, p2, p1)
 		} else {
 			//这里还要考虑 相同的牌型
 		}
-	} else if ps1 != nil {
-		saveScoreDunInfo(dun, p1, p2)
-	} else if ps2 != nil {
-		saveScoreDunInfo(dun, p2, p1)
+	} else if ct1 > int32(xproto.CardHandType_None) {
+		saveScoreAndLosePlayerInfo(dun, p1, p2)
+	} else if ct2 > int32(xproto.CardHandType_None) {
+		saveScoreAndLosePlayerInfo(dun, p2, p1)
 	} else {
 		//两个都为空 则没法比较 返回false
 		return false
@@ -111,6 +163,7 @@ func comparePlayerScoreDun(dun int32, ps1, ps2 *xproto.MsgPlayerScoreDun, p1, p2
 	return true
 }
 
+//两两比较结果
 func comparePlayerResult(p1 *Player, p2 *Player) {
 	for _, cs := range comparePlayers {
 		chair1 := cs[0]
@@ -139,21 +192,21 @@ func comparePlayerResult(p1 *Player, p2 *Player) {
 	}
 }
 
-//保存墩的分数详情(特殊牌型也在这保存)
-func saveScoreDunInfo(dun int32, winPlayer *Player, losePlayer *Player) {
+//保存墩的输玩家详情(特殊牌型也在这保存)
+func saveScoreAndLosePlayerInfo(dun int32, winPlayer *Player, losePlayer *Player) {
 	winPlayerDun := winPlayer.hcontext.cardDuns[dun]
-	losePlayerDun := losePlayer.hcontext.cardDuns[dun]
-
+	// losePlayerDun := losePlayer.hcontext.cardDuns[dun]
 	//计算当前分数
 	score := scoreOfCardType[xproto.CardHandType(winPlayerDun.GetCardType())]
-	ws := winPlayerDun.GetScore()
-	wScore := score + ws
-	winPlayerDun.Score = &wScore
+	winPlayerDun.BaseScore = &score
+	// ws := winPlayerDun.GetScore()
+	// wScore := score + ws
+	// winPlayerDun.Score = &wScore
 
-	ls := losePlayerDun.GetScore()
-	lScore := ls - score
-	losePlayerDun.Score = &lScore
-	//把关系添加进去
+	// ls := losePlayerDun.GetScore()
+	// lScore := ls - score
+	// losePlayerDun.Score = &lScore
+	//把关系添加进去 (把输给我的加进列表)
 	lChairs := winPlayerDun.GetLoserChairID()
 	if lChairs == nil {
 		lChairs = []int32{int32(losePlayer.chairID)}
@@ -163,12 +216,14 @@ func saveScoreDunInfo(dun int32, winPlayer *Player, losePlayer *Player) {
 	winPlayerDun.LoserChairID = lChairs
 }
 
+//计算牌型 并保存结果到player.hcontext
 func caleAndSaveScoreDun(dun int32, cards []int32, p *Player) {
+	if p.hcontext.isDaoDun {
+		//倒墩的话就不计算
+		return
+	}
+	sd := p.hcontext.cardDuns[dun]
 	cardHand := patternConvertMsgCardHand(cards, p.cl)
-	sd := &xproto.MsgPlayerScoreDun{}
 	sd.CardType = cardHand.CardHandType
 	sd.CardNum = &cardHand.Cards[0] //此处要保证最前面的牌是最大的
-	sd.Dun = &dun
-
-	p.hcontext.cardDuns[dun] = sd
 }

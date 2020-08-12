@@ -242,6 +242,17 @@ func (t *Table) getPlayerByUserID(userID string) *Player {
 	return nil
 }
 
+// getPlayerByChairID 根据ChairID获取player对象
+func (t *Table) getPlayerByChairID(chairID int) *Player {
+	for _, p := range t.players {
+		if p.chairID == chairID {
+			return p
+		}
+	}
+
+	return nil
+}
+
 func (t *Table) isForceConsistent() bool {
 	return false
 }

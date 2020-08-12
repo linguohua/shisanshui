@@ -272,10 +272,12 @@ message MsgPlayerScoreDun {
   required int32 cardType = 2;
   // 牌大小
   required int32 cardNum = 3;
-  // 输赢分数
-  required int32 score = 4;
+  // 牌型基础分数(总分等于基础分 * 倍数)
+  required int32 baseScore = 4;
+  // 输赢总分数
+  required int32 totalScore = 5;
 	//牌型赢了谁
-	repeated int32 loserChairID = 5;
+	repeated int32 loserChairID = 6;
 }
 
 // 一手牌结束后每个玩家的计分

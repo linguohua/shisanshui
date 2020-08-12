@@ -9,6 +9,8 @@ import (
 // 每一手牌开始时重新生成
 type phandContext struct {
 	expectedAction int
+	//是否倒墩
+	isDaoDun bool
 	//理牌结果
 	sortCards []int32
 	//墩牌详情 (0号元素 记录特殊牌型)
