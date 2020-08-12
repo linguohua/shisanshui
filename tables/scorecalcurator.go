@@ -4,6 +4,50 @@ package tables
 
 import "shisanshui/xproto"
 
+var (
+	//牌型对应得分
+	scoreOfCardType = map[xproto.CardHandType]int{
+		//普通牌型
+		// 同花顺	Straight Flush 五张或更多的连续单牌（如： 45678 或 78910JQK ）
+		xproto.CardHandType_StraightFlush: 9,
+		// 四条 Four of a Kind：四张同点牌 + 一张
+		xproto.CardHandType_Four: 9,
+		// 葫芦
+		xproto.CardHandType_FullHouse: 9,
+		// 同花(花)	Flush
+		xproto.CardHandType_Flush: 9,
+		// 顺子(蛇)	Straight
+		xproto.CardHandType_Straight: 9,
+		// 三条 Three of a kind
+		xproto.CardHandType_ThreeOfAKind: 9,
+		// 两对牌：数值相同的两张牌
+		xproto.CardHandType_TwoPairs: 9,
+		// 对牌
+		xproto.CardHandType_OnePair: 9,
+		// 单张
+		xproto.CardHandType_HighCard: 9,
+		//特殊牌型
+		// 三顺子 每一墩都是顺子（如  23456、45678、789）
+		xproto.CardHandType_Three_Straight: 9,
+		// 三同花 每一墩花色相同（如 第一墩都是梅花 第二墩都是方块）
+		xproto.CardHandType_Three_Flush: 9,
+		// 六对半
+		xproto.CardHandType_SixPairs_HighCard: 9,
+		// 五对 加 三条
+		xproto.CardHandType_FivePairs_ThreeOfAKind: 9,
+		// 一点黑
+		xproto.CardHandType_One_Black: 9,
+		// 一点红
+		xproto.CardHandType_One_Red: 9,
+		// 清一色 (全黑或全红 可以方块红桃混合)
+		xproto.CardHandType_Pure_One_Suit: 9,
+		// 一条龙
+		xproto.CardHandType_All_Straight: 9,
+		// 至尊清龙
+		xproto.CardHandType_All_StraightFlush: 9,
+	}
+)
+
 func calcFinalResult(s *statePlaying) {
 	//计算结果
 	for _, p := range s.playingPlayers {
