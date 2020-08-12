@@ -6,7 +6,7 @@ import "shisanshui/xproto"
 
 var (
 	//牌型对应得分
-	scoreOfCardType = map[xproto.CardHandType]int{
+	scoreOfCardType = map[xproto.CardHandType]int32{
 		//普通牌型
 		// 同花顺	Straight Flush 五张或更多的连续单牌（如： 45678 或 78910JQK ）
 		xproto.CardHandType_StraightFlush: 9,
@@ -46,22 +46,29 @@ var (
 		// 至尊清龙
 		xproto.CardHandType_All_StraightFlush: 9,
 	}
+
+	//保存已经比较过的玩家
+	comparePlayers [][]int
 )
 
 func calcFinalResult(s *statePlaying) {
+	comparePlayers = make([][]int, 0)
 	//计算结果
 	for _, p := range s.playingPlayers {
+		p.hcontext.cardDuns = make(map[int32]*xproto.MsgPlayerScoreDun)
 		//TODO ：判断是否 倒墩(弃权) 是的话就不参与比较
 		cardHand := patternConvertMsgCardHand(p.hcontext.sortCards, p.cl)
-		p.hcontext.specialCardType = *cardHand.CardHandType
-		if *cardHand.CardHandType != int32(xproto.CardHandType_None) {
+		if cardHand.GetCardHandType() != int32(xproto.CardHandType_None) {
 			//有特殊牌型
-			p.hcontext.specialCardNum = cardHand.Cards[0] //此处要保证最前面的牌是最大的
+			sd := &xproto.MsgPlayerScoreDun{}
+			sd.CardType = cardHand.CardHandType
+			sd.CardNum = &cardHand.Cards[0] //此处要保证最前面的牌是最大的
+			dun := int32(0)
+			sd.Dun = &dun
+			p.hcontext.cardDuns[dun] = sd
 		} else {
 			//没有特殊牌型 要每一墩都计算
 			if len(p.hcontext.sortCards) == 13 {
-				p.hcontext.cardDuns = make([]*xproto.MsgPlayerScoreDun, 3)
-
 				dun1 := p.hcontext.sortCards[0:5]
 				dun2 := p.hcontext.sortCards[5:10]
 				dun3 := p.hcontext.sortCards[10:13]
@@ -74,20 +81,86 @@ func calcFinalResult(s *statePlaying) {
 	//比较大小
 	for _, myP := range s.playingPlayers {
 		for _, otherP := range s.playingPlayers {
-			//跟其他人比较 输赢只记录自己的就可以
 			if myP != otherP {
-				if myP.hcontext.specialCardType != otherP.hcontext.specialCardType {
-					//先比较特殊牌型（这里还要考虑 相同的特殊牌型）
-
-				}
-
+				comparePlayerResult(myP, otherP)
 			}
 		}
 	}
 }
 
-func comparePlayerResult(p1 *Player, p2 *Player) {
+func comparePlayerScoreDun(dun int32, ps1, ps2 *xproto.MsgPlayerScoreDun, p1, p2 *Player) bool {
+	if ps1 != nil && ps2 != nil {
+		//先比较特殊牌型
+		ct1 := ps1.GetCardType()
+		ct2 := ps2.GetCardType()
+		if ct1 > ct2 {
+			saveScoreDunInfo(dun, p1, p2)
+		} else if ct1 < ct2 {
+			saveScoreDunInfo(dun, p2, p1)
+		} else {
+			//这里还要考虑 相同的牌型
+		}
+	} else if ps1 != nil {
+		saveScoreDunInfo(dun, p1, p2)
+	} else if ps2 != nil {
+		saveScoreDunInfo(dun, p2, p1)
+	} else {
+		//两个都为空 则没法比较 返回false
+		return false
+	}
+	return true
+}
 
+func comparePlayerResult(p1 *Player, p2 *Player) {
+	for _, cs := range comparePlayers {
+		chair1 := cs[0]
+		chair2 := cs[1]
+		if (p1.chairID == chair1 && p2.chairID == chair2) ||
+			(p1.chairID == chair2 && p2.chairID == chair1) {
+			//之前比较过 不在比较
+			return
+		}
+	}
+	//先保存进数组 避免下次还比较这两个人
+	comparePlayers = append(comparePlayers, []int{p1.chairID, p2.chairID})
+
+	specialCard1 := p1.hcontext.cardDuns[0]
+	specialCard2 := p2.hcontext.cardDuns[0]
+	//先比较特殊牌型
+	isSpecialCard := comparePlayerScoreDun(0, specialCard1, specialCard2, p1, p2)
+	if !isSpecialCard {
+		//都没特殊牌型 比较墩
+		for i := 1; i < 4; i++ {
+			dun := int32(i)
+			sc1 := p1.hcontext.cardDuns[dun]
+			sc2 := p2.hcontext.cardDuns[dun]
+			comparePlayerScoreDun(dun, sc1, sc2, p1, p2)
+		}
+	}
+}
+
+//保存墩的分数详情(特殊牌型也在这保存)
+func saveScoreDunInfo(dun int32, winPlayer *Player, losePlayer *Player) {
+	winPlayerDun := winPlayer.hcontext.cardDuns[dun]
+	losePlayerDun := losePlayer.hcontext.cardDuns[dun]
+
+	//计算当前分数
+	score := scoreOfCardType[xproto.CardHandType(winPlayerDun.GetCardType())]
+	ws := winPlayerDun.GetScore()
+	wScore := score + ws
+	winPlayerDun.Score = &wScore
+
+	ls := losePlayerDun.GetScore()
+	lScore := ls - score
+	losePlayerDun.Score = &lScore
+	//把关系添加进去
+	lChairs := winPlayerDun.GetLoserChairID()
+	if lChairs == nil {
+		lChairs = []int32{int32(losePlayer.chairID)}
+	} else {
+		lChairs = append(lChairs, int32(losePlayer.chairID))
+	}
+	winPlayerDun.LoserChairID = lChairs
 }
 
 func caleAndSaveScoreDun(dun int32, cards []int32, p *Player) {
@@ -97,5 +170,5 @@ func caleAndSaveScoreDun(dun int32, cards []int32, p *Player) {
 	sd.CardNum = &cardHand.Cards[0] //此处要保证最前面的牌是最大的
 	sd.Dun = &dun
 
-	p.hcontext.cardDuns[dun-1] = sd
+	p.hcontext.cardDuns[dun] = sd
 }
