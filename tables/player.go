@@ -32,7 +32,7 @@ type Player struct {
 
 	cards *cardlist
 
-	hcontext *phandContext
+	rContext *roundContext
 	gcontext *pgameContext
 
 	// websocket connection

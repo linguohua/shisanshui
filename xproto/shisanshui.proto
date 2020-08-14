@@ -2,9 +2,31 @@ syntax = "proto2";
 package xproto;
 option go_package = ".;xproto";
 
+// 特殊牌型
+enum SpecialType{
+  Special_None = 0;  // 无效牌型
+  // 三顺子 每一墩都是顺子（如  23456、45678、789）
+  Three_Straight = 1;
+  // 三同花 每一墩花色相同（如 第一墩都是梅花 第二墩都是方块）
+  Three_Flush = 2;
+  // 六对半
+  SixPairs_HighCard = 3;
+  // 五对 加 三条
+  FivePairs_ThreeOfAKind = 4;
+  // 一点黑
+  One_Black = 5;
+  // 一点红
+  One_Red = 6;
+  // 清一色 (全黑或全红 可以方块红桃混合)
+  Pure_One_Suit = 7;
+  // 一条龙
+  All_Straight = 8;
+  // 至尊清龙
+  All_StraightFlush = 9;
+}
 // 牌组类型
 enum CardHandType {
-  None = 0;  // 无效牌型
+  CardHand_None = 0;  // 无效牌型
   // 单张
   HighCard = 1;
   // 对牌
@@ -23,25 +45,6 @@ enum CardHandType {
   Four = 8;
   // 同花顺	Straight Flush 五张或更多的连续单牌（如： 45678 或 78910JQK ）
   StraightFlush = 9;
-  //特殊牌型
-  // 三顺子 每一墩都是顺子（如  23456、45678、789）
-  Three_Straight = 10;
-  // 三同花 每一墩花色相同（如 第一墩都是梅花 第二墩都是方块）
-  Three_Flush = 11;
-  // 六对半
-  SixPairs_HighCard = 12;
-  // 五对 加 三条
-  FivePairs_ThreeOfAKind = 13;
-  // 一点黑
-  One_Black = 14;
-  // 一点红
-  One_Red = 15;
-  // 清一色 (全黑或全红 可以方块红桃混合)
-  Pure_One_Suit = 16;
-  // 一条龙
-  All_Straight = 17;
-  // 至尊清龙
-  All_StraightFlush = 18;
 }
 
 // 一手牌局结束

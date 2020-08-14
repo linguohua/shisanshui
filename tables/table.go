@@ -395,16 +395,16 @@ func (t *Table) kickPlayer(userID string) error {
 	return fmt.Errorf("not implement")
 }
 
-// updateRoomInfo2All 把房间当前状态和玩家数据发给所有用户
+// updateTableInfo2All 把房间当前状态和玩家数据发给所有用户
 func (t *Table) updateTableInfo2All() {
 	if len(t.players) > 0 {
-		var msgRoomInfo = serializeMsgRoomInfo(t)
+		var msgTableInfo = serializeMsgTableInfo(t)
 		for _, p := range t.players {
-			p.sendGameMsg(msgRoomInfo, int32(xproto.MessageCode_OPTableUpdate))
+			p.sendGameMsg(msgTableInfo, int32(xproto.MessageCode_OPTableUpdate))
 		}
 	}
 
-	// r.pushState2RoomMgrServer()
+	// r.pushState2TableMgrServer()
 }
 
 // onHandOver 一手牌结局

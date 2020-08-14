@@ -89,15 +89,15 @@ func (s *statePlaying) onActionMessage(p *Player, msg *xproto.MsgPlayerAction) {
 		return
 	}
 
-	if p.hcontext.expectedAction&int(msg.GetAction()) == 0 {
+	if p.rContext.expectedAction&int(msg.GetAction()) == 0 {
 		s.cl.Printf("OnMessageAction allow actions %d not match %d, userId:%s, name:%s",
-			p.hcontext.expectedAction, msg.GetAction(), p.ID, p.Name)
+			p.rContext.expectedAction, msg.GetAction(), p.ID, p.Name)
 		s.cl.Panic("action not expected")
 		return
 	}
 
 	// reset player expected actions
-	p.hcontext.expectedAction = 0
+	p.rContext.expectedAction = 0
 
 	var action = xproto.ActionType(msg.GetAction())
 	switch action {
@@ -115,7 +115,7 @@ func (s *statePlaying) onStateEnter() {
 	s.cl.Println("onStateEnter")
 
 	for _, p := range s.playingPlayers {
-		p.hcontext = &phandContext{}
+		p.rContext = &roundContext{}
 		p.cards = cardlistNew(p)
 	}
 
@@ -181,7 +181,7 @@ func (s *statePlaying) waitPlayersAction() bool {
 	actions := int(xproto.ActionType_enumActionType_DISCARD)
 
 	for _, p := range s.playingPlayers {
-		p.hcontext.expectedAction = actions
+		p.rContext.expectedAction = actions
 		//TODO : 10要写到配置里
 		msgAllowPlayerAction := serializeMsgAllowedForDiscard(s, p, actions, qaIndex, 10)
 		p.sendGameMsg(msgAllowPlayerAction, int32(xproto.MessageCode_OPActionAllowed))
@@ -198,7 +198,7 @@ func (s *statePlaying) waitPlayersAction() bool {
 
 func (s *statePlaying) handOver() {
 	//计算结果
-	comparePlayerResults(s)
+	compareAndCalc(s)
 
 	msgHandOver := serializeMsgHandOver(s)
 	s.table.onHandOver(msgHandOver)

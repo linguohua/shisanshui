@@ -38,7 +38,7 @@ func serializeMsgDeal(s *statePlaying, my *Player) *xproto.MsgDeal {
 	return msg
 }
 
-func serializeMsgAllowedForDiscard(s *statePlaying, p *Player, actions int, qaIndex int, betNumber int32) *xproto.MsgAllowAction {
+func serializeMsgAllowedForDiscard(s *statePlaying, p *Player, actions int, qaIndex int, timeout int32) *xproto.MsgAllowAction {
 	// 序列化某个玩家出牌是允许的动作
 	var msg = &xproto.MsgAllowAction{}
 	var qaIndex32 = int32(qaIndex)
@@ -47,7 +47,7 @@ func serializeMsgAllowedForDiscard(s *statePlaying, p *Player, actions int, qaIn
 	msg.AllowedActions = &allowedActions32
 	var chairID32 = int32(p.chairID)
 	msg.ActionChairID = &chairID32
-	var timeout32 = int32(betNumber)
+	var timeout32 = int32(timeout)
 	msg.TimeoutInSeconds = &timeout32
 
 	return msg
@@ -66,21 +66,21 @@ func serializeCardList(player *Player, isShowDarkCards bool) *xproto.MsgPlayerCa
 	return playerCardList
 }
 
-func serializeMsgRoomInfo(r *Table) *xproto.MsgTableInfo {
-	// serializeMsgRoomInfo 序列化房间信息给客户端
+func serializeMsgTableInfo(t *Table) *xproto.MsgTableInfo {
+	// serializeMsgTableInfo 序列化房间信息给客户端
 	msg := &xproto.MsgTableInfo{}
 
-	var state32 = int32(r.state.getStateConst())
+	var state32 = int32(t.state.getStateConst())
 	msg.State = &state32
-	var tableNumber = r.Number
+	var tableNumber = t.Number
 	msg.TableNumber = &tableNumber
 	// var handStartted32 = int32(r.handRoundStarted)
 	// msg.HandStartted = &handStartted32
 	// var handFinished32 = int32(r.handRoundFinished)
 	// msg.HandFinished = &handFinished32
 
-	playerInfos := make([]*xproto.MsgPlayerInfo, len(r.players))
-	for i, p := range r.players {
+	playerInfos := make([]*xproto.MsgPlayerInfo, len(t.players))
+	for i, p := range t.players {
 		var msgPlayerInfo = &xproto.MsgPlayerInfo{}
 		var chairID32 = int32(p.chairID)
 		msgPlayerInfo.ChairID = &chairID32

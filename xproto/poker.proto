@@ -139,6 +139,8 @@ message MsgCardHand {
   required int32 cardHandType = 1;
   // 牌列表，对于一些有规律的牌组例如同花顺，可以只写第一个牌
   repeated int32 cards = 2;
+  // 墩序号
+  required int32 handNum = 3;
 }
 
 // 玩家牌列表
@@ -231,6 +233,7 @@ message MsgPlayerAction {
   optional int32 flags = 3;
   // 动作的涉及的牌列表
   repeated int32 cards = 4;
+  // repeated MsgCardHand discardedHands = 4;
 }
 
 // 服务器通知所有玩家某个玩家进行了何种动作
@@ -265,9 +268,9 @@ message MsgRestore {
 }
 
 // 墩的计分
-message MsgPlayerScoreDun {
+message MsgPlayerScoreHand {
   // 墩 1、2、3
-  required int32 dun = 1;
+  required int32 hand = 1;
   // 牌型
   required int32 cardType = 2;
   // 牌大小
@@ -289,7 +292,7 @@ message MsgPlayerScore {
   // 总赢 总输
   required int32 totalScore = 3;
   // 墩子具体信息
-  repeated MsgPlayerScoreDun scoreDun = 4;
+  repeated MsgPlayerScoreHand scoreHand = 4;
 }
 
 // 一手牌结束后计分
