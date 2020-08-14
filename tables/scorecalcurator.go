@@ -63,8 +63,8 @@ var (
 //客户端结果上来后调用 计算结果入口
 func calcFinalResult(s *statePlaying, p *Player, cards []int32) {
 	//计算结果
-	//TODO : 判断是否是特殊牌型 (判断函数还没写)
-	cardHand := patternConvertMsgCardHand(cards, p.cl)
+	//判断是否是特殊牌型 (判断函数还没写)
+	cardHand := calc13(cards, p.cl)
 	if cardHand.GetCardHandType() != int32(xproto.SpecialType_Special_None) {
 		//有特殊牌型
 		p.rContext.specialCardHand = cardHand

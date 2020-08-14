@@ -4,10 +4,10 @@ option go_package = ".;xproto";
 
 // 牌的ID
 enum CardID {
-  R2H = 0; // 2
-  R2D = 1;
-  R2C = 2;
-  R2S = 3;
+  R2H = 0; //红桃2
+  R2D = 1; //方块2
+  R2C = 2; //梅花2
+  R2S = 3; //黑桃2
 
   R3H = 4; // 3
   R3D = 5;

@@ -73,6 +73,10 @@ func patternVerifyFlush(hai []int32) bool {
 
 	sum := 0
 	for _, v := range slots {
+		//todo 这里是不是应该 写成
+		// if v > 0 {
+		// 	sum ++
+		// }
 		sum = sum + v
 	}
 
@@ -89,6 +93,7 @@ func patternVerifyStraight(hai []int32) bool {
 	}
 
 	for ; i < len(hai)-1; i++ {
+		//todo 这里是不是应该 hai[i]/4
 		if hai[i]-hai[i+1] != 1 {
 			return false
 		}
@@ -171,6 +176,120 @@ func patternConvertMsgCardHand(hai []int32, cl *logrus.Entry) *xproto.MsgCardHan
 	}
 
 	cardHand.Cards = haiNew
+	return cardHand
+}
+
+// calc13 特殊牌型转换为MsgCardHand
+func calc13(hai []int32, cl *logrus.Entry) *xproto.MsgCardHand {
+	if len(hai) != 13 {
+		cl.Panicf("hand cards count should != 13, current:%d", len(hai))
+	}
+	//保存一份用于判断三顺子三同花
+	oldHai := make([]int32, 13)
+	for i := 0; i < 13; i++ {
+		oldHai[i] = hai[i]
+	}
+
+	// 牌大到小排列
+	sort.Slice(hai, func(i, j int) bool {
+		rankI := hai[i] / 4
+		rankJ := hai[j] / 4
+		if rankI == rankJ {
+			return hai[i] > hai[j]
+		}
+
+		return rank2Priority[rankI] > rank2Priority[rankJ]
+	})
+
+	cardNums := make([]int, 14) //保存每种牌个数
+	slots := make([]int, 4)     //花色数量 0:红桃 1:方块 2:梅花 3:黑桃
+	isStraight := true          //是否是顺子
+	for i := 0; i < len(hai); i++ {
+		card1 := hai[i]
+		if i+1 < len(hai) {
+			card2 := hai[i+1]
+			if card1/4-card2/4 != 1 {
+				isStraight = false
+			}
+		}
+		slots[card1%4]++
+		cardNums[card1/4]++
+	}
+	sum := 0      //有几种花色
+	redNum := 0   //红牌张数
+	blackNum := 0 //黑牌张数
+	for i, v := range slots {
+		if v > 0 {
+			sum++
+		}
+		if i == 0 || i == 1 {
+			redNum += v
+		}
+		if i == 2 || i == 3 {
+			blackNum += v
+		}
+	}
+	ct := xproto.SpecialType_Special_None
+	if isStraight {
+		ct = xproto.SpecialType_All_Straight
+		if sum == 1 {
+			ct = xproto.SpecialType_All_StraightFlush
+		}
+	} else {
+		if sum == 1 {
+			//一种花色
+			ct = xproto.SpecialType_Pure_One_Suit
+		} else if redNum == 1 {
+			//其中一种颜色只有1张  就是一点黑或者一点红
+			ct = xproto.SpecialType_One_Red
+		} else if blackNum == 1 {
+			ct = xproto.SpecialType_One_Black
+		} else {
+			pairsNum := 0        //对子个数
+			threeOfAKindNum := 0 //三条个数
+			for _, c := range cardNums {
+				if c == 2 {
+					pairsNum++
+				} else if c == 3 {
+					threeOfAKindNum++
+				}
+			}
+			//5对1三条
+			if pairsNum == 5 && threeOfAKindNum == 1 {
+				ct = xproto.SpecialType_FivePairs_ThreeOfAKind
+			}
+			//6对半
+			if pairsNum == 6 {
+				ct = xproto.SpecialType_SixPairs_HighCard
+			}
+		}
+	}
+	if ct == xproto.SpecialType_Special_None {
+		//不是上面的牌型就看看是不是三同花跟三顺子
+		hands := [][]int32{oldHai[0:5], oldHai[5:10], oldHai[10:13]}
+		fNum := 0 //同花墩数
+		sNum := 0 //顺子墩数
+		for _, hand := range hands {
+			if patternVerifyStraight(hand) {
+				sNum++
+			}
+			if patternVerifyFlush(hand) {
+				fNum++
+			}
+		}
+		if sNum == 3 {
+			ct = xproto.SpecialType_Three_Straight
+		}
+		if fNum == 3 {
+			ct = xproto.SpecialType_Three_Flush
+		}
+		hai = oldHai
+	}
+
+	cardHand := &xproto.MsgCardHand{}
+	var cardHandType32 = int32(ct)
+	cardHand.CardHandType = &cardHandType32
+	cardHand.Cards = hai
 	return cardHand
 }
 

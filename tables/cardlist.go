@@ -42,7 +42,7 @@ func (cli *cardlist) cardCountInHand() int {
 
 func (cli *cardlist) addHandCard(newCard *card) {
 	if cli.cardCountInHand() >= 13 {
-		cli.cl.Panic("Total cards must less than 21")
+		cli.cl.Panic("Total cards must less than 13")
 		return
 	}
 
