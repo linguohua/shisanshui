@@ -11,7 +11,7 @@ type roundContext struct {
 	expectedAction int
 	//是否倒墩
 	isInvertedHand bool
-	//墩列表
+	//墩列表 0、1、2 表示 1、2、3墩
 	hands []*xproto.MsgCardHand
 	// 特殊牌型
 	specialCardHand *xproto.MsgCardHand

@@ -5,27 +5,33 @@ package tables
 import "shisanshui/xproto"
 
 var (
+	//非以下牌型：每墩赢了会获得1分。
+	//第一墩四条：如果玩家第一墩有1组四条而获得胜利，那会获得4分（水）
+	//第一墩同花顺：如果玩家第一墩有1组同花顺而获得胜利，那会获得5分（水）
+	//第二墩四条：如果玩家第二墩有1组四条而获得胜利，那会获得8分（水）
+	//第二墩同花顺：如果玩家第二墩有1组同花顺而获得胜利，那会获得10分（水）
+	//第二墩葫芦：如果玩家第二墩有1组葫芦而获得胜利，那会获得2分（水）
+	//第三墩三条：如果玩家第3墩有1组三条而获得胜利，那会获得3分（水）
 	//墩牌型对应得分
-	scoreOfHandType = map[xproto.CardHandType]int32{
-		//普通牌型
-		// 同花顺	Straight Flush 五张或更多的连续单牌（如： 45678 或 78910JQK ）
-		xproto.CardHandType_StraightFlush: 9,
-		// 四条 Four of a Kind：四张同点牌 + 一张
-		xproto.CardHandType_Four: 9,
-		// 葫芦
-		xproto.CardHandType_FullHouse: 9,
-		// 同花(花)	Flush
-		xproto.CardHandType_Flush: 9,
-		// 顺子(蛇)	Straight
-		xproto.CardHandType_Straight: 9,
-		// 三条 Three of a kind
-		xproto.CardHandType_ThreeOfAKind: 9,
-		// 两对牌：数值相同的两张牌
-		xproto.CardHandType_TwoPairs: 9,
-		// 对牌
-		xproto.CardHandType_OnePair: 9,
-		// 单张
-		xproto.CardHandType_HighCard: 9,
+	scoreOfHandType = []map[xproto.CardHandType]int32{
+		map[xproto.CardHandType]int32{
+			// 同花顺	Straight Flush 五张或更多的连续单牌（如： 45678 或 78910JQK ）
+			xproto.CardHandType_StraightFlush: 5,
+			// 四条 Four of a Kind：四张同点牌 + 一张
+			xproto.CardHandType_Four: 4,
+		},
+		map[xproto.CardHandType]int32{
+			// 同花顺	Straight Flush 五张或更多的连续单牌（如： 45678 或 78910JQK ）
+			xproto.CardHandType_StraightFlush: 10,
+			// 四条 Four of a Kind：四张同点牌 + 一张
+			xproto.CardHandType_Four: 8,
+			// 葫芦
+			xproto.CardHandType_FullHouse: 2,
+		},
+		map[xproto.CardHandType]int32{
+			// 三条 Three of a kind
+			xproto.CardHandType_ThreeOfAKind: 3,
+		},
 	}
 	scoreOfSpecialType = map[xproto.SpecialType]int32{
 		//特殊牌型
@@ -108,11 +114,13 @@ func comparePlayerResult(p1 *Player, p2 *Player) {
 
 //计算墩的分数
 func calcHandScore(hand int32, handType xproto.CardHandType) int32 {
-	//TODO 没有牌型就1分
+	// 没有牌型就1分
 	score := int32(1)
 	if handType != xproto.CardHandType_CardHand_None {
-		score = scoreOfHandType[handType]
-		return score
+		score = scoreOfHandType[hand][handType]
+		if score > 0 {
+			return score
+		}
 	}
 
 	return score
