@@ -68,9 +68,9 @@ func calcFinalResult(s *statePlaying, p *Player, cards []int32) {
 		hand1 := cards[0:5]
 		hand2 := cards[5:10]
 		hand3 := cards[10:13]
-		cardT1 := caleAndSaveScoreHand(0, hand1, p)
-		cardT2 := caleAndSaveScoreHand(1, hand2, p)
-		cardT3 := caleAndSaveScoreHand(2, hand3, p)
+		cardT1 := caleAndSaveHand(0, hand1, p)
+		cardT2 := caleAndSaveHand(1, hand2, p)
+		cardT3 := caleAndSaveHand(2, hand3, p)
 		// 判断是否倒墩
 		p.rContext.isInvertedHand = cardT1 < cardT2 || cardT2 < cardT3 || cardT1 < cardT3
 	}
@@ -79,7 +79,7 @@ func calcFinalResult(s *statePlaying, p *Player, cards []int32) {
 }
 
 //计算墩的牌型 并保存结果到 player.rContext
-func caleAndSaveScoreHand(hand int32, cards []int32, p *Player) int32 {
+func caleAndSaveHand(hand int32, cards []int32, p *Player) int32 {
 	cardHand := patternConvertMsgCardHand(cards, p.cl)
 	p.rContext.hands[hand] = cardHand
 
@@ -94,14 +94,14 @@ func comparePlayerResult(p1 *Player, p2 *Player) {
 	compareContext1 := &compareContext{}
 	p2.rContext.compareContexts[p1.chairID] = compareContext1
 	//先比较特殊牌型
-	haveSpecialCard := haveSpecialCardType(p1, p2)
+	haveSpecialCard := haveSpecialCardTypeAndSaveScore(p1, p2)
 	if !haveSpecialCard {
 		//都没特殊牌型 比较墩
 		for i := 0; i < 3; i++ {
 			hand := int32(i)
 			sc1 := p1.rContext.hands[hand]
 			sc2 := p2.rContext.hands[hand]
-			compareHand(hand, sc1, sc2, p1, p2)
+			compareHandAndSaveScore(hand, sc1, sc2, p1, p2)
 		}
 	}
 }
@@ -118,8 +118,8 @@ func calcHandScore(hand int32, handType xproto.CardHandType) int32 {
 	return score
 }
 
-//比较墩
-func compareHand(hand int32, ps1, ps2 *xproto.MsgCardHand, p1, p2 *Player) {
+//比较墩 并 保存基础分数
+func compareHandAndSaveScore(hand int32, ps1, ps2 *xproto.MsgCardHand, p1, p2 *Player) {
 	score := int32(0)
 	var winer *Player
 	var loser *Player
@@ -165,8 +165,8 @@ func compareHand(hand int32, ps1, ps2 *xproto.MsgCardHand, p1, p2 *Player) {
 	loser.rContext.totalScore -= score
 }
 
-//看看是否有特殊牌型
-func haveSpecialCardType(p1, p2 *Player) bool {
+//看看是否有特殊牌型 并保存基础分
+func haveSpecialCardTypeAndSaveScore(p1, p2 *Player) bool {
 	pContext1 := p1.rContext
 	pContext2 := p2.rContext
 	if pContext1.specialCardType == int32(xproto.SpecialType_Special_None) &&
@@ -201,7 +201,7 @@ func haveSpecialCardType(p1, p2 *Player) bool {
 }
 
 //比较大小 算分
-func compareAndCalc(s *statePlaying) {
+func compareAndCalcScore(s *statePlaying) {
 	//按chairid排序player 便于比较
 	sortPlayers := make([]*Player, 4)
 	for _, p := range s.playingPlayers {

@@ -198,7 +198,7 @@ func (s *statePlaying) waitPlayersAction() bool {
 
 func (s *statePlaying) handOver() {
 	//计算结果
-	compareAndCalc(s)
+	compareAndCalcScore(s)
 
 	msgHandOver := serializeMsgHandOver(s)
 	s.table.onHandOver(msgHandOver)
