@@ -19,8 +19,6 @@ type roundContext struct {
 	compareContexts []*compareContext
 	//是否三家皆赢
 	isWinAll bool
-	//三墩皆输给我的玩家列表
-	allHandLoserPlayer []int32
 	//总分
 	totalScore int32
 }
