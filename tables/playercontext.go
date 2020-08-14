@@ -14,7 +14,7 @@ type roundContext struct {
 	//墩列表
 	hands []*xproto.MsgCardHand
 	// 特殊牌型
-	specialCardType int32
+	specialCardHand *xproto.MsgCardHand
 	//与玩家分数关系
 	compareContexts []*compareContext
 	//是否三家皆赢

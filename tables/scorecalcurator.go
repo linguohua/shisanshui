@@ -61,7 +61,7 @@ func calcFinalResult(s *statePlaying, p *Player, cards []int32) {
 	cardHand := patternConvertMsgCardHand(cards, p.cl)
 	if cardHand.GetCardHandType() != int32(xproto.SpecialType_Special_None) {
 		//有特殊牌型
-		p.rContext.specialCardType = *cardHand.CardHandType
+		p.rContext.specialCardHand = cardHand
 	} else {
 		p.rContext.hands = make([]*xproto.MsgCardHand, 3)
 		//没有特殊牌型 要每一墩都计算
@@ -121,33 +121,32 @@ func calcHandScore(hand int32, handType xproto.CardHandType) int32 {
 //比较墩 并 保存基础分数
 func compareHandAndSaveScore(hand int32, ps1, ps2 *xproto.MsgCardHand, p1, p2 *Player) {
 	score := int32(0)
-	var winer *Player
-	var loser *Player
+	winer := p1
+	loser := p2
 	//先看看是不是倒墩
 	if p1.rContext.isInvertedHand && p2.rContext.isInvertedHand {
 		return
 	}
-	if p2.rContext.isInvertedHand {
-		score = calcHandScore(hand, xproto.CardHandType(ps1.GetCardHandType()))
-		winer = p1
-		loser = p2
-	} else if p1.rContext.isInvertedHand {
-		score = calcHandScore(hand, xproto.CardHandType(ps2.GetCardHandType()))
+	if p1.rContext.isInvertedHand {
 		winer = p2
 		loser = p1
-	} else {
-		if ps1.GetCardHandType() > ps2.GetCardHandType() {
-			score = calcHandScore(hand, xproto.CardHandType(ps1.GetCardHandType()))
-			winer = p1
-			loser = p2
-		} else if ps2.GetCardHandType() > ps1.GetCardHandType() {
-			score = calcHandScore(hand, xproto.CardHandType(ps2.GetCardHandType()))
+	} else if !p1.rContext.isInvertedHand && !p2.rContext.isInvertedHand {
+		if ps2.GetCardHandType() > ps1.GetCardHandType() {
 			winer = p2
 			loser = p1
-		} else {
-			//TODO 比较同种牌型大小 用最大牌点数比较 相同就往下一张...
+		} else if ps1.GetCardHandType() == ps2.GetCardHandType() {
+			//比较同种牌型大小 用最大牌点数比较 相同就往下一张...
+			r := getCardsCompareResult(ps1.GetCards(), ps2.GetCards())
+			if r == 2 {
+				winer = p2
+				loser = p1
+			}
+			if r == 0 {
+				return
+			}
 		}
 	}
+	score = calcHandScore(hand, xproto.CardHandType(winer.rContext.hands[hand].GetCardHandType()))
 	//赢的一方 添加到输的一方的compareContexts列表里
 	handCompareContextWin := &handCompareContext{}
 	handCompareContextWin.handTotalScore = score
@@ -165,28 +164,46 @@ func compareHandAndSaveScore(hand int32, ps1, ps2 *xproto.MsgCardHand, p1, p2 *P
 	loser.rContext.totalScore -= score
 }
 
+//比较牌组点数大小 返回 0：相等 1：第一个参数大  2：第二个参数大
+func getCardsCompareResult(cards1, cards2 []int32) int {
+	//比较同种牌型大小 用最大牌点数比较 相同就往下一张...
+	for i := 0; i < len(cards1); i++ {
+		if cards1[i] > cards2[i] {
+			return 1
+		}
+		if cards2[i] > cards1[i] {
+			return 2
+		}
+	}
+	return 0
+}
+
 //看看是否有特殊牌型 并保存基础分
 func haveSpecialCardTypeAndSaveScore(p1, p2 *Player) bool {
 	pContext1 := p1.rContext
 	pContext2 := p2.rContext
-	if pContext1.specialCardType == int32(xproto.SpecialType_Special_None) &&
-		pContext2.specialCardType == int32(xproto.SpecialType_Special_None) {
+	if pContext1.specialCardHand.GetCardHandType() == int32(xproto.SpecialType_Special_None) &&
+		pContext2.specialCardHand.GetCardHandType() == int32(xproto.SpecialType_Special_None) {
 		return false
 	}
 	score := int32(0)
-	var winer *Player
-	var loser *Player
-	if pContext1.specialCardType > pContext2.specialCardType {
-		score = scoreOfSpecialType[xproto.SpecialType(pContext1.specialCardType)]
-		winer = p1
-		loser = p2
-	} else if pContext2.specialCardType > pContext1.specialCardType {
-		score = scoreOfSpecialType[xproto.SpecialType(pContext2.specialCardType)]
+	winer := p1
+	loser := p2
+	if pContext2.specialCardHand.GetCardHandType() > pContext1.specialCardHand.GetCardHandType() {
 		winer = p2
 		loser = p1
-	} else {
-		//TODO 比较同种牌型大小 用最大牌点数比较 相同就往下一张...
+	} else if pContext1.specialCardHand.GetCardHandType() == pContext2.specialCardHand.GetCardHandType() {
+		//比较同种牌型大小 用最大牌点数比较 相同就往下一张...
+		r := getCardsCompareResult(pContext1.specialCardHand.GetCards(), pContext2.specialCardHand.GetCards())
+		if r == 2 {
+			winer = p2
+			loser = p1
+		}
+		if r == 0 {
+			return true
+		}
 	}
+	score = scoreOfSpecialType[xproto.SpecialType(winer.rContext.specialCardHand.GetCardHandType())]
 	winCompareContext := loser.rContext.compareContexts[winer.chairID]
 	winCompareContext.target = winer
 	winCompareContext.compareTotalScore += score
@@ -219,7 +236,7 @@ func compareAndCalcScore(s *statePlaying) {
 	//看看是不是三家皆赢
 	for _, p := range s.playingPlayers {
 		//非特殊牌型才看三家皆赢
-		if p.rContext.specialCardType != int32(xproto.SpecialType_Special_None) {
+		if p.rContext.specialCardHand.GetCardHandType() != int32(xproto.SpecialType_Special_None) {
 			loserNum := 0
 			for _, cC := range p.rContext.compareContexts {
 				if cC.loseHandNum == 3 {
