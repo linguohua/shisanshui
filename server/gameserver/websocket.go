@@ -43,7 +43,7 @@ func acceptWebsocket(w http.ResponseWriter, r *http.Request, params httprouter.P
 
 	cl.Println("accept websocket:", r.URL)
 	switch playerType {
-	case "/play":
+	case "play":
 		var tk = q.Get("tk")
 		userID, ok := token.ParseToken(tk)
 		if !ok {
@@ -64,7 +64,7 @@ func acceptWebsocket(w http.ResponseWriter, r *http.Request, params httprouter.P
 		var tableUID = q.Get("tuid")
 		acceptPlayer(userID, tableUID, ws, r)
 		break
-	case "/monkey":
+	case "monkey":
 		var tableIDString = q.Get("tuid")
 		if tableIDString == "" {
 			var tableNumber = q.Get("tnid")

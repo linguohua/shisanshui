@@ -73,11 +73,9 @@ func patternVerifyFlush(hai []int32) bool {
 
 	sum := 0
 	for _, v := range slots {
-		//todo 这里是不是应该 写成
-		// if v > 0 {
-		// 	sum ++
-		// }
-		sum = sum + v
+		if v > 0 {
+			sum++
+		}
 	}
 
 	return sum == 1
@@ -93,8 +91,7 @@ func patternVerifyStraight(hai []int32) bool {
 	}
 
 	for ; i < len(hai)-1; i++ {
-		//todo 这里是不是应该 hai[i]/4
-		if hai[i]-hai[i+1] != 1 {
+		if hai[i]/4-hai[i+1]/4 != 1 {
 			return false
 		}
 	}

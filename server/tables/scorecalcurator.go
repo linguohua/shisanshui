@@ -14,13 +14,13 @@ var (
 	//第三墩三条：如果玩家第3墩有1组三条而获得胜利，那会获得3分（水）
 	//墩牌型对应得分
 	scoreOfHandType = []map[xproto.CardHandType]int32{
-		map[xproto.CardHandType]int32{
+		{
 			// 同花顺	Straight Flush 五张或更多的连续单牌（如： 45678 或 78910JQK ）
 			xproto.CardHandType_StraightFlush: 5,
 			// 四条 Four of a Kind：四张同点牌 + 一张
 			xproto.CardHandType_Four: 4,
 		},
-		map[xproto.CardHandType]int32{
+		{
 			// 同花顺	Straight Flush 五张或更多的连续单牌（如： 45678 或 78910JQK ）
 			xproto.CardHandType_StraightFlush: 10,
 			// 四条 Four of a Kind：四张同点牌 + 一张
@@ -28,7 +28,7 @@ var (
 			// 葫芦
 			xproto.CardHandType_FullHouse: 2,
 		},
-		map[xproto.CardHandType]int32{
+		{
 			// 三条 Three of a kind
 			xproto.CardHandType_ThreeOfAKind: 3,
 		},
