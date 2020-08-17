@@ -19,8 +19,8 @@ type actionWaiter struct {
 	waitQueue *list.List
 }
 
-// TaskExchangeTilesQueueItem 等待队列项
-type TaskExchangeTilesQueueItem struct {
+// TaskExchangeQueueItem 等待队列项
+type TaskExchangeQueueItem struct {
 	player     *Player
 	reply      bool
 	waitAction int
@@ -37,7 +37,7 @@ func actionWaiterNew(s *statePlaying) *actionWaiter {
 	// TODO: construct players list
 	aw.waitQueue = list.New()
 	for _, p := range s.playingPlayers {
-		ti := &TaskExchangeTilesQueueItem{}
+		ti := &TaskExchangeQueueItem{}
 		ti.player = p
 		ti.waitAction = int(xproto.ActionType_enumActionType_DISCARD)
 
@@ -69,9 +69,9 @@ func (aw *actionWaiter) wait() bool {
 }
 
 // findWaitQueueItem 根据player找到wait item
-func (aw *actionWaiter) findWaitQueueItem(player *Player) *TaskExchangeTilesQueueItem {
+func (aw *actionWaiter) findWaitQueueItem(player *Player) *TaskExchangeQueueItem {
 	for e := aw.waitQueue.Front(); e != nil; e = e.Next() {
-		qi := e.Value.(*TaskExchangeTilesQueueItem)
+		qi := e.Value.(*TaskExchangeQueueItem)
 		if qi.player == player {
 			return qi
 		}
@@ -84,12 +84,12 @@ func (aw *actionWaiter) takeAction(player *Player, action int, cardIDs []int32) 
 
 	wi := aw.findWaitQueueItem(player)
 	if wi == nil {
-		aw.cl.Printf("player %s not in TaskExchangeTiles queue", player.ID)
+		aw.cl.Printf("player %s not in TaskExchange queue", player.ID)
 		return
 	}
 
 	if wi.reply {
-		aw.cl.Printf("player %s ha already reply TaskExchangeTiles queue", player.ID)
+		aw.cl.Printf("player %s ha already reply TaskExchange queue", player.ID)
 		return
 	}
 
@@ -101,7 +101,7 @@ func (aw *actionWaiter) takeAction(player *Player, action int, cardIDs []int32) 
 
 	allReply := true
 	for e := aw.waitQueue.Front(); e != nil; e = e.Next() {
-		qi := e.Value.(*TaskExchangeTilesQueueItem)
+		qi := e.Value.(*TaskExchangeQueueItem)
 		if !qi.reply {
 			allReply = false
 			break

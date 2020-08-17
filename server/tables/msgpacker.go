@@ -175,7 +175,7 @@ func serializeCardListsForHandOver(s *statePlaying) []*xproto.MsgPlayerCardList 
 	return playerCardLists
 }
 
-func serializeMsgActionResultNotifyForNoTile(actoin int, player *Player) *xproto.MsgActionResultNotify {
+func serializeMsgActionResultNotifyForAll(actoin int, player *Player) *xproto.MsgActionResultNotify {
 	// 序列化某个玩家的动作结果给其他玩家
 	var msg = &xproto.MsgActionResultNotify{}
 	var action32 = int32(actoin)
@@ -183,5 +183,17 @@ func serializeMsgActionResultNotifyForNoTile(actoin int, player *Player) *xproto
 	var chairID32 = int32(player.chairID)
 	msg.TargetChairID = &chairID32
 
+	return msg
+}
+
+func serializeMsgActionResultNotifyForSelfDiscard(actoin int, player *Player) *xproto.MsgActionResultNotify {
+	// 序列化自己出牌结果给自己
+	var msg = &xproto.MsgActionResultNotify{}
+	var action32 = int32(actoin)
+	msg.Action = &action32
+	var chairID32 = int32(player.chairID)
+	msg.TargetChairID = &chairID32
+	//特殊牌型排序 可能为nil
+	msg.ActionHand = player.rContext.specialCardHand
 	return msg
 }

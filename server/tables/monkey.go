@@ -68,7 +68,7 @@ func MonkeyAttachTableCfg2Table(tableNumber string, body string, cl *log.Entry) 
 
 	table := mgr.GetTableByNumber(tableNumber)
 	if table == nil {
-		cl.Printf("MonkeyAttachTableCfg2Table, no table found for table number:%d", tableNumber)
+		cl.Printf("MonkeyAttachTableCfg2Table, no table found for table number:%s", tableNumber)
 		return fmt.Errorf("no table found for table number:%s", tableNumber)
 	}
 

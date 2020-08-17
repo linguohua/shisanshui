@@ -25,16 +25,17 @@ func onMessageDiscardHandler(s *statePlaying, p *Player, msg *xproto.MsgPlayerAc
 	s.waiter.takeAction(p, int(xproto.ActionType_enumActionType_DISCARD), msg.Cards)
 
 	// 发送通知给所有客户端
-	var msgActionNotifyResult = serializeMsgActionResultNotifyForNoTile(int(xproto.ActionType_enumActionType_DISCARD), p)
-
+	var msgActionNotifyResult = serializeMsgActionResultNotifyForAll(int(xproto.ActionType_enumActionType_DISCARD), p)
 	// 发送结果给所有其他用户
 	for _, pP := range s.table.players {
 		if pP != p {
 			pP.sendActionResultNotify(msgActionNotifyResult)
 		}
 	}
-	//TODO 发给自己的 需要加上牌详情 客户端用于显示
-
 	//计算牌型
 	calcFinalResult(s, p, msg.Cards)
+
+	// 发给自己的 需要加上牌详情 客户端用于显示
+	myNotify := serializeMsgActionResultNotifyForSelfDiscard(int(xproto.ActionType_enumActionType_DISCARD), p)
+	p.sendActionResultNotify(myNotify)
 }
