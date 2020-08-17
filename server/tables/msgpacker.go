@@ -128,7 +128,26 @@ func serializeMsgHandOver(s *statePlaying) *xproto.MsgHandOver {
 
 	for _, player := range s.playingPlayers {
 		var msgPlayerScore = &xproto.MsgPlayerScore{}
-		msgPlayerScore.TotalScore = &player.score
+		rContext := player.rContext
+		msgPlayerScore.TotalScore = &rContext.totalScore
+		chairid := int32(player.chairID)
+		msgPlayerScore.TargetChairID = &chairid
+		msgPlayerScore.SpecialCardHand = rContext.specialCardHand
+		msgPlayerScore.IsWinAll = &rContext.isWinAll
+		msgPlayerScore.IsInvertedHand = &rContext.isInvertedHand
+		//与其他玩家关系
+		compareContexts := make([]*xproto.MsgPlayerCompareContext, 3)
+		for _, cC := range rContext.compareContexts {
+			compareContext := &xproto.MsgPlayerCompareContext{}
+			tc := int32(cC.target.chairID)
+			compareContext.TargetChairID = &tc
+			compareContext.TotalScore = &cC.compareTotalScore
+			compareContext.LoseHandNum = &cC.loseHandNum
+			compareContext.HandTotalScore = cC.handTotalScore
+
+			compareContexts = append(compareContexts, compareContext)
+		}
+		msgPlayerScore.CompareContexts = compareContexts
 		playerScores = append(playerScores, msgPlayerScore)
 	}
 

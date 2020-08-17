@@ -166,20 +166,8 @@ message MsgPlayerCardList {
 message MsgDeal {
   // 庄家座位ID
   required int32 bankerChairID = 1;
-  // 当做花牌的风牌id
-  required int32 windFlowerID = 2;
   // 所有玩家的牌列表
-  repeated MsgPlayerCardList playerCardLists = 3;
-  // 牌墙剩余张数
-  required int32 cardsInWall = 4;
-  // 第一个骰子
-  optional int32 dice1 = 5;
-  // 第二个骰子
-  optional int32 dice2 = 6;
-  // bankerChairID是否连庄
-  optional bool isContinuousBanker = 7;
-  // 暂时用于加价局计数
-  optional int32 markup = 8;
+  repeated MsgPlayerCardList playerCardLists = 2;
 }
 
 // 服务器准许客户端做游戏动作
@@ -267,20 +255,16 @@ message MsgRestore {
   repeated int32 playersListA = 7;
 }
 
-// 墩的计分
-message MsgPlayerScoreHand {
-  // 墩 1、2、3
-  required int32 hand = 1;
-  // 牌型
-  required int32 cardType = 2;
-  // 牌大小
-  required int32 cardNum = 3;
-  // 牌型基础分数(总分等于基础分 * 倍数)
-  required int32 baseScore = 4;
+// 与其他玩家关系
+message MsgPlayerCompareContext{
+  // 玩家chairID
+  required int32 targetChairID = 1;
   // 输赢总分数
-  required int32 totalScore = 5;
-	//牌型赢了谁
-	repeated int32 loserChairID = 6;
+  required int32 totalScore = 2;
+	// 此玩家输了多少墩
+  required int32 loseHandNum = 3;
+  // 墩分数详情列表
+  repeated int32 handTotalScore = 4;
 }
 
 // 一手牌结束后每个玩家的计分
@@ -288,11 +272,17 @@ message MsgPlayerScore {
   // 玩家
   required int32 targetChairID = 1;
   // 赢特殊牌类型 可以无效
-  required int32 winType = 2;
+  required MsgCardHand specialCardHand = 2;
   // 总赢 总输
   required int32 totalScore = 3;
-  // 墩子具体信息
-  repeated MsgPlayerScoreHand scoreHand = 4;
+  // 与其他玩家关系
+  repeated MsgPlayerCompareContext compareContexts = 4;
+  // 是否赢了三家
+  required bool isWinAll = 5;
+  // 是否倒墩
+  required bool isInvertedHand = 6;
+  // 墩子牌型
+  repeated MsgCardHand cardHands = 7;
 }
 
 // 一手牌结束后计分

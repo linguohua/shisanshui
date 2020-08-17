@@ -156,17 +156,13 @@ func compareHandAndSaveScore(hand int32, ps1, ps2 *xproto.MsgCardHand, p1, p2 *P
 	}
 	score = calcHandScore(hand, xproto.CardHandType(winer.rContext.hands[hand].GetCardHandType()))
 	//赢的一方 添加到输的一方的compareContexts列表里
-	handCompareContextWin := &handCompareContext{}
-	handCompareContextWin.handTotalScore = score
 	winCompareContext := loser.rContext.compareContexts[winer.chairID]
-	winCompareContext.handCompareContexts[hand] = handCompareContextWin
+	winCompareContext.handTotalScore[hand] = score
 	winCompareContext.compareTotalScore += score
 	winer.rContext.totalScore += score
 	//输的一方 添加到赢的一方的compareContexts列表里
-	handCompareContextLose := &handCompareContext{}
-	handCompareContextLose.handTotalScore = -score
 	loseCompareContext := winer.rContext.compareContexts[loser.chairID]
-	loseCompareContext.handCompareContexts[hand] = handCompareContextLose
+	loseCompareContext.handTotalScore[hand] = -score
 	loseCompareContext.loseHandNum++
 	loseCompareContext.compareTotalScore -= score
 	loser.rContext.totalScore -= score
@@ -271,19 +267,19 @@ func calcAddedScore(p *Player) {
 	for _, cC := range pr.compareContexts {
 		if cC.loseHandNum == 3 {
 			targetP := cC.target
-			for hand, handC := range cC.handCompareContexts {
+			for hand, score := range cC.handTotalScore {
 				//需要修改的基数
-				changeScore := handC.handTotalScore
+				changeScore := score
 				if targetP.rContext.isInvertedHand && pr.isWinAll {
 					changeScore = changeScore * 3
 				}
 				//先修改p的
-				handC.handTotalScore += changeScore
+				cC.handTotalScore[hand] += changeScore
 				cC.compareTotalScore += changeScore
 				pr.totalScore += changeScore
 				//再修改target的
 				tcC := targetP.rContext.compareContexts[p.chairID]
-				tcC.handCompareContexts[hand].handTotalScore -= changeScore
+				tcC.handTotalScore[hand] -= changeScore
 				tcC.compareTotalScore -= changeScore
 				targetP.rContext.totalScore -= changeScore
 			}
