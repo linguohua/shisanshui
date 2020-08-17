@@ -29,10 +29,11 @@ func onMessageDiscardHandler(s *statePlaying, p *Player, msg *xproto.MsgPlayerAc
 
 	// 发送结果给所有其他用户
 	for _, pP := range s.table.players {
-		// if pP != p {
-		pP.sendActionResultNotify(msgActionNotifyResult)
-		// }
+		if pP != p {
+			pP.sendActionResultNotify(msgActionNotifyResult)
+		}
 	}
+	//TODO 发给自己的 需要加上牌详情 客户端用于显示
 
 	//计算牌型
 	calcFinalResult(s, p, msg.Cards)
