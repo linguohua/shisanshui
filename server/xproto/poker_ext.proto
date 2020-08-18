@@ -71,7 +71,8 @@ message MsgTableInfo {
 
     repeated MsgTableHandScoreRecord scoreRecords = 6;
 
-	optional int32 handFinished = 7; // 已经完成了多少手牌
+    optional int32 handFinished = 7; // 已经完成了多少手牌
+    required int32 timeout = 8; // 倒计时
 }
 
 // 房间分数记录

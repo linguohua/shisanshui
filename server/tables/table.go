@@ -396,9 +396,9 @@ func (t *Table) kickPlayer(userID string) error {
 }
 
 // updateTableInfo2All 把房间当前状态和玩家数据发给所有用户
-func (t *Table) updateTableInfo2All() {
+func (t *Table) updateTableInfo2All(timeout int32) {
 	if len(t.players) > 0 {
-		var msgTableInfo = serializeMsgTableInfo(t)
+		var msgTableInfo = serializeMsgTableInfo(t, timeout)
 		for _, p := range t.players {
 			p.sendGameMsg(msgTableInfo, int32(xproto.MessageCode_OPTableUpdate))
 		}
@@ -422,8 +422,22 @@ func (t *Table) onHandOver(msgHandOver *xproto.MsgHandOver) {
 		// 确保状态已经切换到SWaiting后，才发送手牌结果给客户端
 		p.sendGameMsg(msgHandOver, int32(xproto.MessageCode_OPHandOver))
 	}
+	// TODO : 筹码不足的人踢出
 
+	timeout := 0
+	//如果人数够的话 准备下一局
+	playerCount := len(t.players)
+	if playerCount >= t.config.PlayerNumAcquired {
+		if !t.countingDown {
+			timeout = t.config.Countdown
+		}
+	}
 	// 所有用户状态已经被改为PlayerState_PSNone
 	// 因此通知所有客户端更新用户状态
-	t.updateTableInfo2All()
+	t.updateTableInfo2All(int32(timeout))
+
+	//TODO 倒计时多久后进入
+	if timeout > 0 {
+		t.startCountingDown()
+	}
 }
