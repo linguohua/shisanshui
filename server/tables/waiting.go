@@ -26,25 +26,30 @@ func (s *stateWaiting) name() string {
 
 func (s *stateWaiting) onPlayerEnter(p *Player) {
 	p.state = xproto.PlayerState_PSNone
-	s.table.updateTableInfo2All()
 
+	timeout := 0
 	playerCount := len(s.table.players)
 	if playerCount >= s.table.config.PlayerNumAcquired {
 		if !s.table.countingDown {
-			s.table.startCountingDown()
+			timeout = t.config.Countdown
 		}
+	}
+	s.table.updateTableInfo2All(int32(timeout))
+
+	if timeout > 0 {
+		s.table.startCountingDown()
 	}
 }
 
 func (s *stateWaiting) onPlayerReConnect(p *Player) {
 	// restore
 	p.state = xproto.PlayerState_PSNone
-	s.table.updateTableInfo2All()
+	s.table.updateTableInfo2All(0)
 }
 
 func (s *stateWaiting) onPlayerOffline(p *Player) {
 	p.state = xproto.PlayerState_PSOffline
-	s.table.updateTableInfo2All()
+	s.table.updateTableInfo2All(0)
 }
 
 func (s *stateWaiting) onPlayerMsg(p *Player, msg *xproto.GameMessage) {

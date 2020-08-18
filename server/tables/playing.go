@@ -48,20 +48,20 @@ func (s *statePlaying) onPlayerEnter(p *Player) {
 	// add to watching player list
 	p.state = xproto.PlayerState_PSNone
 	s.watchingPlayers = append(s.watchingPlayers, p)
-	s.table.updateTableInfo2All()
+	s.table.updateTableInfo2All(0)
 }
 
 func (s *statePlaying) onPlayerReConnect(p *Player) {
 	// restore
 	p.state = xproto.PlayerState_PSPlaying
-	s.table.updateTableInfo2All()
+	s.table.updateTableInfo2All(0)
 	msgRestore := serializeMsgRestore(s, p)
 	p.sendGameMsg(msgRestore, int32(xproto.MessageCode_OPRestore))
 }
 
 func (s *statePlaying) onPlayerOffline(p *Player) {
 	p.state = xproto.PlayerState_PSOffline
-	s.table.updateTableInfo2All()
+	s.table.updateTableInfo2All(0)
 }
 
 func (s *statePlaying) onPlayerMsg(p *Player, gmsg *xproto.GameMessage) {

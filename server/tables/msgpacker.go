@@ -66,7 +66,7 @@ func serializeCardList(player *Player, isShowDarkCards bool) *xproto.MsgPlayerCa
 	return playerCardList
 }
 
-func serializeMsgTableInfo(t *Table) *xproto.MsgTableInfo {
+func serializeMsgTableInfo(t *Table, timeout int32) *xproto.MsgTableInfo {
 	// serializeMsgTableInfo 序列化房间信息给客户端
 	msg := &xproto.MsgTableInfo{}
 
@@ -74,6 +74,8 @@ func serializeMsgTableInfo(t *Table) *xproto.MsgTableInfo {
 	msg.State = &state32
 	var tableNumber = t.Number
 	msg.TableNumber = &tableNumber
+
+	msg.Timeout = &timeout
 	// var handStartted32 = int32(r.handRoundStarted)
 	// msg.HandStartted = &handStartted32
 	// var handFinished32 = int32(r.handRoundFinished)
