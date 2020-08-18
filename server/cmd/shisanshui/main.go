@@ -13,20 +13,15 @@ import (
 )
 
 var (
-	listenPort = ""
-	daemon     = ""
+	filepath = ""
+	daemon   = ""
 
 	version     string
 	longVersion string
 )
 
-const (
-	monkeyServerID    = "monkey-game-server-id"
-	monkeyRedisServer = "127.0.0.1:6379"
-)
-
 func init() {
-	flag.StringVar(&listenPort, "l", "4443", "specify the listen address")
+	flag.StringVar(&filepath, "c", "", "specify the config file")
 	flag.StringVar(&daemon, "d", "yes", "specify daemon mode")
 }
 
@@ -54,23 +49,19 @@ func main() {
 		os.Exit(0)
 	}
 
-	log.Println("try to start  shisanshui server, version:", getVersion())
-
-	// not in k8s cluster
-	if os.Getenv(config.EnvK8sServiceHost) == "" {
-		// inject monkey env
-		os.Setenv(config.EnvNameGameSeverPort, listenPort)
-		os.Setenv(config.EnvServerID, monkeyServerID)
-		os.Setenv(config.EnvRedisServer, monkeyRedisServer)
+	if filepath == "" {
+		log.Println("please specify config yaml file path use -c")
+		os.Exit(1)
 	}
 
-	err := config.Init()
+	err := config.Init(filepath)
 	if err != nil {
 		log.Panicln("config faield:", err)
 	}
 
+	log.Println("try to start  shisanshui server, version:", getVersion())
 	params := &gameserver.Params{
-		ListenAddr: fmt.Sprintf(":%s", config.ServerPort),
+		ListenAddr: fmt.Sprintf(":%d", config.ServerPort),
 	}
 
 	// start http server

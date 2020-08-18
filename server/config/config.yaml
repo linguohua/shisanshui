@@ -1,0 +1,11 @@
+externServers:
+  - name: redis-server # redis 服务器地址
+    addr: "redis-server:6379"
+  - name: game-lobby-server # 游戏自己的大厅服务器地址
+    addr: "shisansui-lobby-server:8080"
+  - name: business-lobby-server # 业务大厅的服务器地址
+    addr: "csharp-lobby-server:8080"
+  - name: config-server # 配置服务器地址
+    addr: "config-server:8080"
+serverPort: 8080
+serverID: "non-in-k8s-cluster"
