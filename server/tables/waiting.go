@@ -31,7 +31,7 @@ func (s *stateWaiting) onPlayerEnter(p *Player) {
 	playerCount := len(s.table.players)
 	if playerCount >= s.table.config.PlayerNumAcquired {
 		if !s.table.countingDown {
-			timeout = t.config.Countdown
+			timeout = s.table.config.Countdown
 		}
 	}
 	s.table.updateTableInfo2All(int32(timeout))
