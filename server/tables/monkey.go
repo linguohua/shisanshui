@@ -57,6 +57,8 @@ func MonkeyDestroyMonkeyTable(tableID string, cl *log.Entry) error {
 		table.destroy(xproto.TableDeleteReason_DisbandBySystem)
 	})
 
+	mgr.delTable(table)
+
 	return nil
 }
 

@@ -22,7 +22,11 @@ type tableConfig struct {
 }
 
 func tableConfigNew() *tableConfig {
-	return &tableConfig{}
+	return &tableConfig{
+		PlayerNumAcquired: 2,
+		PlayerNumMax:      4,
+		Countdown:         5,
+	}
 }
 
 func tableConfigNewFromJSON(jsonString string) (*tableConfig, error) {

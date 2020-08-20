@@ -1,6 +1,6 @@
 externServers:
   - name: redis-server # redis 服务器地址
-    addr: "redis-server:6379"
+    addr: "127.0.0.1:6379"
   - name: game-lobby-server # 游戏自己的大厅服务器地址
     addr: "shisansui-lobby-server:8080"
   - name: business-lobby-server # 业务大厅的服务器地址
