@@ -182,7 +182,7 @@ func (s *statePlaying) waitPlayersAction() bool {
 
 	for _, p := range s.playingPlayers {
 		p.rContext.expectedAction = actions
-		//TODO : 10要写到配置里
+		//TODO : 10要写到配置里(理牌时间)
 		msgAllowPlayerAction := serializeMsgAllowedForDiscard(s, p, actions, qaIndex, 10)
 		p.sendGameMsg(msgAllowPlayerAction, int32(xproto.MessageCode_OPActionAllowed))
 

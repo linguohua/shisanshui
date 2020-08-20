@@ -49,6 +49,7 @@ func (s *stateWaiting) onPlayerReConnect(p *Player) {
 
 func (s *stateWaiting) onPlayerOffline(p *Player) {
 	p.state = xproto.PlayerState_PSOffline
+	s.table.stateRemovePlayer(p)
 	s.table.updateTableInfo2All(0)
 }
 
