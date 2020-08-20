@@ -38,7 +38,7 @@ type Player struct {
 	// websocket connection
 	ws *websocket.Conn
 	// websocket concurrent write lock
-	wsWriteLock *sync.Mutex
+	wsWriteLock sync.Mutex
 
 	lastMsgTime time.Time
 

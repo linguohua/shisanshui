@@ -3,7 +3,6 @@ package tables
 import (
 	"fmt"
 	"math/rand"
-	"runtime/debug"
 	"shisanshui/xproto"
 	"sort"
 	"sync"
@@ -49,6 +48,8 @@ type Table struct {
 	// context logger, print with table uuid, table nid, etc...
 	cl *logrus.Entry
 
+	bankerChairID int
+
 	// table uuid
 	UUID   string
 	Number string
@@ -70,16 +71,15 @@ type Table struct {
 
 	lastMsgTime time.Time
 
-	countingDown bool
-	isForMonkey  bool
+	isForMonkey bool
 }
 
 // tableNew new a table
 func tableNew(uuid string, number string, cfg *tableConfig) *Table {
 	fields := make(logrus.Fields)
 	fields["src"] = "table"
-	fields["table uuid"] = uuid
-	fields["table number"] = number
+	fields["table-uuid"] = uuid
+	fields["table-number"] = number
 
 	cl := logrus.WithFields(fields)
 
@@ -90,6 +90,12 @@ func tableNew(uuid string, number string, cfg *tableConfig) *Table {
 		rand:   rand.New(rand.NewSource(time.Now().UnixNano())),
 		config: cfg,
 	}
+
+	t.chairs = append(t.chairs, chairAllocOrder...)
+	t.chairSortIndexes = append(t.chairSortIndexes, chairAllocOrder...)
+
+	// init to idle state
+	t.state = idleStateNew(t)
 
 	return t
 }
@@ -165,7 +171,7 @@ func (t *Table) OnPlayerEnter(ws *websocket.Conn, userID string) *Player {
 	// 写redis数据库，以便其他服务器能够知道玩家进入该房间
 	t.writePlayerEnterEvent2Redis(player)
 
-	return nil
+	return player
 }
 
 // onPlayerReconnect handle player re-connect flow
@@ -298,49 +304,6 @@ func (t *Table) writePlayerEnterEvent2Redis(player *Player) {
 	// TODO: write event 2 redis
 }
 
-func (t *Table) startCountingDown() {
-	if t.countingDown {
-		t.cl.Panic("table is in counting down")
-	}
-
-	t.cl.Printf("table start to countdown with %d seconds", t.config.Countdown)
-	t.countingDown = true
-	time.AfterFunc(time.Duration(t.config.Countdown)*time.Second, func() {
-		defer func() {
-			if r := recover(); r != nil {
-				debug.PrintStack()
-				t.cl.Printf("-----PANIC: This Table will die, STACK\n:%v", r)
-				mgr.IncExceptionCount()
-			}
-		}()
-
-		// new goroutine call into here, so onCountdownCompleted
-		// must be concurrent safe
-		t.HoldLock(func() {
-			t.onCountdownCompleted()
-		})
-	})
-}
-
-// onCountdownCompleted countdown timer completed
-// call by timer goroutine
-func (t *Table) onCountdownCompleted() {
-	t.countingDown = false
-
-	oldState := t.state.(*stateWaiting)
-	if oldState == nil {
-		t.cl.Panic("state should be waiting when countdown completed")
-	}
-
-	if len(t.players) < t.config.PlayerNumAcquired {
-		t.cl.Printf("current player count %d < required(%d), continue waitig",
-			len(t.players), t.config.PlayerNumAcquired)
-		return
-	}
-
-	t.stateTo(playingStateNew(t))
-}
-
 func (t *Table) yieldLock(func1 func()) {
 	t.lock.Unlock()
 	defer t.lock.Lock() // re-lock
@@ -374,6 +337,8 @@ func (t *Table) destroy(reason xproto.TableDeleteReason) {
 
 	// 断开玩家的链接
 	t.kickAll()
+
+	t.cl.Println("table destroyed")
 }
 
 func (t *Table) kickAll() {
@@ -421,23 +386,5 @@ func (t *Table) onHandOver(msgHandOver *xproto.MsgHandOver) {
 
 		// 确保状态已经切换到SWaiting后，才发送手牌结果给客户端
 		p.sendGameMsg(msgHandOver, int32(xproto.MessageCode_OPHandOver))
-	}
-	// TODO : 筹码不足的人踢出
-
-	timeout := 0
-	//如果人数够的话 准备下一局
-	playerCount := len(t.players)
-	if playerCount >= t.config.PlayerNumAcquired {
-		if !t.countingDown {
-			timeout = t.config.Countdown
-		}
-	}
-	// 所有用户状态已经被改为PlayerState_PSNone
-	// 因此通知所有客户端更新用户状态
-	t.updateTableInfo2All(int32(timeout))
-
-	//TODO 倒计时多久后进入
-	if timeout > 0 {
-		t.startCountingDown()
 	}
 }

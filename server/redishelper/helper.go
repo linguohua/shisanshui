@@ -27,7 +27,7 @@ func newPool(addr string) *redis.Pool {
 func GetConn() redis.Conn {
 	if pool == nil {
 		once.Do(func() {
-			newPool(config.RedisServer)
+			pool = newPool(config.RedisServer)
 		})
 	}
 

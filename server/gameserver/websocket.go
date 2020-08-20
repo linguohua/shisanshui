@@ -61,13 +61,13 @@ func acceptWebsocket(w http.ResponseWriter, r *http.Request, params httprouter.P
 		}
 
 		// table uuid
-		var tableUID = q.Get("tuid")
+		var tableUID = q.Get("tableID")
 		acceptPlayer(userID, tableUID, ws, r)
 		break
 	case "monkey":
-		var tableIDString = q.Get("tuid")
+		var tableIDString = q.Get("tableID")
 		if tableIDString == "" {
-			var tableNumber = q.Get("tnid")
+			var tableNumber = q.Get("tableNumber")
 			if tableNumber == "" {
 				cl.Println("monkey has no table uuid and table number id")
 				return

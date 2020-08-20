@@ -50,6 +50,35 @@ func (m *TableMgr) addTable(table *Table) error {
 		return fmt.Errorf("add Table failed: duplicate uuid %s", table.UUID)
 	}
 
+	m.tablesIDMap.Store(table.Number, table.UUID)
+
+	return nil
+}
+
+func (m *TableMgr) delTable(table *Table) {
+	m.tablesIDMap.Delete(table.Number)
+	m.tablesMap.Delete(table.UUID)
+}
+
+func (m *TableMgr) delTableByID(tableID string) error {
+	t := m.GetTable(tableID)
+	if t != nil {
+		return fmt.Errorf("delTableByID failed: no table found for id:%s", tableID)
+	}
+
+	m.delTable(t)
+
+	return nil
+}
+
+func (m *TableMgr) delTableByNumber(tableNumber string) error {
+	t := m.GetTableByNumber(tableNumber)
+	if t != nil {
+		return fmt.Errorf("delTableByID failed: no table found for number:%s", tableNumber)
+	}
+
+	m.delTable(t)
+
 	return nil
 }
 

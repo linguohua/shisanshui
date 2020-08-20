@@ -34,6 +34,8 @@ func serializeMsgDeal(s *statePlaying, my *Player) *xproto.MsgDeal {
 	}
 
 	msg.PlayerCardLists = playerCardLists
+	bankerChairID := int32(s.table.bankerChairID)
+	msg.BankerChairID = &bankerChairID
 
 	return msg
 }

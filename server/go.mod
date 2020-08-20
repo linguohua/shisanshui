@@ -12,4 +12,5 @@ require (
 	github.com/sirupsen/logrus v1.6.0
 	golang.org/x/sys v0.0.0-20200806060901-a37d78b92225 // indirect
 	google.golang.org/protobuf v1.25.0
+	gopkg.in/yaml.v2 v2.2.2
 )
