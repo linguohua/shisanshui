@@ -147,7 +147,7 @@ func (p *Player) unbind() {
 // OnExitMsgLoop handle websocket reading loop, indicates that
 // the websocket connection has been closed or internal error ocurrs
 func (p *Player) OnExitMsgLoop(ws1 *websocket.Conn, err error) {
-	p.cl.Println("OnExitMsgLoop:", err)
+	p.cl.Println("OnExitMsgLoop, error:", err)
 
 	if p.ws != ws1 {
 		return
