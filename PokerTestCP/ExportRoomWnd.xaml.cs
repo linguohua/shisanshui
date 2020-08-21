@@ -1,38 +1,38 @@
-﻿using System;
+﻿using CsvHelper;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
-using CsvHelper;
-using pokerface;
+using Xproto;
 using Path = System.IO.Path;
 
 namespace PokerTest
 {
     /// <summary>
-    /// ExportRoomWnd.xaml 的交互逻辑
+    /// ExportTableWnd.xaml 的交互逻辑
     /// </summary>
-    public partial class ExportRoomWnd : Window
+    public partial class ExportTableWnd : Window
     {
-        public ExportRoomWnd()
+        public ExportTableWnd()
         {
             InitializeComponent();
         }
 
-        public enum ExportRoomType
+        public enum ExportTableType
         {
-            RoomCfg,
+            TableCfg,
             Operations,
         }
 
-        private ExportRoomType _exprotType;
+        private ExportTableType _exprotType;
         private MainWindow _myWindow;
 
-        public static void ShowExportDialog(ExportRoomType type, MainWindow owner)
+        public static void ShowExportDialog(ExportTableType type, MainWindow owner)
         {
-            var wnd = new ExportRoomWnd
+            var wnd = new ExportTableWnd
             {
                 Owner = owner,
                 _exprotType = type,
@@ -60,7 +60,7 @@ namespace PokerTest
 
                 try
                 {
-                    await ExportAllRoomOps(text);
+                    await ExportAllTableOps(text);
                     return;
                 }
                 catch (Exception ex)
@@ -70,7 +70,7 @@ namespace PokerTest
 
             }
 
-            if (_exprotType == ExportRoomType.Operations)
+            if (_exprotType == ExportTableType.Operations)
             {
                 try
                 {
@@ -82,7 +82,7 @@ namespace PokerTest
                     MessageBox.Show(ex.Message);
                 }
             }
-            else if (_exprotType == ExportRoomType.RoomCfg)
+            else if (_exprotType == ExportTableType.TableCfg)
             {
                 //await ExportCfg(text);
             }
@@ -94,26 +94,26 @@ namespace PokerTest
         }
 
 
-        private async Task ExportAllRoomOps(string text)
+        private async Task ExportAllTableOps(string text)
         {
             string xid = "recordSID=" + text;
-            var result = await HttpHandlers.ExportRoomShareIDs(xid, this);
+            var result = await HttpHandlers.ExportTableShareIDs(xid, this);
             if (result == null)
             {
                 return;
             }
 
-            var strArray = ParseRoomShareIDs(result);
+            var strArray = ParseTableShareIDs(result);
 
             for (var i = 0; i < strArray.Length; i++)
             {
                 string recordID = strArray[i];
-                var filename = $"room-{i}-{recordID}";
+                var filename = $"table-{i}-{recordID}";
                 await ExportOps(recordID, filename);
             }
         }
 
-        private string[] ParseRoomShareIDs(string strx)
+        private string[] ParseTableShareIDs(string strx)
         {
             var strArray = new List<string>();
             using (var strReader = new StringReader(strx))
@@ -147,95 +147,95 @@ namespace PokerTest
                 xid = "recordSID=" + text;
             }
 
-            var result = await HttpHandlers.ExportRoomOps(xid, this);
+            var result = await HttpHandlers.ExportTableOps(xid, this);
 
             if (result == null)
             {
                 return;
             }
 
-            var recorder = result.ToProto<SRMsgHandRecorder>();
+            //var recorder = result.ToProto<SRMsgHandRecorder>();
 
-            List<PlayerData> players = FromRecorder(recorder);
-            //string drawSequence = ExtractDrawSequence(recorder);
-            //string kongSequence = ExtractKongSequence(recorder);
+            //List<PlayerData> players = FromRecorder(recorder);
+            ////string drawSequence = ExtractDrawSequence(recorder);
+            ////string kongSequence = ExtractKongSequence(recorder);
 
-            var windId = recorder.windFlowerID;
-            var bankerPlayer = players.Find((p) => p.ChairId == recorder.bankerChairID);
-            var bankderUserId = bankerPlayer.UserId;
-            players = sortPlayers(players, bankderUserId);
-            var extra = recorder.extra;
-            var markup = extra.markup;
+            //var windId = recorder.windFlowerID;
+            //var bankerPlayer = players.Find((p) => p.ChairId == recorder.bankerChairID);
+            //var bankderUserId = bankerPlayer.UserId;
+            //players = sortPlayers(players, bankderUserId);
+            //var extra = recorder.extra;
+            //var markup = extra.markup;
 
-            //名称	userID1	手牌	花牌	动作提示	userID2	手牌	花牌	动作提示	userID3	手牌	花牌	动作提示	userID4	手牌	花牌	动作提示	抽牌序列	庄家	风牌
-            Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
-            dlg.FileName = fileName; // Default file name
+            ////名称	userID1	手牌	花牌	动作提示	userID2	手牌	花牌	动作提示	userID3	手牌	花牌	动作提示	userID4	手牌	花牌	动作提示	抽牌序列	庄家	风牌
+            //Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
+            //dlg.FileName = fileName; // Default file name
 
-            dlg.DefaultExt = ".csv"; // Default file extension
-            dlg.Filter = "CSV documents (.csv)|*.csv"; // Filter files by extension
+            //dlg.DefaultExt = ".csv"; // Default file extension
+            //dlg.Filter = "CSV documents (.csv)|*.csv"; // Filter files by extension
 
-            // Show save file dialog box
-            bool? dlgResult = dlg.ShowDialog();
-            // Process save file dialog box results
-            if (dlgResult == true)
-            {
-                // Save document
-                string filename = dlg.FileName;
-                using (var textWriter =
-                    new StreamWriter(new FileStream(filename, FileMode.Create, FileAccess.ReadWrite), Encoding.Default))
-                {
-                    var headers = DealCfgWnd.Headers;
+            //// Show save file dialog box
+            //bool? dlgResult = dlg.ShowDialog();
+            //// Process save file dialog box results
+            //if (dlgResult == true)
+            //{
+            //    // Save document
+            //    string filename = dlg.FileName;
+            //    using (var textWriter =
+            //        new StreamWriter(new FileStream(filename, FileMode.Create, FileAccess.ReadWrite), Encoding.Default))
+            //    {
+            //        var headers = DealCfgWnd.Headers;
 
-                    // 第一行
-                    var csv = new CsvWriter(textWriter);
-                    foreach (var header in headers)
-                    {
-                        csv.WriteField(header);
-                    }
-                    csv.NextRecord();
+            //        // 第一行
+            //        var csv = new CsvWriter(textWriter);
+            //        foreach (var header in headers)
+            //        {
+            //            csv.WriteField(header);
+            //        }
+            //        csv.NextRecord();
 
-                    // 第二行
-                    csv.WriteField("bug"); // 名字
-                    csv.WriteField("大丰关张"); // 名字
+            //        // 第二行
+            //        csv.WriteField("bug"); // 名字
+            //        csv.WriteField("大丰关张"); // 名字
 
-                    foreach (var playerData in players)
-                    {
-                        playerData.WriteCsv(csv);
-                    }
+            //        foreach (var playerData in players)
+            //        {
+            //            playerData.WriteCsv(csv);
+            //        }
 
-                    int pad = 4 - players.Count();
-                    for (int i = 0; i < pad; ++i)
-                    {
-                        for (int j = 0; j < 3; ++j)
-                            csv.WriteField("");
-                    }
+            //        int pad = 4 - players.Count();
+            //        for (int i = 0; i < pad; ++i)
+            //        {
+            //            for (int j = 0; j < 3; ++j)
+            //                csv.WriteField("");
+            //        }
 
-                    //csv.WriteField(drawSequence);
-                    //csv.WriteField(kongSequence);//杠后牌
-                    //csv.WriteField(markup); // 上楼计数
-                    csv.WriteField(1); // 强制一致
-                    csv.WriteField(recorder.roomConfigID);
-                    csv.WriteField(recorder.isContinuousBanker ? "1" : "0");
-                    csv.NextRecord();
-                }
+            //        //csv.WriteField(drawSequence);
+            //        //csv.WriteField(kongSequence);//杠后牌
+            //        //csv.WriteField(markup); // 上楼计数
+            //        csv.WriteField(1); // 强制一致
+            //        csv.WriteField(recorder.tableConfigID);
+            //        csv.WriteField(recorder.isContinuousBanker ? "1" : "0");
+            //        csv.NextRecord();
+            //    }
 
-                if (!string.IsNullOrWhiteSpace(recorder.roomConfigID))
-                {
-                    var dir = Path.GetDirectoryName(filename);
-                    if (dir == null)
-                    {
-                        return;
-                    }
+            //    if (!string.IsNullOrWhiteSpace(recorder.tableConfigID))
+            //    {
+            //        var dir = Path.GetDirectoryName(filename);
+            //        if (dir == null)
+            //        {
+            //            return;
+            //        }
 
-                    var jsonFileName = Path.Combine(dir, Path.GetFileNameWithoutExtension(filename) + ".json");
-                    await LoadAndSaveRoomConfig(recorder.roomConfigID, jsonFileName);
-                }
-            }
+            //        var jsonFileName = Path.Combine(dir, Path.GetFileNameWithoutExtension(filename) + ".json");
+            //        await LoadAndSaveTableConfig(recorder.tableConfigID, jsonFileName);
+            //    }
+            //}
         }
 
-        private async Task LoadAndSaveRoomConfig(string recorderRoomConfigId, string jsonFileName)
+        private async Task LoadAndSaveTableConfig(string recorderTableConfigId, string jsonFileName)
         {
-            var result = await HttpHandlers.ExportRoomCfg(recorderRoomConfigId, this);
+            var result = await HttpHandlers.ExportTableCfg(recorderTableConfigId, this);
 
             if (result == null)
             {
@@ -288,7 +288,7 @@ namespace PokerTest
 
         //        foreach (var tile in drawAction.cards)
         //        {
-        //            if (tile < (int)CardID.CARDMAX)
+        //            if (tile < (int)CardID.Cardmax)
         //            {
         //                sb.Append(_myWindow.IdNames[tile]);
         //                sb.Append(",");
@@ -323,31 +323,31 @@ namespace PokerTest
         //    return sb.ToString();
         //}
 
-        private List<PlayerData> FromRecorder(SRMsgHandRecorder recorder)
-        {
-            var players = recorder.players;
-            var playerDatas = new List<PlayerData>();
+        //private List<PlayerData> FromRecorder(SRMsgHandRecorder recorder)
+        //{
+        //    var players = recorder.players;
+        //    var playerDatas = new List<PlayerData>();
 
-            foreach (var player in players)
-            {
-                var pd = new PlayerData() { UserId = player.userID, ChairId = player.chairID, MyWindow = _myWindow };
-                playerDatas.Add(pd);
-            }
+        //    foreach (var player in players)
+        //    {
+        //        var pd = new PlayerData() { UserId = player.userID, ChairId = player.chairID, MyWindow = _myWindow };
+        //        playerDatas.Add(pd);
+        //    }
 
-            foreach (var dealDetail in recorder.deals)
-            {
-                var pd = playerDatas.Find((x) => x.ChairId == dealDetail.chairID);
-                pd.Deal = dealDetail;
-            }
+        //    foreach (var dealDetail in recorder.deals)
+        //    {
+        //        var pd = playerDatas.Find((x) => x.ChairId == dealDetail.chairID);
+        //        pd.Deal = dealDetail;
+        //    }
 
-            foreach (var pd in playerDatas)
-            {
-                var actions = recorder.actions.Where((x) => x.chairID == pd.ChairId).ToList();
-                pd.Actions = actions;
-            }
+        //    foreach (var pd in playerDatas)
+        //    {
+        //        var actions = recorder.actions.Where((x) => x.chairID == pd.ChairId).ToList();
+        //        pd.Actions = actions;
+        //    }
 
-            return playerDatas;
-        }
+        //    return playerDatas;
+        //}
 
         internal class PlayerData
         {
@@ -356,9 +356,9 @@ namespace PokerTest
             public MainWindow MyWindow { get; set; }
 
             public int ChairId { get; set; }
-            public SRDealDetail Deal { get; set; }
+            //public SRDealDetail Deal { get; set; }
 
-            public List<SRAction> Actions { get; set; }
+            //public List<SRAction> Actions { get; set; }
 
             public void WriteCsv(CsvWriter csv)
             {
@@ -376,13 +376,13 @@ namespace PokerTest
 
             public string ToHandString()
             {
-                var hands = Deal.cardsHand;
+                //var hands = Deal.cardsHand;
                 var sb = new StringBuilder();
-                foreach (var hand in hands)
-                {
-                    sb.Append(MyWindow.IdNames[hand]);
-                    sb.Append(",");
-                }
+                //foreach (var hand in hands)
+                //{
+                //    sb.Append(MyWindow.IdNames[hand]);
+                //    sb.Append(",");
+                //}
                 return sb.ToString();
             }
 
@@ -402,47 +402,47 @@ namespace PokerTest
             {
                 var qaIndex = 0;
                 var sb = new StringBuilder();
-                foreach (var action in Actions)
-                {
-                    // 忽略抽牌动作
-                    if (action.action == (int)ActionType.enumActionType_DRAW)
-                    {
-                        continue;
-                    }
+                //foreach (var action in Actions)
+                //{
+                //    // 忽略抽牌动作
+                //    if (action.action == (int)ActionType.enumActionType_DRAW)
+                //    {
+                //        continue;
+                //    }
 
-                    // 由于扑克牌没有吃椪杠同时发生因此没有同样的qaIndex
-                    // 但是扑克牌最后一个win-selfdrawn的qaIndex前一个动作是一致的
-                    // 因此需要注释掉
-                    // 同样的qaIndex，忽略
-                    //if (action.qaIndex == qaIndex)
-                    //{
-                    //    continue;
-                    //}
+                //    // 由于扑克牌没有吃椪杠同时发生因此没有同样的qaIndex
+                //    // 但是扑克牌最后一个win-selfdrawn的qaIndex前一个动作是一致的
+                //    // 因此需要注释掉
+                //    // 同样的qaIndex，忽略
+                //    //if (action.qaIndex == qaIndex)
+                //    //{
+                //    //    continue;
+                //    //}
 
-                    qaIndex = action.qaIndex;
-                    var act = (ActionType)action.action;
-                    switch (act)
-                    {
-                        case ActionType.enumActionType_DISCARD:
-                            sb.Append(
-                                "[discard ");
-                            for(var i = 1; i < action.cards.Count; i++)
-                            {
-                                var tileId = action.cards[i];
-                                sb.Append($"{MyWindow.IdNames[tileId]} ");
-                            }
-                            sb.Append("],");
-                            break;
-                        case ActionType.enumActionType_Win_SelfDrawn:
-                            sb.Append(
-                                $"[winSelf],");
-                            break;
-                        default:
-                            sb.Append(
-                                $"[skip],");
-                            break;
-                    }
-                }
+                //    qaIndex = action.qaIndex;
+                //    var act = (ActionType)action.action;
+                //    switch (act)
+                //    {
+                //        case ActionType.enumActionType_DISCARD:
+                //            sb.Append(
+                //                "[discard ");
+                //            for(var i = 1; i < action.cards.Count; i++)
+                //            {
+                //                var tileId = action.cards[i];
+                //                sb.Append($"{MyWindow.IdNames[tileId]} ");
+                //            }
+                //            sb.Append("],");
+                //            break;
+                //        case ActionType.enumActionType_Win_SelfDrawn:
+                //            sb.Append(
+                //                $"[winSelf],");
+                //            break;
+                //        default:
+                //            sb.Append(
+                //                $"[skip],");
+                //            break;
+                //    }
+                //}
 
                 return sb.ToString();
             }

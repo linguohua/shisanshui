@@ -9,7 +9,7 @@ namespace PokerTest
     class ProgramConfig
     {
         public static string ServerUrl = "http://localhost:3001";
-        public static string RecentUsedRoomNumber = "";
+        public static string RecentUsedTableNumber = "";
 
         public const string ConfigFileName = "config.json";
         //public static List<string> OptionalUrls = new List<string>();

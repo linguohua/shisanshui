@@ -6,7 +6,7 @@ using System.Text;
 using System.Windows;
 using System.Windows.Controls;
 using CsvHelper;
-using pokerface;
+using Xproto;
 
 namespace PokerTest
 {
@@ -124,16 +124,16 @@ namespace PokerTest
 
         private readonly Random _random = new Random();
         public readonly MainWindow _owner;
-        public readonly int[] _wallTiles = new int[(int)CardID.CARDMAX];
+        public readonly int[] _wallTiles = new int[(int)CardID.Cardmax];
 
-        private readonly Button[] _wallTilesButtons = new Button[(int)CardID.CARDMAX];
-        private readonly Label[] _wallTilesLabels = new Label[(int)CardID.CARDMAX];
+        private readonly Button[] _wallTilesButtons = new Button[(int)CardID.Cardmax];
+        private readonly Label[] _wallTilesLabels = new Label[(int)CardID.Cardmax];
 
         private readonly DealCfg[] _dealCfgs = new DealCfg[4];
         private DrawCfg _drawCfg ;
         private readonly XTiles _endXTile;
 
-        //public readonly int WindId = (int)CardID.CARDMAX;
+        //public readonly int WindId = (int)CardID.Cardmax;
 
         // "抽牌序列", "杠后牌", "上楼计数"
         public static string[] Headers = new[] {
@@ -151,7 +151,7 @@ namespace PokerTest
 
         private void InitWallTiles()
         {
-            for (int i = 0; i < (int) CardID.CARDMAX; i++)
+            for (int i = 0; i < (int) CardID.Cardmax; i++)
             {
                 _wallTiles[i] = 1;
             }
@@ -161,17 +161,17 @@ namespace PokerTest
                 _wallTiles[i] = 0;
             }
 
-            for (var i = (int)CardID.JOB; i <= (int)CardID.JOR; i++)
+            for (var i = (int)CardID.Job; i <= (int)CardID.Jor; i++)
             {
                 _wallTiles[i] = 0;
             }
 
-            for (var i = (int)CardID.AS; i <= (int)CardID.AS; i++)
+            for (var i = (int)CardID.As; i <= (int)CardID.As; i++)
             {
                 _wallTiles[i] = 0;
             }
 
-            //for (int i = (int) CardID.CARDMAX; i < (int) CardID.CARDMAX; i++)
+            //for (int i = (int) CardID.Cardmax; i < (int) CardID.Cardmax; i++)
             //{
             //    _wallTiles[i] = 1;
             //}
@@ -291,7 +291,7 @@ namespace PokerTest
         private void WallTiles2Ui()
         {
             int sum = 0;
-            for (int i = 0; i < (int)CardID.CARDMAX; i++)
+            for (int i = 0; i < (int)CardID.Cardmax; i++)
             {
                 sum += _wallTiles[i];
                 _wallTilesLabels[i].Content = _wallTiles[i];
@@ -304,14 +304,14 @@ namespace PokerTest
 
         private void InitWallTilesUi()
         {
-            for (int i = 0; i < (int) CardID.CARDMAX; i++)
+            for (int i = 0; i < (int) CardID.Cardmax; i++)
             {
                 var stackPanel = CreateTileStackPanel(i);
 
                 WallTileNonFlower.Children.Add(stackPanel);
             }
 
-            //for (int i = (int)TileID.enumTid_HAK; i < (int)CardID.CARDMAX; i++)
+            //for (int i = (int)TileID.enumTid_HAK; i < (int)CardID.Cardmax; i++)
             //{
             //    var stackPanel = CreateTileStackPanel(i);
 
@@ -358,7 +358,7 @@ namespace PokerTest
             DealCfg.DealCfgTag select = (DealCfg.DealCfgTag)btn.Tag;
 
             bool found = false;
-            if (select.Tile >= (int)CardID.CARDMAX /*|| select.Tile == WindId*/)
+            if (select.Tile >= (int)CardID.Cardmax /*|| select.Tile == WindId*/)
             {
                 // found = select.DealCfg.TilesFlower.Remove(select.Tile);
             }
@@ -449,7 +449,7 @@ namespace PokerTest
             else
             {
                 var dealCfg = GetCurrentSelectDealCfg();
-                if (select >= (int)CardID.CARDMAX /*|| select == WindId*/)
+                if (select >= (int)CardID.Cardmax /*|| select == WindId*/)
                 {
                     //dealCfg.TilesFlower.Add(select);
                 }
@@ -510,7 +510,7 @@ namespace PokerTest
                 var select = remains[_random.Next(0, remainCount)];
                 _wallTiles[select]--;
 
-                if (select >= (int) CardID.CARDMAX /*|| select == WindId*/)
+                if (select >= (int) CardID.Cardmax /*|| select == WindId*/)
                 {
                     flowers.Add(select);
                 }
@@ -717,7 +717,7 @@ namespace PokerTest
                     {
 
                         // 第一行
-                        var csv = new CsvWriter(textWriter);
+                        var csv = new CsvWriter(textWriter, System.Globalization.CultureInfo.CurrentCulture);
                         foreach (var header in Headers)
                         {
                             csv.WriteField(header);
@@ -810,7 +810,7 @@ namespace PokerTest
                         using (var stringReader = new StringReader(x))
                         {
                             // csv reader
-                            var csvReader = new CsvReader(stringReader);
+                            var csvReader = new CsvReader(stringReader, System.Globalization.CultureInfo.CurrentCulture);
                             
                             // 读取头部
                             if (!csvReader.ReadHeader())
@@ -820,7 +820,8 @@ namespace PokerTest
                             }
 
 
-                            if (Headers.Length != csvReader.FieldHeaders.Length)
+                            var headers = csvReader.Context.HeaderRecord;
+                            if (Headers.Length != headers.Length)
                             {
                                 MessageBox.Show("Invalid input csv file, header count not match");
                                 return;
@@ -828,7 +829,7 @@ namespace PokerTest
 
                             for (var i = 0; i < Headers.Length; i++)
                             {
-                                if (string.Compare(Headers[i], csvReader.FieldHeaders[i], StringComparison.Ordinal) != 0)
+                                if (string.Compare(Headers[i], headers[i], StringComparison.Ordinal) != 0)
                                 {
                                     MessageBox.Show("Invalid input csv file, header not match");
                                     return;
@@ -882,7 +883,7 @@ namespace PokerTest
         //    _owner.rb111 = 0;
         //    clearXXX();
 
-        //    for (int i = 0; i < (int)CardID.CARDMAX; i++)
+        //    for (int i = 0; i < (int)CardID.Cardmax; i++)
         //    {
         //        _wallTiles[i] = 1;
         //    }
@@ -894,12 +895,12 @@ namespace PokerTest
         //{
         //    _owner.rb111 = 1;
         //    clearXXX();
-        //    for (int i = 0; i < (int)CardID.CARDMAX; i++)
+        //    for (int i = 0; i < (int)CardID.Cardmax; i++)
         //    {
         //        _wallTiles[i] = 1;
         //    }
 
-        //    for (int i = (int)CardID.CARDMAX; i < (int)CardID.CARDMAX; i++)
+        //    for (int i = (int)CardID.Cardmax; i < (int)CardID.Cardmax; i++)
         //    {
         //        _wallTiles[i] =1;
         //    }

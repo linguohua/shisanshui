@@ -15,9 +15,9 @@
         <GridSplitter Grid.Column="1" Width="5" HorizontalAlignment="Stretch" />
         <DockPanel LastChildFill="True" Grid.Column="2" >
             <StackPanel Orientation="Horizontal" Height="30" DockPanel.Dock="Bottom" HorizontalAlignment="Right">
-                <Button Content="导出打牌记录" Click="OnExportRoomOps_Button_Click" Margin="5,0,0,0"></Button>
-                <Button Content="重置房间" Click="OnExportRoomCfg_Button_Click" Margin="5,0,0,0"></Button>
-                <Button Content="踢出所有用户" Click="OnKickAllInRoom_Button_Click" Margin="5,0,0,0"></Button>
+                <Button Content="导出打牌记录" Click="OnExportTableOps_Button_Click" Margin="5,0,0,0"></Button>
+                <Button Content="重置房间" Click="OnExportTableCfg_Button_Click" Margin="5,0,0,0"></Button>
+                <Button Content="踢出所有用户" Click="OnKickAllInTable_Button_Click" Margin="5,0,0,0"></Button>
                 <Button Content="配牌器" Click="OnDealCfg_Button_Click" Margin="5,0,5,0"></Button>
             </StackPanel>
             <TextBox IsReadOnly="True" x:Name="TbLogger" MinWidth="300" VerticalAlignment="Stretch" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">hello</TextBox>
@@ -29,14 +29,14 @@
                 <TextBlock VerticalAlignment="Center" x:Name="TbCurrentCfg"></TextBlock>
                 <Button Content="开始发牌" Margin="10,0,0,0" Click="OnStartGame_Button_Click"></Button>
                 <Button Content="选择配置" Margin="10,0,0,0" Click="OnSelectCfg_Button_Click"></Button>
-                <Button Content="创建M房间" Margin="10,0,0,0" Click="OnCreateRoom_Button_Click"></Button>
-                <Button Content="销毁M房间" Margin="10,0,0,0" Click="OnDestroyRoom_Button_Click"></Button>
+                <Button Content="创建M房间" Margin="10,0,0,0" Click="OnCreateTable_Button_Click"></Button>
+                <Button Content="销毁M房间" Margin="10,0,0,0" Click="OnDestroyTable_Button_Click"></Button>
                 <Button Content="附加发牌配置" Margin="10,0,0,0" Click="OnAttachDealCfg_Button_Click"></Button>
-                <Button Content="附加房间配置" Margin="10,0,0,0" Click="OnAttachRoomCfg_Button_Click"></Button>
+                <Button Content="附加房间配置" Margin="10,0,0,0" Click="OnAttachTableCfg_Button_Click"></Button>
                 <Button Content="单个玩家" Margin="10,0,0,0" Click="OnSinglePlayer_Button_Click"></Button>
                 <CheckBox x:Name="CheckBoxAutoAction" VerticalAlignment="Center" Margin="10,0,0,0">自动</CheckBox>
-                <Button Content="解散房间" Margin="10,0,0,0" Click="OnDisbandRoom_Button_Click"></Button>
-                <Button Content="房间数" Margin="10,0,0,0" Click="OnRoomCount_Button_Click"></Button>
+                <Button Content="解散房间" Margin="10,0,0,0" Click="OnDisbandTable_Button_Click"></Button>
+                <Button Content="房间数" Margin="10,0,0,0" Click="OnTableCount_Button_Click"></Button>
                 <Button Content="玩家数" Margin="10,0,0,0" Click="OnUserCount_Button_Click"></Button>
                 <Button Content="异常数" Margin="10,0,0,0" Click="OnExceptionCount_Button_Click"></Button>
                 <Button Content="清零异常" Margin="10,0,0,0" Click="OnClearExceptionCount_Button_Click"></Button>

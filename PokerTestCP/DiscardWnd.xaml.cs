@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Windows;
 using System.Windows.Controls;
-using pokerface;
+using Xproto;
 
 namespace PokerTest
 {
@@ -36,7 +36,7 @@ namespace PokerTest
         public List<int> SelectedTiles = new List<int>();
         public List<int> HandTiles = new List<int>();
 
-        private pokerface.MsgCardHand prevCardHand;
+        private MsgCardHand prevCardHand;
 
         private int specialCardID;
         private List<MsgCardHand> discardAbleTips;
@@ -245,8 +245,8 @@ namespace PokerTest
             HandTiles.AddRange(SelectedTiles);
             SelectedTiles.Clear();
 
-            SelectedTiles.AddRange(current.cards);
-            foreach (var c in current.cards)
+            SelectedTiles.AddRange(current.Cards);
+            foreach (var c in current.Cards)
             {
                 HandTiles.Remove(c);
             }
@@ -329,7 +329,7 @@ namespace PokerTest
             }
         }
 
-        public static bool ShowDialog(List<int> tileDiscarded, pokerface.MsgCardHand prevCardHand, int specialCardID, TileStackWnd owner)
+        public static bool ShowDialog(List<int> tileDiscarded, MsgCardHand prevCardHand, int specialCardID, TileStackWnd owner)
         {
             var tiles2Discarded = owner.TilesHandList;
             tileDiscarded.Clear();
@@ -344,40 +344,40 @@ namespace PokerTest
 
             if (prevCardHand != null)
             {
-                var currents = AgariIndex.FindGreatThanCardHand(prevCardHand, tiles2Discarded,specialCardID);
-                if (null == currents || currents.Count == 0)
-                {
-                    MessageBox.Show("oh shit, a huge bug");
-                    throw new System.Exception("huge bug");
-                }
+                //var currents = AgariIndex.FindGreatThanCardHand(prevCardHand, tiles2Discarded,specialCardID);
+                //if (null == currents || currents.Count == 0)
+                //{
+                //    MessageBox.Show("oh shit, a huge bug");
+                //    throw new System.Exception("huge bug");
+                //}
 
-                if (currents.Count > 1)
-                {
-                    x.BtnExtra.Visibility = Visibility.Visible;
-                    x.BtnExtra.Content = "下一个提示";
-                }
+                //if (currents.Count > 1)
+                //{
+                //    x.BtnExtra.Visibility = Visibility.Visible;
+                //    x.BtnExtra.Content = "下一个提示";
+                //}
  
-                var current = currents[0];
-                x.SelectedTiles.AddRange(current.cards);
-                foreach(var c in current.cards)
-                {
-                    x.HandTiles.Remove(c);
-                }
+                //var current = currents[0];
+                //x.SelectedTiles.AddRange(current.cards);
+                //foreach(var c in current.cards)
+                //{
+                //    x.HandTiles.Remove(c);
+                //}
 
-                x.discardAbleTips = currents;
-                x.discardAbleTipsIndex = 0;
+                //x.discardAbleTips = currents;
+                //x.discardAbleTipsIndex = 0;
 
                 x.Hand2UI();
                 x.Selected2UI();
             }
             else
             {
-                var current = AgariIndex.SearchLongestDiscardCardHand(tiles2Discarded, specialCardID);
-                x.SelectedTiles.AddRange(current.cards);
-                foreach (var c in current.cards)
-                {
-                    x.HandTiles.Remove(c);
-                }
+                //var current = AgariIndex.SearchLongestDiscardCardHand(tiles2Discarded, specialCardID);
+                //x.SelectedTiles.AddRange(current.cards);
+                //foreach (var c in current.cards)
+                //{
+                //    x.HandTiles.Remove(c);
+                //}
 
                 x.Hand2UI();
                 x.Selected2UI();

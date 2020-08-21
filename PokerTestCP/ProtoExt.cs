@@ -1,65 +1,81 @@
 ﻿using System;
 using System.IO;
-using pokerface;
-using ProtoBuf;
+using Xproto;
+using Google.Protobuf;
 
 namespace PokerTest
 {
     public static class ProtoExt
     {
-        public static byte[] ToBytes<T>(this T proto)
+        public static byte[] ToBytes<T>(this T proto) where T: IMessage
         {
             if (proto == null)
                 return null;
 
             using (var ms = new MemoryStream())
             {
-                Serializer.Serialize(ms, proto);
+                proto.WriteTo(ms);
                 return ms.ToArray();
             }
         }
 
-        public static GameMessage ToMessage<T>(this T proto, int ops)
+        public static GameMessage ToMessage<T>(this T proto, int ops) where T : IMessage
         {
             return ToMessage(proto, ops, 0, 0);
         }
 
-        public static GameMessage ToMessage<T>(this T proto, int ops, long playerId)
+        public static GameMessage ToMessage<T>(this T proto, int ops, long playerId) where T : IMessage
         {
             return ToMessage(proto, ops, 0, playerId);
         }
 
-        public static GameMessage ToMessage<T>(this T proto, int ops, int serverid)
+        public static GameMessage ToMessage<T>(this T proto, int ops, int serverid) where T : IMessage
         {
             return ToMessage(proto, ops, serverid, 0);
         }
 
-        public static GameMessage ToMessage<T>(this T proto, int ops, int serverId, long playerId)
+        public static GameMessage ToMessage<T>(this T proto, int ops, int serverId, long playerId) where T : IMessage
         {
             var ret = new GameMessage
             {
-                Ops = ops,
-                Data = proto.ToBytes()
+                Code = ops,
+                Data = ByteString.CopyFrom(proto.ToBytes())
             };
-
 
             return ret;
         }
 
-        public static T ToProto<T>(this Stream stream)
+        public static T ToProto<T>(this Stream stream) where T : IMessage
         {
             if (stream == null) return default(T);
-            return Serializer.Deserialize<T>(stream);
+
+            var x = default(T);
+            x.MergeFrom(stream);
+
+            return x;
         }
 
-        public static T ToProto<T>(this byte[] data)
+        public static T ToProto<T>(this ByteString stream) where T : IMessage
+        {
+            if (stream == null) return default(T);
+
+            var x = default(T);
+            x.MergeFrom(stream);
+
+            return x;
+        }
+
+        public static T ToProto<T>(this byte[] data) where T : IMessage
         {
             if (data == null || data.Length == 0) return default(T);
             try
             {
                 using (var ms = new MemoryStream(data))
                 {
-                    return Serializer.Deserialize<T>(ms);
+                    var x = default(T);
+                    x.MergeFrom(ms);
+
+                    return x;
                 }
             }
             catch (Exception e)

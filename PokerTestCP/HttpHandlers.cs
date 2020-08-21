@@ -12,12 +12,12 @@ namespace PokerTest
     {
         //public const string HttpServerUrl = @"http://localhost:3001";
         public const string PathUploadCfgFile = @"/support/uploadCfgs";
-        public const string PathExportRoomOps = @"/support/exportRoomOps";
-        public const string PathExportRoomCfg = @"/support/exportRoomCfg";
-        public const string PathExportRoomSIDss = @"/support/exportRoomSIDs";
+        public const string PathExportTableOps = @"/support/exportTableOps";
+        public const string PathExportTableCfg = @"/support/exportTableCfg";
+        public const string PathExportTableSIDss = @"/support/exportTableSIDs";
 
         public const string PathAttachDealCfgFile = @"/support/attachDealCfg";
-        public const string PathAttachRoomCfgFile = @"/support/attachRoomCfg";
+        public const string PathAttachTableCfgFile = @"/support/attachTableCfg";
 
         public static async void SendFileContent(string filePath, MainWindow wnd)
         {
@@ -56,7 +56,7 @@ namespace PokerTest
             }
         }
 
-        public static async void SendFileContent2(string filePath, string roomNumber, string path, MainWindow wnd)
+        public static async void SendFileContent2(string filePath, string tableNumber, string path, MainWindow wnd)
         {
             try
             {
@@ -65,7 +65,7 @@ namespace PokerTest
                 {
 
                     // Add a new Request Message
-                    var url = $"{ProgramConfig.ServerUrl}{path}?account={ProgramConfig.Account}&password={ProgramConfig.Password}&roomNumber={roomNumber}";
+                    var url = $"{ProgramConfig.ServerUrl}{path}?account={ProgramConfig.Account}&password={ProgramConfig.Password}&tableNumber={tableNumber}";
                     HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Post, url)
                     {
                         Content = new StringContent(content, Encoding.UTF8, "application/text")
@@ -93,14 +93,14 @@ namespace PokerTest
             }
         }
 
-        public static async Task<byte[]> ExportRoomOps(string xID, Window owner)
+        public static async Task<byte[]> ExportTableOps(string xID, Window owner)
         {
             try
             {
                 using (var httpClient = new HttpClient())
                 {
                     // Add a new Request Message
-                    var url = $"{ProgramConfig.ServerUrl}{PathExportRoomOps}?{xID}&account={ProgramConfig.Account}&password={ProgramConfig.Password}";
+                    var url = $"{ProgramConfig.ServerUrl}{PathExportTableOps}?{xID}&account={ProgramConfig.Account}&password={ProgramConfig.Password}";
                     HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
 
                     var response = await httpClient.SendAsync(requestMessage);
@@ -126,14 +126,14 @@ namespace PokerTest
             return null;
         }
 
-        public static async Task<byte[]> ExportRoomCfg(string roomConfigId, Window owner)
+        public static async Task<byte[]> ExportTableCfg(string tableConfigId, Window owner)
         {
             try
             {
                 using (var httpClient = new HttpClient())
                 {
                     // Add a new Request Message
-                    var url = $"{ProgramConfig.ServerUrl}{PathExportRoomCfg}?roomConfigID={roomConfigId}&account={ProgramConfig.Account}&password={ProgramConfig.Password}";
+                    var url = $"{ProgramConfig.ServerUrl}{PathExportTableCfg}?tableConfigID={tableConfigId}&account={ProgramConfig.Account}&password={ProgramConfig.Password}";
                     HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
 
                     var response = await httpClient.SendAsync(requestMessage);
@@ -203,14 +203,14 @@ namespace PokerTest
                 MessageBox.Show(ex.Message);
             }
         }
-        public static async Task<string> ExportRoomShareIDs(string xID, Window owner)
+        public static async Task<string> ExportTableShareIDs(string xID, Window owner)
         {
             try
             {
                 using (var httpClient = new HttpClient())
                 {
                     // Add a new Request Message
-                    var url = $"{ProgramConfig.ServerUrl}{PathExportRoomSIDss}?{xID}&account={ProgramConfig.Account}&password={ProgramConfig.Password}";
+                    var url = $"{ProgramConfig.ServerUrl}{PathExportTableSIDss}?{xID}&account={ProgramConfig.Account}&password={ProgramConfig.Password}";
                     HttpRequestMessage requestMessage = new HttpRequestMessage(HttpMethod.Get, url);
 
                     var response = await httpClient.SendAsync(requestMessage);

@@ -10,14 +10,14 @@ namespace PokerTest
         public InputWnd()
         {
             IsNeedUserId = true;
-            IsNeedRoomId = true;
+            IsNeedTableId = true;
             InitializeComponent();
 
-            TextBoxRoomId.Text = ProgramConfig.RecentUsedRoomNumber;
+            TextBoxTableId.Text = ProgramConfig.RecentUsedTableNumber;
         }
 
         private bool _isNeedUserId;
-        private bool _isNeedRoomId;
+        private bool _isNeedTableId;
 
         public bool IsNeedUserId
         {
@@ -32,15 +32,15 @@ namespace PokerTest
             }
         }
 
-        public bool IsNeedRoomId
+        public bool IsNeedTableId
         {
-            get { return _isNeedRoomId; }
+            get { return _isNeedTableId; }
             set
             {
-                _isNeedRoomId = value;
-                if (!_isNeedRoomId)
+                _isNeedTableId = value;
+                if (!_isNeedTableId)
                 {
-                    TextBoxRoomId.IsEnabled = false;
+                    TextBoxTableId.IsEnabled = false;
                 }
             }
         }
@@ -52,15 +52,15 @@ namespace PokerTest
                 MessageBox.Show("please input a valid userID");
                 return;
             }
-            if (IsNeedRoomId && string.IsNullOrWhiteSpace(TextBoxRoomId.Text))
+            if (IsNeedTableId && string.IsNullOrWhiteSpace(TextBoxTableId.Text))
             {
-                MessageBox.Show("please input a valid roomID");
+                MessageBox.Show("please input a valid tableID");
                 return;
             }
 
-            if (IsNeedRoomId && !string.IsNullOrWhiteSpace(TextBoxRoomId.Text))
+            if (IsNeedTableId && !string.IsNullOrWhiteSpace(TextBoxTableId.Text))
             {
-                ProgramConfig.RecentUsedRoomNumber = TextBoxRoomId.Text;
+                ProgramConfig.RecentUsedTableNumber = TextBoxTableId.Text;
             }
             
             DialogResult = true;

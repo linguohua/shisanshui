@@ -6,7 +6,8 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using pokerface;
+using Xproto;
+
 
 namespace PokerTest
 {
@@ -43,9 +44,9 @@ namespace PokerTest
         public bool IsBandker => BankerChairId == MyPlayer.ChairId;
 
         public MainWindow MyOwner { get; private set; }
-        public MsgAllowPlayerAction CurrentAllowPlayerAction { get; private set; }
+        public MsgAllowAction CurrentAllowPlayerAction { get; private set; }
 
-        public MsgAllowPlayerReAction CurrentAllowPlayerReAction { get; private set; }
+        public MsgAllowReAction CurrentAllowPlayerReAction { get; private set; }
 
         public IEnumerator<Button> GetEnumerator()
         {
@@ -193,7 +194,7 @@ namespace PokerTest
                 //    }
                 //    OnTakeActionKong2TripletTile(tile1);
                 //    break;
-                case (int)ActionType.enumActionType_DISCARD:
+                case (int)ActionType.EnumActionTypeDiscard:
                     completed = doCommonDiscardClick();
                     break;
             }
@@ -203,31 +204,31 @@ namespace PokerTest
 
         private bool doCommonDiscardClick()
         {
-            pokerface.MsgCardHand prevCardHand = null;
-            int specialCardID = -1;
-            if (CurrentAllowPlayerReAction != null)
-            {
-                prevCardHand = CurrentAllowPlayerReAction.prevActionHand;
-                if (CurrentAllowPlayerReAction.timeoutInSeconds > 255)
-                {
-                    specialCardID = (int)pokerface.CardID.R2H;
-                }
-            }
-            else  if (CurrentAllowPlayerAction != null)
-            {
-                if (CurrentAllowPlayerAction.timeoutInSeconds > 255)
-                {
-                    specialCardID = (int)pokerface.CardID.R3H;
-                }
-            }
+            //MsgCardHand prevCardHand = null;
+            //int specialCardID = -1;
+            //if (CurrentAllowPlayerReAction != null)
+            //{
+            //    prevCardHand = CurrentAllowPlayerReAction.PrevActionHand;
+            //    if (CurrentAllowPlayerReAction.timeoutInSeconds > 255)
+            //    {
+            //        specialCardID = (int)pokerface.CardID.R2H;
+            //    }
+            //}
+            //else  if (CurrentAllowPlayerAction != null)
+            //{
+            //    if (CurrentAllowPlayerAction.timeoutInSeconds > 255)
+            //    {
+            //        specialCardID = (int)pokerface.CardID.R3H;
+            //    }
+            //}
 
-            var discardedList = new List<int>();
-            if (!DiscardWnd.ShowDialog(discardedList, prevCardHand, specialCardID, this))
-            {
-                return false;
-            }
+            //var discardedList = new List<int>();
+            //if (!DiscardWnd.ShowDialog(discardedList, prevCardHand, specialCardID, this))
+            //{
+            //    return false;
+            //}
 
-            OnTakeActionDiscardTile(discardedList);
+            //OnTakeActionDiscardTile(discardedList);
 
             return true;
         }
@@ -268,25 +269,25 @@ namespace PokerTest
             //enumActionType_WIN_FirstReadyHand
             //enumActionType_SKIP
             //throw new NotImplementedException();
-            var button = sender as Button;
-            if (button == null)
-            {
-                return;
-            }
+            //var button = sender as Button;
+            //if (button == null)
+            //{
+            //    return;
+            //}
 
-            var action = (int)button.Tag;
-            switch (action)
-            {
-                //case (int)ActionType.enumActionType_FirstReadyHand:
-                //    OnNonBankerTakeActionFirstHand(0);
-                //    break;
-                case (int)ActionType.enumActionType_SKIP:
-                    OnTakeActionSkip();
-                    break;
-                //case (int)ActionType.enumActionType_AccumulateWin:
-                //    OnTakeActionAccumulativeWin();
-                //    break;
-            }
+            //var action = (int)button.Tag;
+            //switch (action)
+            //{
+            //    //case (int)ActionType.enumActionType_FirstReadyHand:
+            //    //    OnNonBankerTakeActionFirstHand(0);
+            //    //    break;
+            //    case (int)ActionType.enumActionType_SKIP:
+            //        OnTakeActionSkip();
+            //        break;
+            //    //case (int)ActionType.enumActionType_AccumulateWin:
+            //    //    OnTakeActionAccumulativeWin();
+            //    //    break;
+            //}
 
             HideAllActionButtons();
         }
@@ -313,7 +314,7 @@ namespace PokerTest
                 //    }
                 //    OnNonBankerTakeActionFirstHand(1);
                 //    break;
-                case (int)ActionType.enumActionType_DISCARD:
+                case (int)ActionType.EnumActionTypeDiscard:
                     // var tile1 = -1;
 
                     //if (IsBandkerReadyHand || expectedReadyHandFlags != 0)
@@ -486,13 +487,13 @@ namespace PokerTest
 
         private void OnTakeActionSkip()
         {
-            var msgAction = new MsgPlayerAction
-            {
-                qaIndex = CurrentAllowPlayerReAction.qaIndex,
-                action = (int)ActionType.enumActionType_SKIP,
-            };
+            //var msgAction = new MsgPlayerAction
+            //{
+            //    qaIndex = CurrentAllowPlayerReAction.qaIndex,
+            //    action = (int)ActionType.enumActionType_SKIP,
+            //};
 
-            MyPlayer.SendMessage((int)MessageCode.OPAction, msgAction.ToBytes());
+            //MyPlayer.SendMessage((int)MessageCode.OPAction, msgAction.ToBytes());
 
             //MyOwner.AppendActionLog($"[skip]({MyPlayer.Name}),({CurrentAllowPlayerReAction.qaIndex})");
         }
@@ -529,22 +530,22 @@ namespace PokerTest
             var qaIndex2 = 0;
             if (CurrentAllowPlayerAction != null)
             {
-                qaIndex2 = CurrentAllowPlayerAction.qaIndex;
+                qaIndex2 = CurrentAllowPlayerAction.QaIndex;
             }
             else
             {
-                qaIndex2 = CurrentAllowPlayerReAction.qaIndex;
+                qaIndex2 = CurrentAllowPlayerReAction.QaIndex;
             }
 
             var msgAction = new MsgPlayerAction
             {
-                qaIndex = qaIndex2,
-                action = (int)ActionType.enumActionType_DISCARD,
+                QaIndex = qaIndex2,
+                Action = (int)ActionType.EnumActionTypeDiscard,
                 
             };
 
-            msgAction.cards.AddRange(tiles2Discarded);
-            MyPlayer.SendMessage((int)MessageCode.OPAction, msgAction.ToBytes());
+            msgAction.Cards.AddRange(tiles2Discarded);
+            MyPlayer.SendMessage((int)MessageCode.Opaction, msgAction.ToBytes());
             //MyOwner.AppendActionLog($"[discard]({MyPlayer.Name}):{MyOwner.TileId2Name(tile2Discarded)},({CurrentAllowPlayerAction.qaIndex})");
         }
 
@@ -582,9 +583,9 @@ namespace PokerTest
             Reset2New();
 
             MsgPlayerCardList myPlayList = null;
-            foreach (var ptl in msg.playerCardLists)
+            foreach (var ptl in msg.PlayerCardLists)
             {
-                if (ptl.chairID == MyPlayer.ChairId)
+                if (ptl.ChairID == MyPlayer.ChairId)
                 {
                     myPlayList = ptl;
                     break;
@@ -594,7 +595,7 @@ namespace PokerTest
             if (myPlayList == null)
                 return;
 
-            if (myPlayList.cardsOnHand.Count < 1)
+            if (myPlayList.CardsOnHand.Count < 1)
                 return;
 
             //// 庄家标记
@@ -620,7 +621,7 @@ namespace PokerTest
             //}
 
             // 手牌列表
-            TilesHandList.AddRange(myPlayList.cardsOnHand);
+            TilesHandList.AddRange(myPlayList.CardsOnHand);
             Hand2Buttons();
 
             //// 花牌列表
@@ -720,13 +721,13 @@ namespace PokerTest
 
         public Player MyPlayer { get; set; }
 
-        public void OnAllowedReActions(MsgAllowPlayerReAction msg)
+        public void OnAllowedReActions(MsgAllowReAction msg)
         {
             HideAllActionButtons();
             CurrentAllowPlayerReAction = msg;
             CurrentAllowPlayerAction = null;
 
-            var actions = msg.allowedActions;
+            var actions = msg.AllowedActions;
 
 
             //if ((actions & (int)ActionType.enumActionType_KONG_Exposed) != 0)
@@ -736,11 +737,11 @@ namespace PokerTest
             //    BtnAction1.Tag = (int)ActionType.enumActionType_KONG_Exposed;
             //}
 
-            if ((actions & (int)ActionType.enumActionType_DISCARD) != 0)
+            if ((actions & (int)ActionType.EnumActionTypeDiscard) != 0)
             {
                 BtnAction2.Visibility = Visibility.Visible;
                 BtnAction2.Content = "出牌";
-                BtnAction2.Tag = (int)ActionType.enumActionType_DISCARD;
+                BtnAction2.Tag = (int)ActionType.EnumActionTypeDiscard;
             }
 
             //if ((actions & (int)ActionType.enumActionType_PONG) != 0)
@@ -750,12 +751,12 @@ namespace PokerTest
             //    BtnAction3.Tag = (int)ActionType.enumActionType_PONG;
             //}
 
-            if ((actions & (int)ActionType.enumActionType_SKIP) != 0)
-            {
-                BtnAction4.Visibility = Visibility.Visible;
-                BtnAction4.Content = "过";
-                BtnAction4.Tag = (int)ActionType.enumActionType_SKIP;
-            }
+            //if ((actions & (int)ActionType.enumActionType_SKIP) != 0)
+            //{
+            //    BtnAction4.Visibility = Visibility.Visible;
+            //    BtnAction4.Content = "过";
+            //    BtnAction4.Tag = (int)ActionType.enumActionType_SKIP;
+            //}
 
             //if ((actions & (int)ActionType.enumActionType_WIN_Chuck) != 0)
             //{
@@ -771,22 +772,22 @@ namespace PokerTest
                 //{
                 //    OnTakeActionSkip();
                 //}
-                if ((actions & (int)ActionType.enumActionType_DISCARD) != 0)
+                if ((actions & (int)ActionType.EnumActionTypeDiscard) != 0)
                 {
                     int specialCardID = -1;
-                    if (CurrentAllowPlayerReAction.timeoutInSeconds > 255)
+                    if (CurrentAllowPlayerReAction.TimeoutInSeconds > 255)
                     {
-                        specialCardID = (int)pokerface.CardID.R3H;
+                        specialCardID = (int)CardID.R3H;
                     }
 
-                    var currents = AgariIndex.FindGreatThanCardHand(CurrentAllowPlayerReAction.prevActionHand, TilesHandList, specialCardID);
-                    if (null == currents || currents.Count == 0)
-                    {
-                        MessageBox.Show("auto discard:oh shit, a huge bug");
-                        throw new System.Exception("huge bug");
-                    }
+                    //var currents = AgariIndex.FindGreatThanCardHand(CurrentAllowPlayerReAction.PrevActionHand, TilesHandList, specialCardID);
+                    //if (null == currents || currents.Count == 0)
+                    //{
+                    //    MessageBox.Show("auto discard:oh shit, a huge bug");
+                    //    throw new System.Exception("huge bug");
+                    //}
 
-                    OnTakeActionDiscardTile(currents[0].cards);
+                    //OnTakeActionDiscardTile(currents[0].cards);
 
                     HideAllActionButtons();
                 }
@@ -794,19 +795,19 @@ namespace PokerTest
             }
         }
 
-        public void OnAllowedActions(MsgAllowPlayerAction msg)
+        public void OnAllowedActions(MsgAllowAction msg)
         {
             HideAllActionButtons();
             CurrentAllowPlayerAction = msg;
             CurrentAllowPlayerReAction = null;
 
-            var actions = msg.allowedActions;
+            var actions = msg.AllowedActions;
 
-            if ((actions & (int)ActionType.enumActionType_DISCARD) != 0)
+            if ((actions & (int)ActionType.EnumActionTypeDiscard) != 0)
             {
                 BtnAction5.Visibility = Visibility.Visible;
                 BtnAction5.Content = "出牌";
-                BtnAction5.Tag = (int)ActionType.enumActionType_DISCARD;
+                BtnAction5.Tag = (int)ActionType.EnumActionTypeDiscard;
 
                 if (MyOwner.CheckBoxAutoAction.IsChecked == false && IsAutoX)
                 {
@@ -830,19 +831,19 @@ namespace PokerTest
                     //}
 
                     int specialCardID = -1;
-                    if (CurrentAllowPlayerAction.timeoutInSeconds > 255)
+                    if (CurrentAllowPlayerAction.TimeoutInSeconds > 255)
                     {
-                        specialCardID = (int)pokerface.CardID.R3H;
+                        specialCardID = (int)CardID.R3H;
                     }
 
-                    var current = AgariIndex.SearchLongestDiscardCardHand(TilesHandList, specialCardID);
-                    if (current == null)
-                    {
-                        MessageBox.Show("auto discard: BIG BIG WORLD");
-                        throw new System.Exception("Huge bug, darling");
-                    }
+                    //var current = AgariIndex.SearchLongestDiscardCardHand(TilesHandList, specialCardID);
+                    //if (current == null)
+                    //{
+                    //    MessageBox.Show("auto discard: BIG BIG WORLD");
+                    //    throw new System.Exception("Huge bug, darling");
+                    //}
 
-                    OnTakeActionDiscardTile(current.cards);
+                    //OnTakeActionDiscardTile(current.cards);
 
                     HideAllActionButtons();
                 }
@@ -861,10 +862,10 @@ namespace PokerTest
         {
 
             // 出牌
-            if (msg.action == (int)ActionType.enumActionType_DISCARD)
+            if (msg.Action == (int)ActionType.EnumActionTypeDiscard)
             {
-                var discardedHand = msg.actionHand;
-                foreach(var d in discardedHand.cards)
+                var discardedHand = msg.ActionHand;
+                foreach(var d in discardedHand.Cards)
                 {
                     TilesHandList.Remove(d);
                 }
@@ -895,7 +896,7 @@ namespace PokerTest
                 }
 
                 var j = 0;
-                foreach (var card in meld.cards)
+                foreach (var card in meld.Cards)
                 {
                     var btn = ButtonsSp2[i];
                     btn.Content = new Image() { Source = ImagesSrc[card] };
@@ -905,7 +906,7 @@ namespace PokerTest
                     if (j == 0)
                     {
                         //SetContributor(ButtonsSp1[i + 1], meld.contributor);
-                        SetMeldFlag(ButtonsSp1[i], meld.cardHandType);
+                        SetMeldFlag(ButtonsSp1[i], meld.CardHandType);
                     }
                     j++;
                     i++;
@@ -921,36 +922,36 @@ namespace PokerTest
 
         private void SetMeldFlag(Button button, int meldMeldType)
         {
-            var ct =( pokerface.CardHandType)meldMeldType;
+            var ct =(CardHandType)meldMeldType;
             switch(ct)
             {
-                case CardHandType.Bomb:
-                    button.Content = "炸弹";
-                    break;
+                //case CardHandType.Bomb:
+                //    button.Content = "炸弹";
+                //    break;
                 case CardHandType.Flush:
                     button.Content = "顺子";
                     break;
-                case CardHandType.Pair:
-                    button.Content = "对子";
-                    break;
-                case CardHandType.Pair2X:
-                    button.Content = "连对";
-                    break;
-                case CardHandType.Single:
-                    button.Content = "单";
-                    break;
-                case CardHandType.Triplet:
-                    button.Content = "三张";
-                    break;
-                case CardHandType.Triplet2X:
-                    button.Content = "飞机";
-                    break;
-                case CardHandType.Triplet2X2Pair:
-                    button.Content = "飞机+";
-                    break;
-                case CardHandType.TripletPair:
-                    button.Content = "三+2";
-                    break;
+                //case CardHandType.Pair:
+                //    button.Content = "对子";
+                //    break;
+                //case CardHandType.Pair2X:
+                //    button.Content = "连对";
+                //    break;
+                //case CardHandType.Single:
+                //    button.Content = "单";
+                //    break;
+                //case CardHandType.Triplet:
+                //    button.Content = "三张";
+                //    break;
+                //case CardHandType.Triplet2X:
+                //    button.Content = "飞机";
+                //    break;
+                //case CardHandType.Triplet2X2Pair:
+                //    button.Content = "飞机+";
+                //    break;
+                //case CardHandType.TripletPair:
+                //    button.Content = "三+2";
+                //    break;
             }
 
             //if (meldMeldType == (int)MeldType.enumMeldTypeTriplet2Kong)
@@ -1009,33 +1010,33 @@ namespace PokerTest
             {
                 MyOwner.IsPlaying = false;
                 MyOwner.AppendLog("[end]\r\n");
-                var handoverType = msg.endType;
+                var handoverType = msg.EndType;
                 switch (handoverType)
                 {
-                    case (int)HandOverType.enumHandOverType_None:
+                    case (int)HandOverType.EnumHandOverTypeNone:
                         MyOwner.AppendLog("流局\r\n");
                         break;
-                    case (int)HandOverType.enumHandOverType_Win_SelfDrawn:
+                    case (int)HandOverType.EnumHandOverTypeWin:
                         MyOwner.AppendLog("自摸胡牌\r\n");
                         break;
-                    case (int)HandOverType.enumHandOverType_Win_Chuck:
+                    case (int)HandOverType.EnumHandOverTypeLoss:
                         MyOwner.AppendLog("放铳胡牌\r\n");
                         break;
                 }
             }
 
-            var handScore = msg.scores;
+            var handScore = msg.Scores;
             if (handScore == null)
             {
                 return;
             }
 
-            var myScore = handScore.playerScores.FirstOrDefault(playerScore => playerScore.targetChairID == MyPlayer.ChairId);
+            var myScore = handScore.PlayerScores.FirstOrDefault(playerScore => playerScore.TargetChairID == MyPlayer.ChairId);
             if (myScore == null)
                 return;
 
 
-            TbScore.Text = myScore.score.ToString();
+            TbScore.Text = myScore.TotalScore.ToString();
 
             if (MyOwner.IsFirstPlayer(MyPlayer))
             {
@@ -1049,95 +1050,95 @@ namespace PokerTest
             var sb = new StringBuilder();
 
             // 结束类型
-            sb.AppendLine($"{Enum2StrHelper.EndType2String(msg.endType)}");
+            sb.AppendLine($"{Enum2StrHelper.EndType2String(msg.EndType)}");
 
-            var handScore = msg.scores;
+            var handScore = msg.Scores;
             // 每个玩家的得分和赢牌类型
-            foreach (var playerScore in handScore.playerScores)
+            foreach (var playerScore in handScore.PlayerScores)
             {
-                sb.Append(Enum2StrHelper.ChairId2Name(playerScore.targetChairID));
+                sb.Append(Enum2StrHelper.ChairId2Name(playerScore.TargetChairID));
                 sb.Append(":");
-                sb.Append(playerScore.score);
-                if (playerScore.winType != 0)
-                {
-                    sb.Append(",");
-                    sb.Append(Enum2StrHelper.WinType2String(playerScore.winType));
-                }
+                sb.Append(playerScore.TotalScore);
+                //if (playerScore.TotalScore != 0)
+                //{
+                //    sb.Append(",");
+                //    sb.Append(Enum2StrHelper.WinType2String(playerScore.winType));
+                //}
 
                 sb.AppendLine();
             }
 
             // 每个玩家得分详细信息
             sb.AppendLine("------------------Details:---------------------");
-            foreach (var playerScore in handScore.playerScores)
-            {
-                sb.AppendLine($"名字：{Enum2StrHelper.ChairId2Name(playerScore.targetChairID)}");
-                sb.AppendLine($"得分：{playerScore.score}");
-                sb.AppendLine($"得分类型：{Enum2StrHelper.WinType2String(playerScore.winType)}");
-                sb.AppendLine($"墩子分：{playerScore.specialScore}");
+            //foreach (var playerScore in handScore.playerScores)
+            //{
+            //    sb.AppendLine($"名字：{Enum2StrHelper.ChairId2Name(playerScore.targetChairID)}");
+            //    sb.AppendLine($"得分：{playerScore.score}");
+            //    sb.AppendLine($"得分类型：{Enum2StrHelper.WinType2String(playerScore.winType)}");
+            //    sb.AppendLine($"墩子分：{playerScore.specialScore}");
 
-                if (playerScore.winType != (int)HandOverType.enumHandOverType_None
-                    && playerScore.winType != (int)HandOverType.enumHandOverType_Chucker)
-                {
-                    if (playerScore.greatWin != null)
-                    {
-                        var greatWin = playerScore.greatWin;
-                        sb.AppendLine($"胡牌类型：大胡");
-                        sb.AppendLine($"辣子数：{greatWin.greatWinPoints}");
-                        sb.AppendLine($"包含辣子：{Enum2StrHelper.GreatWinType2String(greatWin.greatWinType)}");
-                        sb.AppendLine($"限制后辣子数：{greatWin.trimGreatWinPoints}");
-                        sb.AppendLine($"应得分数：{greatWin.baseWinScore}");
-                    }
-                    else
-                    {
-                        var miniWin = playerScore.miniWin;
-                        sb.AppendLine($"胡牌类型：小胡");
-                        sb.AppendLine($"倍数：{miniWin.miniMultiple}");
-                        sb.AppendLine($"包含翻倍：{Enum2StrHelper.MiniWinType2String(miniWin.miniWinType)}");
-                        sb.AppendLine($"花分：{miniWin.miniWinFlowerScore}");
-                        sb.AppendLine($"底分：{miniWin.miniWinBasicScore}");
-                        sb.AppendLine($"限制后分数：{miniWin.miniWinTrimScore}");
+            //    if (playerScore.winType != (int)HandOverType.enumHandOverType_None
+            //        && playerScore.winType != (int)HandOverType.enumHandOverType_Chucker)
+            //    {
+            //        if (playerScore.greatWin != null)
+            //        {
+            //            var greatWin = playerScore.greatWin;
+            //            sb.AppendLine($"胡牌类型：大胡");
+            //            sb.AppendLine($"辣子数：{greatWin.greatWinPoints}");
+            //            sb.AppendLine($"包含辣子：{Enum2StrHelper.GreatWinType2String(greatWin.greatWinType)}");
+            //            sb.AppendLine($"限制后辣子数：{greatWin.trimGreatWinPoints}");
+            //            sb.AppendLine($"应得分数：{greatWin.baseWinScore}");
+            //        }
+            //        else
+            //        {
+            //            var miniWin = playerScore.miniWin;
+            //            sb.AppendLine($"胡牌类型：小胡");
+            //            sb.AppendLine($"倍数：{miniWin.miniMultiple}");
+            //            sb.AppendLine($"包含翻倍：{Enum2StrHelper.MiniWinType2String(miniWin.miniWinType)}");
+            //            sb.AppendLine($"花分：{miniWin.miniWinFlowerScore}");
+            //            sb.AppendLine($"底分：{miniWin.miniWinBasicScore}");
+            //            sb.AppendLine($"限制后分数：{miniWin.miniWinTrimScore}");
 
-                        sb.AppendLine($"连庄得失分：{miniWin.continuousBankerExtra}");
-                    }
-                }
+            //            sb.AppendLine($"连庄得失分：{miniWin.continuousBankerExtra}");
+            //        }
+            //    }
 
-                // 包牌
-                sb.AppendLine($"包牌得失分：{playerScore.fakeWinScore}");
-                if (playerScore.fakeList.Count > 0)
-                {
-                    sb.Append("包牌关系：");
-                    foreach (var chairId in playerScore.fakeList)
-                    {
-                        sb.Append(Enum2StrHelper.ChairId2Name(chairId));
-                        sb.Append(",");
-                    }
-                    sb.AppendLine();
-                }
+            //    // 包牌
+            //    sb.AppendLine($"包牌得失分：{playerScore.fakeWinScore}");
+            //    if (playerScore.fakeList.Count > 0)
+            //    {
+            //        sb.Append("包牌关系：");
+            //        foreach (var chairId in playerScore.fakeList)
+            //        {
+            //            sb.Append(Enum2StrHelper.ChairId2Name(chairId));
+            //            sb.Append(",");
+            //        }
+            //        sb.AppendLine();
+            //    }
 
-                sb.AppendLine();
-            }
+                //sb.AppendLine();
+            //}
 
             return sb.ToString();
         }
 
-        public void OnEnterRoom(MsgEnterRoomResult msg)
+        public void OnEnterTable(MsgEnterTableResult msg)
         {
-            if (msg.status != (int)EnterRoomStatus.Success)
+            if (msg.Status != (int)EnterTableStatus.Success)
             {
-                var x = msg.status;
-                MessageBox.Show($"enter room failed:{x.ToString()}");
+                var x = msg.Status;
+                MessageBox.Show($"enter table failed:{x.ToString()}");
                 return;
             }
 
-            MyPlayer.SendMessage((int)MessageCode.OPPlayerReady, null);
+            MyPlayer.SendMessage((int)MessageCode.OpplayerReady, null);
         }
 
         public void OnDisbandNotify(MsgDisbandNotify msg)
         {
-            if (msg.waits != null)
+            if (msg.Waits != null)
             {
-                var me = msg.waits.Any((x) => x == MyPlayer.ChairId);
+                var me = msg.Waits.Any((x) => x == MyPlayer.ChairId);
                 if (me)
                 {
                     var result = MessageBox.Show(MyOwner, "有人请求解散房间，是否同意？", "解散房间询问", MessageBoxButton.YesNo);
@@ -1145,30 +1146,30 @@ namespace PokerTest
 
 
                     var msgAnswer = new MsgDisbandAnswer();
-                    msgAnswer.agree = agree;
+                    msgAnswer.Agree = agree;
 
-                    MyPlayer.SendMessage((int)MessageCode.OPDisbandAnswer, msgAnswer.ToBytes());
+                    MyPlayer.SendMessage((int)MessageCode.OpdisbandAnswer, msgAnswer.ToBytes());
                 }
             }
         }
 
         public void SendReady2Server()
         {
-            MyPlayer.SendMessage((int)MessageCode.OPPlayerReady, null);
+            MyPlayer.SendMessage((int)MessageCode.OpplayerReady, null);
         }
 
-        public void OnShowRoomTips(MsgRoomShowTips msg)
+        public void OnShowTableTips(MsgTableShowTips msg)
         {
-            MyOwner.AppendLog($"{MyPlayer.UserId}:  {msg.tips}\r\n");
+            MyOwner.AppendLog($"{MyPlayer.UserId}:  {msg.Tips}\r\n");
 
-            if (string.IsNullOrWhiteSpace(msg.tips))
+            if (string.IsNullOrWhiteSpace(msg.Tips))
             {
                 return;
             }
 
             if (MyOwner.CheckBoxAutoAction.IsChecked == true)
             {
-                DoAutoAction(msg.tips);
+                DoAutoAction(msg.Tips);
             }
         }
 

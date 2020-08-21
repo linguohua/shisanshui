@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Windows;
-using pokerface;
+using Xproto;
 using WebSocketSharp;
 
 namespace PokerTest
@@ -72,57 +72,57 @@ namespace PokerTest
 
         private static void OnServerMessage(Player player, GameMessage gmsg)
         {
-            switch (gmsg.Ops)
+            switch (gmsg.Code)
             {
-                case (int)MessageCode.OPActionAllowed:
+                case (int)MessageCode.OpactionAllowed:
                     {
-                        var msg = gmsg.Data.ToProto<MsgAllowPlayerAction>();
+                        var msg = gmsg.Data.ToProto<MsgAllowAction>();
                         OnServerMessageActionAllowed(player, msg);
                     }
                     break;
-                case (int)MessageCode.OPReActionAllowed:
+                case (int)MessageCode.OpreActionAllowed:
                     {
-                        var msg = gmsg.Data.ToProto<MsgAllowPlayerReAction>();
+                        var msg = gmsg.Data.ToProto<MsgAllowReAction>();
                         OnServerMessageReActionAllowed(player, msg);
                     }
                     break;
-                case (int)MessageCode.OPActionResultNotify:
+                case (int)MessageCode.OpactionResultNotify:
                     {
                         var msg = gmsg.Data.ToProto<MsgActionResultNotify>();
                         OnServerMessageActionResultNotify(player, msg);
                     }
                     break;
-                case (int)MessageCode.OPDeal:
+                case (int)MessageCode.Opdeal:
                     {
                         var msg = gmsg.Data.ToProto<MsgDeal>();
                         OnServerMessageDeal(player, msg);
                     }
                     break;
-                case (int)MessageCode.OPHandOver:
+                case (int)MessageCode.OphandOver:
                     {
                         var msg = gmsg.Data.ToProto<MsgHandOver>();
                         OnServerMessageHandScore(player, msg);
                     }
                     break;
-                case (int)MessageCode.OPPlayerEnterRoom:
+                case (int)MessageCode.OpplayerEnterTable:
                     {
-                        var msg = gmsg.Data.ToProto<MsgEnterRoomResult>();
-                        OnServerMessageEnterRoom(player, msg);
+                        var msg = gmsg.Data.ToProto<MsgEnterTableResult>();
+                        OnServerMessageEnterTable(player, msg);
                     }
                     break;
-                case (int)MessageCode.OPRoomUpdate:
+                case (int)MessageCode.OptableUpdate:
                     {
-                        var msg = gmsg.Data.ToProto<MsgRoomInfo>();
-                        OnServerMessageRoomUpdate(player, msg);
+                        var msg = gmsg.Data.ToProto<MsgTableInfo>();
+                        OnServerMessageTableUpdate(player, msg);
                     }
                     break;
-                case (int)MessageCode.OPRoomShowTips:
+                case (int)MessageCode.OptableShowTips:
                     {
-                        var msg = gmsg.Data.ToProto<MsgRoomShowTips>();
-                        OnServerMessageRoomShowTips(player, msg);
+                        var msg = gmsg.Data.ToProto<MsgTableShowTips>();
+                        OnServerMessageTableShowTips(player, msg);
                     }
                     break;
-                case (int)MessageCode.OPDisbandNotify:
+                case (int)MessageCode.OpdisbandNotify:
                     {
                         var msg = gmsg.Data.ToProto<MsgDisbandNotify>();
                         OnServerDisbandNotify(player, msg);
@@ -136,27 +136,27 @@ namespace PokerTest
             player.MyWnd.OnDisbandNotify(msg);
         }
 
-        private static void OnServerMessageRoomShowTips(Player player, MsgRoomShowTips msg)
+        private static void OnServerMessageTableShowTips(Player player, MsgTableShowTips msg)
         {
             // 获得服务器分配的chair id
-            player.MyWnd.OnShowRoomTips(msg);
+            player.MyWnd.OnShowTableTips(msg);
         }
 
-        private static void OnServerMessageRoomUpdate(Player player, MsgRoomInfo msg)
+        private static void OnServerMessageTableUpdate(Player player, MsgTableInfo msg)
         {
             // 获得服务器分配的chair id
-            foreach (var playerInfo in msg.players)
+            foreach (var playerInfo in msg.Players)
             {
-                if (playerInfo.userID == player.UserId)
+                if (playerInfo.UserID == player.UserId)
                 {
-                    player.ChairId = playerInfo.chairID;
+                    player.ChairId = playerInfo.ChairID;
                 }
             }
         }
 
-        private static void OnServerMessageEnterRoom(Player player, MsgEnterRoomResult msg)
+        private static void OnServerMessageEnterTable(Player player, MsgEnterTableResult msg)
         {
-            player.MyWnd.OnEnterRoom(msg);
+            player.MyWnd.OnEnterTable(msg);
         }
 
         private static void OnServerMessageHandScore(Player player, MsgHandOver msg)
@@ -167,7 +167,7 @@ namespace PokerTest
         private static void OnServerMessageActionResultNotify(Player player, MsgActionResultNotify msg)
         {
             //throw new NotImplementedException();
-            if (msg.targetChairID == player.ChairId)
+            if (msg.TargetChairID == player.ChairId)
             {
                 // my result
                 player.MyWnd.OnActionResult(msg);
@@ -179,19 +179,19 @@ namespace PokerTest
             }
         }
 
-        private static void OnServerMessageActionAllowed(Player player, MsgAllowPlayerAction msg)
+        private static void OnServerMessageActionAllowed(Player player, MsgAllowAction msg)
         {
             //throw new NotImplementedException();
-            if (msg.actionChairID == player.ChairId)
+            if (msg.ActionChairID == player.ChairId)
             {
                 // my actions
                 player.MyWnd.OnAllowedActions(msg);
             }
         }
-        private static void OnServerMessageReActionAllowed(Player player, MsgAllowPlayerReAction msg)
+        private static void OnServerMessageReActionAllowed(Player player, MsgAllowReAction msg)
         {
             //throw new NotImplementedException();
-            if (msg.actionChairID == player.ChairId)
+            if (msg.ActionChairID == player.ChairId)
             {
                 // my actions
                 player.MyWnd.OnAllowedReActions(msg);
@@ -214,8 +214,8 @@ namespace PokerTest
         {
             var gmsg = new GameMessage
             {
-                Ops = (int)opAction,
-                Data = toBytes
+                Code = opAction,
+                Data = Google.Protobuf.ByteString.CopyFrom(toBytes)
             };
             var msgBytes = gmsg.ToBytes();
             Ws?.Send(msgBytes);

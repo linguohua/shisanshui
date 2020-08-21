@@ -8,7 +8,7 @@ using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Media.Imaging;
 using CsvHelper;
-using pokerface;
+using Xproto;
 using Newtonsoft.Json.Linq;
 
 namespace PokerTest
@@ -104,7 +104,7 @@ namespace PokerTest
             // TODO: 为了和unity配合测试，少启动一个
             for (var i = 0; i < CurrentDealCfg.PlayerCount -1 ; ++i)
             {
-                var player = new Player(names[i], userIds[i], "monkey-room", wnds[i], this);
+                var player = new Player(names[i], userIds[i], "monkey-table", wnds[i], this);
                 player.Connect();
 
                 _players.Add(player);
@@ -144,8 +144,8 @@ namespace PokerTest
             }
 
             var userId = inputWnd.TextBoxUserId.Text;
-            var roomNumber = inputWnd.TextBoxRoomId.Text;
-            var player = new Player(userId, userId, roomNumber, freeWnd, this);
+            var tableNumber = inputWnd.TextBoxTableId.Text;
+            var player = new Player(userId, userId, tableNumber, freeWnd, this);
             player.Connect();
 
             _players.Add(player);
@@ -260,7 +260,7 @@ namespace PokerTest
                     {
                         var headers = new [] {"名称", "庄家手牌", "庄家花牌",
                             "闲家1手牌", "闲家1花牌", "闲家2牌", "闲家2花牌", "闲家3手牌", "闲家3花牌", "抽牌序列", "强制庄家", "强制风牌" };
-                        var csv = new CsvWriter(textWriter);
+                        var csv = new CsvWriter(textWriter, System.Globalization.CultureInfo.CurrentCulture);
                         foreach (var header in headers)
                         {
                             csv.WriteField(header);
@@ -332,7 +332,7 @@ namespace PokerTest
 
         }
 
-        private void OnExportRoomCfg_Button_Click(object sender, RoutedEventArgs e)
+        private void OnExportTableCfg_Button_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -343,9 +343,9 @@ namespace PokerTest
                     return;
                 }
 
-                var roomNumber = inputWnd.TextBoxRoomId.Text;
+                var tableNumber = inputWnd.TextBoxTableId.Text;
 
-                HttpHandlers.SendPostMethod("/resetRoom", roomNumber, "&roomNumber=" + roomNumber);
+                HttpHandlers.SendPostMethod("/resetTable", tableNumber, "&tableNumber=" + tableNumber);
             }
             catch (Exception ex)
             {
@@ -353,9 +353,9 @@ namespace PokerTest
             }
         }
 
-        private void OnExportRoomOps_Button_Click(object sender, RoutedEventArgs e)
+        private void OnExportTableOps_Button_Click(object sender, RoutedEventArgs e)
         {
-            ExportRoomWnd.ShowExportDialog(ExportRoomWnd.ExportRoomType.Operations, this);
+            ExportTableWnd.ShowExportDialog(ExportTableWnd.ExportTableType.Operations, this);
         }
 
         private void OnLoadAction_Button_Click(object sender, RoutedEventArgs e)
@@ -546,12 +546,12 @@ namespace PokerTest
             UpdateTile();
         }
 
-        private void OnCreateRoom_Button_Click(object sender, RoutedEventArgs e)
+        private void OnCreateTable_Button_Click(object sender, RoutedEventArgs e)
         {
             HttpHandlers.SendPostMethod(@"/monkey/create-monkey-table", "", "&tableID=monkey-table");
         }
 
-        private void OnDestroyRoom_Button_Click(object sender, RoutedEventArgs e)
+        private void OnDestroyTable_Button_Click(object sender, RoutedEventArgs e)
         {
             HttpHandlers.SendPostMethod(@"/monkey/destroy-monkey-table", "", "&tableID=monkey-table");
             IsPlaying = false;
@@ -683,28 +683,28 @@ namespace PokerTest
             NameIds["梅花10"] = (int)CardID.R10C;
             NameIds["黑桃10"] = (int)CardID.R10S;
 
-            NameIds["红桃J"] = (int)CardID.JH;
-            NameIds["方块J"] = (int)CardID.JD;
-            NameIds["梅花J"] = (int)CardID.JC;
-            NameIds["黑桃J"] = (int)CardID.JS;
+            NameIds["红桃J"] = (int)CardID.Jh;
+            NameIds["方块J"] = (int)CardID.Jd;
+            NameIds["梅花J"] = (int)CardID.Jc;
+            NameIds["黑桃J"] = (int)CardID.Js;
 
-            NameIds["红桃Q"] = (int)CardID.QH;
-            NameIds["方块Q"] = (int)CardID.QD;
-            NameIds["梅花Q"] = (int)CardID.QC;
-            NameIds["黑桃Q"] = (int)CardID.QS;
+            NameIds["红桃Q"] = (int)CardID.Qh;
+            NameIds["方块Q"] = (int)CardID.Qd;
+            NameIds["梅花Q"] = (int)CardID.Qc;
+            NameIds["黑桃Q"] = (int)CardID.Qs;
 
-            NameIds["红桃K"] = (int)CardID.KH;
-            NameIds["方块K"] = (int)CardID.KD;
-            NameIds["梅花K"] = (int)CardID.KC;
-            NameIds["黑桃K"] = (int)CardID.KS;
+            NameIds["红桃K"] = (int)CardID.Kh;
+            NameIds["方块K"] = (int)CardID.Kd;
+            NameIds["梅花K"] = (int)CardID.Kc;
+            NameIds["黑桃K"] = (int)CardID.Ks;
 
-            NameIds["红桃A"] = (int)CardID.AH; ;
-            NameIds["方块A"] = (int)CardID.AD; ;
-            NameIds["梅花A"] = (int)CardID.AC; ;
-            NameIds["黑桃A"] = (int)CardID.AS; ;
+            NameIds["红桃A"] = (int)CardID.Ah; 
+            NameIds["方块A"] = (int)CardID.Ad; 
+            NameIds["梅花A"] = (int)CardID.Ac; 
+            NameIds["黑桃A"] = (int)CardID.As; 
 
-            NameIds["黑小丑"] = (int)CardID.JOB;
-            NameIds["红小丑"] = (int)CardID.JOR;
+            NameIds["黑小丑"] = (int)CardID.Job;
+            NameIds["红小丑"] = (int)CardID.Jor;
 
             IdNames[(int)CardID.R2H] = "红桃2";
             IdNames[(int)CardID.R2D] = "方块2";
@@ -751,28 +751,28 @@ namespace PokerTest
             IdNames[(int)CardID.R10C] = "梅花10";
             IdNames[(int)CardID.R10S] = "黑桃10";
 
-            IdNames[(int)CardID.JH] = "红桃J";
-            IdNames[(int)CardID.JD] = "方块J";
-            IdNames[(int)CardID.JC] = "梅花J";
-            IdNames[(int)CardID.JS] = "黑桃J";
+            IdNames[(int)CardID.Jh] = "红桃J";
+            IdNames[(int)CardID.Jd] = "方块J";
+            IdNames[(int)CardID.Jc] = "梅花J";
+            IdNames[(int)CardID.Js] = "黑桃J";
 
-            IdNames[(int)CardID.QH] = "红桃Q";
-            IdNames[(int)CardID.QD] = "方块Q";
-            IdNames[(int)CardID.QC] = "梅花Q";
-            IdNames[(int)CardID.QS] = "黑桃Q";
+            IdNames[(int)CardID.Qh] = "红桃Q";
+            IdNames[(int)CardID.Qd] = "方块Q";
+            IdNames[(int)CardID.Qc] = "梅花Q";
+            IdNames[(int)CardID.Qs] = "黑桃Q";
 
-            IdNames[(int)CardID.KH] = "红桃K";
-            IdNames[(int)CardID.KD] = "方块K";
-            IdNames[(int)CardID.KC] = "梅花K";
-            IdNames[(int)CardID.KS] = "黑桃K";
+            IdNames[(int)CardID.Kh] = "红桃K";
+            IdNames[(int)CardID.Kd] = "方块K";
+            IdNames[(int)CardID.Kc] = "梅花K";
+            IdNames[(int)CardID.Ks] = "黑桃K";
 
-            IdNames[(int)CardID.AH] = "红桃A";
-            IdNames[(int)CardID.AD] = "方块A";
-            IdNames[(int)CardID.AC] = "梅花A";
-            IdNames[(int)CardID.AS] = "黑桃A";
+            IdNames[(int)CardID.Ah] = "红桃A";
+            IdNames[(int)CardID.Ad] = "方块A";
+            IdNames[(int)CardID.Ac] = "梅花A";
+            IdNames[(int)CardID.As] = "黑桃A";
 
-            IdNames[(int)CardID.JOB] = "黑小丑";
-            IdNames[(int)CardID.JOR] = "红小丑";
+            IdNames[(int)CardID.Job] = "黑小丑";
+            IdNames[(int)CardID.Jor] = "红小丑";
 
         }
 
@@ -826,10 +826,10 @@ namespace PokerTest
                         return;
                     }
 
-                    var roomNumber = inputWnd.TextBoxRoomId.Text;
+                    var tableNumber = inputWnd.TextBoxTableId.Text;
                     // Open document
                     var filePath = dlg.FileName;
-                    HttpHandlers.SendFileContent2(filePath, roomNumber, HttpHandlers.PathAttachDealCfgFile, this);
+                    HttpHandlers.SendFileContent2(filePath, tableNumber, HttpHandlers.PathAttachDealCfgFile, this);
                 }
                 catch (Exception ex)
                 {
@@ -845,7 +845,7 @@ namespace PokerTest
             {
                 using (BinaryWriter bw = new BinaryWriter(ms))
                 {
-                    ManualProtoCoder.EncodeInt32(bw, (uint)MessageCode.OPDeal, 1);
+                    ManualProtoCoder.EncodeInt32(bw, (uint)MessageCode.Opdeal, 1);
                     var abc = new byte[4000];
                     abc[0] = 1;
                     abc[1] = 2;
@@ -855,7 +855,7 @@ namespace PokerTest
 
                     var encoded = ms.ToArray();
                     var gmsg = encoded.ToProto<GameMessage>();
-                    Debug.Assert(gmsg.Ops == (int)MessageCode.OPDeal);
+                    Debug.Assert(gmsg.Code == (int)MessageCode.Opdeal);
                     Debug.Assert(abc.SequenceEqual(gmsg.Data));
 
                     // 解码
@@ -865,7 +865,7 @@ namespace PokerTest
                         {
                             uint ops = 0;
                             ManualProtoCoder.DecodeInt32(br, 1, out ops);
-                            Debug.Assert(ops == (uint)MessageCode.OPDeal);
+                            Debug.Assert(ops == (uint)MessageCode.Opdeal);
 
                             byte[] bytes;
                             ManualProtoCoder.DecodeBytes(br, 2, out bytes);
@@ -877,11 +877,11 @@ namespace PokerTest
             }
         }
 
-        private void OnAttachRoomCfg_Button_Click(object sender, RoutedEventArgs e)
+        private void OnAttachTableCfg_Button_Click(object sender, RoutedEventArgs e)
         {
             // Configure open file dialog box
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            dlg.FileName = "room"; // Default file name
+            dlg.FileName = "table"; // Default file name
             dlg.DefaultExt = ".json"; // Default file extension
             dlg.Filter = "JSON documents (.json)|*.json"; // Filter files by extension
 
@@ -900,10 +900,10 @@ namespace PokerTest
                         return;
                     }
 
-                    var roomNumber = inputWnd.TextBoxRoomId.Text;
+                    var tableNumber = inputWnd.TextBoxTableId.Text;
                     // Open document
                     var filePath = dlg.FileName;
-                    HttpHandlers.SendFileContent2(filePath, roomNumber, HttpHandlers.PathAttachRoomCfgFile, this);
+                    HttpHandlers.SendFileContent2(filePath, tableNumber, HttpHandlers.PathAttachTableCfgFile, this);
                 }
                 catch (Exception ex)
                 {
@@ -912,7 +912,7 @@ namespace PokerTest
             }
         }
 
-        private void OnKickAllInRoom_Button_Click(object sender, RoutedEventArgs e)
+        private void OnKickAllInTable_Button_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -923,9 +923,9 @@ namespace PokerTest
                     return;
                 }
 
-                var roomNumber = inputWnd.TextBoxRoomId.Text;
+                var tableNumber = inputWnd.TextBoxTableId.Text;
 
-                HttpHandlers.SendPostMethod("/support/kickAll", roomNumber, "&roomNumber="+roomNumber);
+                HttpHandlers.SendPostMethod("/support/kickAll", tableNumber, "&tableNumber="+tableNumber);
             }
             catch (Exception ex)
             {
@@ -949,7 +949,7 @@ namespace PokerTest
             return _players[0] == myPlayer;
         }
 
-        private void OnDisbandRoom_Button_Click(object sender, RoutedEventArgs e)
+        private void OnDisbandTable_Button_Click(object sender, RoutedEventArgs e)
         {
             try
             {
@@ -960,15 +960,15 @@ namespace PokerTest
                 //    return;
                 //}
 
-                //var roomNumber = inputWnd.TextBoxRoomId.Text;
+                //var tableNumber = inputWnd.TextBoxTableId.Text;
 
-                //HttpHandlers.SendPostMethod("/support/disbandRoom", roomNumber, "&roomNumber=" + roomNumber);
+                //HttpHandlers.SendPostMethod("/support/disbandTable", tableNumber, "&tableNumber=" + tableNumber);
                 if (_players.Count < 1)
                 {
                     return;
                 }
                 var player = _players[0];
-                player.SendMessage((int)MessageCode.OPDisbandRequest, null);
+                player.SendMessage((int)MessageCode.OpdisbandRequest, null);
             }
             catch (Exception ex)
             {
@@ -976,11 +976,11 @@ namespace PokerTest
             }
         }
 
-        private void OnRoomCount_Button_Click(object sender, RoutedEventArgs e)
+        private void OnTableCount_Button_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                HttpHandlers.SendGetMethod("/support/roomCount", null);
+                HttpHandlers.SendGetMethod("/support/tableCount", null);
             }
             catch (Exception ex)
             {
@@ -1004,7 +1004,7 @@ namespace PokerTest
         {
             try
             {
-                HttpHandlers.SendGetMethod("/support/roomException", null);
+                HttpHandlers.SendGetMethod("/support/tableException", null);
             }
             catch (Exception ex)
             {
@@ -1016,7 +1016,7 @@ namespace PokerTest
         {
             try
             {
-                HttpHandlers.SendGetMethod("/support/clearRoomException", null);
+                HttpHandlers.SendGetMethod("/support/clearTableException", null);
             }
             catch (Exception ex)
             {

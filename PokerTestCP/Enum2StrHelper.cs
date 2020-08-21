@@ -1,5 +1,5 @@
 using System.Text;
-using pokerface;
+using Xproto;
 
 namespace PokerTest
 {
@@ -67,16 +67,13 @@ namespace PokerTest
             var result = "";
             switch (playerScoreWinType)
             {
-                case (int)HandOverType.enumHandOverType_Win_Chuck:
-                    result = "吃铳胡";
-                    break;
-                case (int)HandOverType.enumHandOverType_Win_SelfDrawn:
+                case (int)HandOverType.EnumHandOverTypeWin:
                     result = "自摸胡";
                     break;
-                case (int)HandOverType.enumHandOverType_None:
+                case (int)HandOverType.EnumHandOverTypeNone:
                     result = "";
                     break;
-                case (int)HandOverType.enumHandOverType_Chucker:
+                case (int)HandOverType.EnumHandOverTypeLoss:
                     result = "放铳";
                     break;
             }
@@ -88,13 +85,13 @@ namespace PokerTest
             var result = "";
             switch (msgEndType)
             {
-                case (int)HandOverType.enumHandOverType_Win_Chuck:
+                case (int)HandOverType.EnumHandOverTypeLoss:
                     result = "放铳胡牌";
                     break;
-                case (int)HandOverType.enumHandOverType_Win_SelfDrawn:
+                case (int)HandOverType.EnumHandOverTypeWin:
                     result = "自摸胡牌";
                     break;
-                case (int)HandOverType.enumHandOverType_None:
+                case (int)HandOverType.EnumHandOverTypeNone:
                     result = "流局";
                     break;
             }
