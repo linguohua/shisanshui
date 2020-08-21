@@ -51,7 +51,7 @@ func (s *stateWaiting) onPlayerMsg(p *Player, msg *xproto.GameMessage) {
 	code := msg.GetCode()
 	switch code {
 	case int32(xproto.MessageCode_OPPlayerReady):
-		s.cl.Println("got player ready:", p.chairID)
+		s.cl.Printf("got player ready:%d, total player count:%d", p.chairID, len(s.table.players))
 		if p.state == xproto.PlayerState_PSReady {
 			// 重复收到ready消息
 			break
@@ -86,18 +86,20 @@ func (s *stateWaiting) getStateConst() xproto.TableState {
 
 func (s *stateWaiting) tryCountingDown() {
 	if s.inCountingDownState {
+		s.cl.Println("tryCountingDown: already in countdown")
 		return
 	}
 
 	readyCount := 0
 	for _, p := range s.table.players {
-		if p.state != xproto.PlayerState_PSReady {
+		s.cl.Printf("tryCountingDown: player chairID:%d, state:%v", p.chairID, p.state)
+		if p.state == xproto.PlayerState_PSReady {
 			readyCount++
-			break
 		}
 	}
 
-	if readyCount > s.table.config.PlayerNumAcquired {
+	s.cl.Printf("tryCountingDown: current ready player:%d, required:%d", readyCount, s.table.config.PlayerNumAcquired)
+	if readyCount >= s.table.config.PlayerNumAcquired {
 		// start counting down, startCountingDown can call multiple times
 		s.doCountingDown()
 	}
@@ -108,24 +110,31 @@ func (s *stateWaiting) doCountingDown() {
 	s.cl.Printf("table start to countdown with %d seconds", s.countdownTick)
 	s.inCountingDownState = true
 
-	time.AfterFunc(time.Second, func() {
-		defer func() {
-			if r := recover(); r != nil {
-				debug.PrintStack()
-				s.cl.Printf("-----PANIC: This Table will die, STACK\n:%v", r)
-				mgr.IncExceptionCount()
-			}
-		}()
+	go s.countdownGoroutine()
+}
 
+func (s *stateWaiting) countdownGoroutine() {
+	defer func() {
+		if r := recover(); r != nil {
+			debug.PrintStack()
+			s.cl.Printf("-----PANIC: This Table will die, STACK\n:%v", r)
+			mgr.IncExceptionCount()
+		}
+	}()
+
+	loop := true
+	for loop {
+
+		time.Sleep(time.Second)
 		// new goroutine call into here, so onCountdownCompleted
 		// must be concurrent safe
 		s.table.HoldLock(func() {
-			s.onCountdownStep()
+			loop = s.onCountdownStep()
 		})
-	})
+	}
 }
 
-func (s *stateWaiting) onCountdownStep() {
+func (s *stateWaiting) onCountdownStep() bool {
 	if s.countdownTick > 0 {
 		s.countdownTick--
 	}
@@ -139,9 +148,12 @@ func (s *stateWaiting) onCountdownStep() {
 
 			s.inCountingDownState = false
 
-			return
+		} else {
+			s.table.stateTo(playingStateNew(s.table))
 		}
 
-		s.table.stateTo(playingStateNew(s.table))
+		return false
 	}
+
+	return true
 }

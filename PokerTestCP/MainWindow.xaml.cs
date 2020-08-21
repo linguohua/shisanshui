@@ -19,7 +19,7 @@ namespace PokerTest
     public partial class MainWindow : Window
     {
         public const string Version = "1.13";
-        public const string ToolName = "RunFast";
+        public const string ToolName = "Chinise Poker";
         public MainWindow()
         {
             InitIdNames();
@@ -548,12 +548,12 @@ namespace PokerTest
 
         private void OnCreateRoom_Button_Click(object sender, RoutedEventArgs e)
         {
-            HttpHandlers.SendPostMethod(@"/support/createMonkeyRoom", "monkey", null);
+            HttpHandlers.SendPostMethod(@"/monkey/create-monkey-table", "", "&tableID=monkey-table");
         }
 
         private void OnDestroyRoom_Button_Click(object sender, RoutedEventArgs e)
         {
-            HttpHandlers.SendPostMethod(@"/support/destroyMonkeyRoom", "",null);
+            HttpHandlers.SendPostMethod(@"/monkey/destroy-monkey-table", "", "&tableID=monkey-table");
             IsPlaying = false;
         }
 

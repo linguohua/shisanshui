@@ -15,14 +15,14 @@ namespace PokerTest
         public TileStackWnd MyWnd { get; }
 
         public MainWindow MWnd { get; }
-        public Player(string name, string userId, string roomNumber, TileStackWnd myWnd, MainWindow mWnd)
+        public Player(string name, string userId, string tableNumber, TileStackWnd myWnd, MainWindow mWnd)
         {
             Name = name;
             MyWnd = myWnd;
             UserId = userId;
-            var url = $"{ProgramConfig.ServerUrl}/ws/monkey?userID={userId}&roomNumber={roomNumber}";
+            var url = $"{ProgramConfig.ServerUrl}/ws/monkey?userID={userId}&tableNumber={tableNumber}";
             url = url.Replace("http", "ws");
-            Ws = new WebSocket(string.Format(url, userId, roomNumber));
+            Ws = new WebSocket(string.Format(url, userId, tableNumber));
             MyWnd.SetPlayer(this);
             MWnd = mWnd;
         }
