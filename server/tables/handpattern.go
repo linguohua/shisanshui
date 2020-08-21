@@ -84,8 +84,8 @@ func patternVerifyFlush(hai []int32) bool {
 // patternVerifyStraight 检查是否顺子
 func patternVerifyStraight(hai []int32) bool {
 	var i = 0
-
-	if hai[0]/4 == int32(xproto.CardID_AC)/4 && hai[1]/4 == int32(xproto.CardID_R5C)/4 {
+	//墩子的顺子 可能是 A23、A2345、QKA、10JQKA (所以应该是判断最后一张是不是2)
+	if hai[0]/4 == int32(xproto.CardID_AC)/4 && hai[len(hai)-1]/4 == int32(xproto.CardID_R2C)/4 {
 		// A, 5, ...
 		i = 1
 	}
