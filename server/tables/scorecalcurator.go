@@ -129,26 +129,31 @@ func isInvertedHand(hand1, hand2, hand3 *xproto.MsgCardHand) bool {
 			return true
 		}
 	} else {
-		// 第三墩是顺子 并且 跟另外两墩相连 则第三墩应该是最小的那三张
-		// 第三墩是同花 并且 跟另外两墩花色相同 则第三墩应该是最小的三张
-		if hand3.GetCardHandType() == hand1.GetCardHandType() {
-			if hand3.GetCardHandType() == int32(xproto.CardHandType_Flush) {
-				if hand3.Cards[0]%4 == hand1.Cards[0]%4 {
-					return isBigOfCardsfigure(hand1, hand3)
-				}
-			}
-			if hand3.GetCardHandType() == int32(xproto.CardHandType_Straight) {
+		if compareHandAndReturnResult(hand1, hand3) {
+			return true
+		}
+		if compareHandAndReturnResult(hand2, hand3) {
+			return true
+		}
+	}
+	return false
+}
 
+//第三墩 跟 第一二墩比较 (返回true 说明倒墩)
+func compareHandAndReturnResult(hand, hand3 *xproto.MsgCardHand) bool {
+	// 第三墩是顺子 并且 跟另外两墩相连 则第三墩应该是最小的那三张
+	// 第三墩是同花 并且 跟另外两墩花色相同 则第三墩应该是最小的三张
+	if hand3.GetCardHandType() == hand.GetCardHandType() {
+		if hand3.GetCardHandType() == int32(xproto.CardHandType_Flush) {
+			if hand3.Cards[0]%4 == hand.Cards[0]%4 {
+				return isBigOfCardsfigure(hand.GetCards(), hand3.GetCards(), false)
 			}
 		}
-		if hand3.GetCardHandType() == hand2.GetCardHandType() {
-			if hand3.GetCardHandType() == int32(xproto.CardHandType_Flush) {
-				if hand3.Cards[0]%4 == hand2.Cards[0]%4 {
-					return isBigOfCardsfigure(hand2, hand3)
-				}
-			}
-			if hand3.GetCardHandType() == int32(xproto.CardHandType_Straight) {
-
+		if hand3.GetCardHandType() == int32(xproto.CardHandType_Straight) {
+			hai := append(hand3.GetCards(), hand.GetCards()...)
+			if patternVerifyStraight(hai) {
+				//两墩牌合起来如果是顺子 说明是相连的
+				return isBigOfCardsfigure(hand.GetCards(), hand3.GetCards(), true)
 			}
 		}
 	}
@@ -156,10 +161,20 @@ func isInvertedHand(hand1, hand2, hand3 *xproto.MsgCardHand) bool {
 }
 
 //第三墩 是不是有的牌大于 第一二墩的最小牌 (返回true 说明倒墩)
-func isBigOfCardsfigure(hand, handThree *xproto.MsgCardHand) bool {
+func isBigOfCardsfigure(hand, handThree []int32, isStraight bool) bool {
 	//最小牌
-	smallCard := hand.Cards[4]
-	for _, v := range handThree.GetCards() {
+	smallCard := hand[4]
+	if isStraight {
+		//顺子要考虑A
+		if hand[0]/4 == int32(xproto.CardID_AC)/4 && hand[len(hand)-1]/4 == int32(xproto.CardID_R2C)/4 {
+			// A, 5, ...
+			smallCard = hand[len(hand)-1]
+		}
+		if handThree[0]/4 == int32(xproto.CardID_AC)/4 && handThree[len(handThree)-1]/4 == int32(xproto.CardID_R2C)/4 {
+			handThree = handThree[1:]
+		}
+	}
+	for _, v := range handThree {
 		if v > smallCard {
 			return true
 		}

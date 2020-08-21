@@ -84,11 +84,12 @@ func tableNew(uuid string, number string, cfg *tableConfig) *Table {
 	cl := logrus.WithFields(fields)
 
 	t := &Table{
-		cl:     cl,
-		UUID:   uuid,
-		Number: number,
-		rand:   rand.New(rand.NewSource(time.Now().UnixNano())),
-		config: cfg,
+		cl:      cl,
+		UUID:    uuid,
+		Number:  number,
+		rand:    rand.New(rand.NewSource(time.Now().UnixNano())),
+		config:  cfg,
+		players: make([]*Player, 0),
 	}
 
 	t.chairs = append(t.chairs, chairAllocOrder...)
@@ -221,6 +222,19 @@ func (t *Table) onPlayerMsg(player *Player, msg []byte) {
 	// 记录一下最后一个消息的接收时间
 	t.lastMsgTime = time.Now()
 
+	var msgCode = gmsg.GetCode()
+	var handled = false
+	switch msgCode {
+	case int32(xproto.MessageCode_OPKickout):
+		break
+	default:
+		break
+	}
+
+	if handled {
+		return
+	}
+
 	// 不是房间可以处理的消息，交给状态机
 	t.state.onPlayerMsg(player, gmsg)
 }
@@ -344,20 +358,31 @@ func (t *Table) destroy(reason xproto.TableDeleteReason) {
 func (t *Table) kickAll() {
 	// 断开玩家的链接
 	for _, p := range t.players {
-		t.releaseChair(p.chairID)
-		p.unbind()
+		p.ws.Close()
 	}
 }
 
 func (t *Table) kickPlayer(userID string) error {
-
+	//TODO 通知客户端
 	p := t.getPlayerByUserID(userID)
 	if p != nil {
-		t.releaseChair(p.chairID)
-		p.unbind()
+		p.ws.Close()
 	}
 
 	return fmt.Errorf("not implement")
+}
+
+// stateRemovePlayer 用于状态机从玩家列表中移除玩家
+// 玩家移除后，需要归还座位
+func (t *Table) stateRemovePlayer(player *Player) {
+	for i, p := range t.players {
+		if p == player {
+			t.players = append(t.players[0:i], t.players[i+1:]...)
+			// 归还座位
+			t.releaseChair(p.chairID)
+			break
+		}
+	}
 }
 
 // updateTableInfo2All 把房间当前状态和玩家数据发给所有用户
