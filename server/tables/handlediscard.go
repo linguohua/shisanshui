@@ -7,6 +7,10 @@ import (
 // onMessageDiscardHandler 响应玩家打牌动作，对于十三水来说就是玩家整理牌型完成，服务器比较玩家之间
 // 的牌型大小，得出每个玩家赢取的分数
 func onMessageDiscardHandler(s *statePlaying, p *Player, msg *xproto.MsgPlayerAction) {
+	if len(msg.Cards) != 13 {
+		p.cl.Panic("onMessageDiscardHandler, discard cards len:%d !=13", len(msg.Cards))
+	}
+
 	// 检查是否拥有这些牌
 	cardsNum := make([]int, 52)
 	cards := p.cards.hand2IDList(true)

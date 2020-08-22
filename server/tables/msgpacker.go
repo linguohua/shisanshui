@@ -140,7 +140,7 @@ func serializeMsgHandOver(s *statePlaying) *xproto.MsgHandOver {
 		msgPlayerScore.IsWinAll = &rContext.isWinAll
 		msgPlayerScore.IsInvertedHand = &rContext.isInvertedHand
 		//与其他玩家关系
-		compareContexts := make([]*xproto.MsgPlayerCompareContext, 3)
+		compareContexts := make([]*xproto.MsgPlayerCompareContext, 0, 3)
 		for _, cC := range rContext.compareContexts {
 			compareContext := &xproto.MsgPlayerCompareContext{}
 			tc := int32(cC.target.chairID)
@@ -160,7 +160,8 @@ func serializeMsgHandOver(s *statePlaying) *xproto.MsgHandOver {
 	// 构造MsgHandOver
 	msgHandOver := &xproto.MsgHandOver{}
 	msgHandOver.Scores = msgHandScore
-
+	endType := int32(xproto.HandOverType_enumHandOverType_None)
+	msgHandOver.EndType = &endType
 	msgHandOver.PlayerCardLists = serializeCardListsForHandOver(s)
 
 	return msgHandOver
@@ -198,6 +199,11 @@ func serializeMsgActionResultNotifyForSelfDiscard(actoin int, player *Player) *x
 	var chairID32 = int32(player.chairID)
 	msg.TargetChairID = &chairID32
 	//特殊牌型排序 可能为nil
-	msg.ActionHand = player.rContext.specialCardHand
+	if player.rContext.specialCardHand != nil {
+		msg.ActionHands = []*xproto.MsgCardHand{player.rContext.specialCardHand}
+	} else {
+		msg.ActionHands = player.rContext.hands
+	}
+
 	return msg
 }

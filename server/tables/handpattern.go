@@ -44,14 +44,16 @@ func calcPatternKey(hai []int32, cl *logrus.Entry) (int64, []*slotitem) {
 		}
 	}
 
+	//cl.Printf("before sort slotitems:%+v", slotitems)
 	sort.Slice(slotitems, func(i, j int) bool {
 		cnt1 := len(slotitems[i].cards)
 		cnt2 := len(slotitems[j].cards)
 		return cnt1 > cnt2
 	})
+	//cl.Printf("after sort slotitems:%+v", slotitems)
 
 	tag := int64(0)
-	for i := 0; i < len(slotitems); i-- {
+	for i := 0; i < len(slotitems); i++ {
 		l := len(slotitems[i].cards)
 		if l == 0 {
 			break
@@ -105,6 +107,7 @@ func patternConvertMsgCardHand(hai []int32, cl *logrus.Entry) *xproto.MsgCardHan
 		cl.Panicf("hand cards count should >= 3, current:%d", len(hai))
 	}
 
+	//cl.Printf("before sort Slice:%+v", hai)
 	// 牌大到小排列
 	sort.Slice(hai, func(i, j int) bool {
 		rankI := hai[i] / 4
@@ -115,6 +118,7 @@ func patternConvertMsgCardHand(hai []int32, cl *logrus.Entry) *xproto.MsgCardHan
 
 		return rank2Priority[rankI] > rank2Priority[rankJ]
 	})
+	//cl.Printf("after sort Slice:%+v", hai)
 
 	key, slots := calcPatternKey(hai, cl)
 
@@ -136,7 +140,7 @@ func patternConvertMsgCardHand(hai []int32, cl *logrus.Entry) *xproto.MsgCardHan
 		isStraight = patternVerifyStraight(hai)
 	}
 
-	cl.Printf("convertMsgCardHand, agarix:%x, ct:%d\n", agari, ct)
+	cl.Printf("convertMsgCardHand, agarix:%x, ct:%d", agari, ct)
 
 	if isStraight {
 		// 如果是顺子，则不可能是4张，也不可能是葫芦，因此要么作为同花顺，要么作为顺子
@@ -179,14 +183,16 @@ func patternConvertMsgCardHand(hai []int32, cl *logrus.Entry) *xproto.MsgCardHan
 // calc13 特殊牌型转换为MsgCardHand
 func calc13(hai []int32, cl *logrus.Entry) *xproto.MsgCardHand {
 	if len(hai) != 13 {
-		cl.Panicf("hand cards count should != 13, current:%d", len(hai))
+		cl.Panicf("hand cards count should == 13, current:%d", len(hai))
 	}
+
 	//保存一份用于判断三顺子三同花
 	oldHai := make([]int32, 13)
 	for i := 0; i < 13; i++ {
 		oldHai[i] = hai[i]
 	}
 
+	//cl.Printf("calc13, before sort Slice:%+v", hai)
 	// 牌大到小排列
 	sort.Slice(hai, func(i, j int) bool {
 		rankI := hai[i] / 4
@@ -198,6 +204,7 @@ func calc13(hai []int32, cl *logrus.Entry) *xproto.MsgCardHand {
 		return rank2Priority[rankI] > rank2Priority[rankJ]
 	})
 
+	//cl.Printf("calc13, after sort Slice:%+v", hai)
 	cardNums := make([]int, 14) //保存每种牌个数
 	slots := make([]int, 4)     //花色数量 0:红桃 1:方块 2:梅花 3:黑桃
 	isStraight := true          //是否是顺子

@@ -36,3 +36,13 @@ type compareContext struct {
 // reset when player exit
 type pgameContext struct {
 }
+
+func (rc *roundContext) getTargetCompareContext(p *Player) *compareContext {
+	for _, cc := range rc.compareContexts {
+		if cc.target == p {
+			return cc
+		}
+	}
+
+	return nil
+}

@@ -214,7 +214,7 @@ namespace PokerTest
             //        specialCardID = (int)pokerface.CardID.R2H;
             //    }
             //}
-            //else  if (CurrentAllowPlayerAction != null)
+            //else if (CurrentAllowPlayerAction != null)
             //{
             //    if (CurrentAllowPlayerAction.timeoutInSeconds > 255)
             //    {
@@ -222,13 +222,13 @@ namespace PokerTest
             //    }
             //}
 
-            //var discardedList = new List<int>();
-            //if (!DiscardWnd.ShowDialog(discardedList, prevCardHand, specialCardID, this))
-            //{
-            //    return false;
-            //}
+            var discardedList = new List<int>();
+            if (!DiscardWnd.ShowDialog(discardedList, this))
+            {
+                return false;
+            }
 
-            //OnTakeActionDiscardTile(discardedList);
+            OnTakeActionDiscardTile(discardedList);
 
             return true;
         }
@@ -330,13 +330,13 @@ namespace PokerTest
                     //}
                     //else
                     //{
-                    //    if (!DiscardWnd.ShowDialog(CurrentAllowPlayerAction.tipsForAction, out tile1, this))
-                    //    {
-                    //        return;
-                    //    }
-
-                    //    OnTakeActionDiscardTile(tile1);
+                    //if (!DiscardWnd.ShowDialog(CurrentAllowPlayerAction.tipsForAction, out tile1, this))
+                    //{
+                    //    return;
                     //}
+
+                    //OnTakeActionDiscardTile(tile1);
+                    ////}
                     completed = doCommonDiscardClick();
                     break;
                 //case (int)ActionType.enumActionType_WIN_Chuck:
@@ -864,13 +864,16 @@ namespace PokerTest
             // 出牌
             if (msg.Action == (int)ActionType.EnumActionTypeDiscard)
             {
-                var discardedHand = msg.ActionHand;
-                foreach(var d in discardedHand.Cards)
+                var discardedHands = msg.ActionHands;
+                foreach(var h in discardedHands)
                 {
-                    TilesHandList.Remove(d);
-                }
+                    foreach (var d in h.Cards)
+                    {
+                        TilesHandList.Remove(d);
+                    }
 
-                MeldList.Add(discardedHand);
+                    MeldList.Add(h);
+                }
 
                 Hand2Buttons();
                 MeldList2Buttons();
@@ -925,33 +928,33 @@ namespace PokerTest
             var ct =(CardHandType)meldMeldType;
             switch(ct)
             {
-                //case CardHandType.Bomb:
-                //    button.Content = "炸弹";
-                //    break;
-                case CardHandType.Flush:
+                case CardHandType.Straight:
                     button.Content = "顺子";
                     break;
-                //case CardHandType.Pair:
-                //    button.Content = "对子";
-                //    break;
-                //case CardHandType.Pair2X:
-                //    button.Content = "连对";
-                //    break;
-                //case CardHandType.Single:
-                //    button.Content = "单";
-                //    break;
-                //case CardHandType.Triplet:
-                //    button.Content = "三张";
-                //    break;
-                //case CardHandType.Triplet2X:
-                //    button.Content = "飞机";
-                //    break;
-                //case CardHandType.Triplet2X2Pair:
-                //    button.Content = "飞机+";
-                //    break;
-                //case CardHandType.TripletPair:
-                //    button.Content = "三+2";
-                //    break;
+                case CardHandType.Flush:
+                    button.Content = "同花";
+                    break;
+                case CardHandType.ThreeOfAkind:
+                    button.Content = "三条";
+                    break;
+                case CardHandType.FullHouse:
+                    button.Content = "葫芦";
+                    break;
+                case CardHandType.HighCard:
+                    button.Content = "单";
+                    break;
+                case CardHandType.OnePair:
+                    button.Content = "对牌";
+                    break;
+                case CardHandType.TwoPairs:
+                    button.Content = "两对";
+                    break;
+                case CardHandType.Four:
+                    button.Content = "四条";
+                    break;
+                case CardHandType.StraightFlush:
+                    button.Content = "同花顺";
+                    break;
             }
 
             //if (meldMeldType == (int)MeldType.enumMeldTypeTriplet2Kong)

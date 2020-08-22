@@ -139,8 +139,6 @@ message MsgCardHand {
   required int32 cardHandType = 1;
   // 牌列表，对于一些有规律的牌组例如同花顺，可以只写第一个牌
   repeated int32 cards = 2;
-  // 墩序号
-  required int32 handNum = 3;
 }
 
 // 玩家牌列表
@@ -232,7 +230,7 @@ message MsgActionResultNotify {
   // 动作名
   required int32 action = 2;
   // 动作目标牌组
-  optional MsgCardHand actionHand = 3;
+  repeated MsgCardHand actionHands = 3;
   // 剩余牌张数
   optional int32 cardsInWall = 4;
 }
@@ -272,7 +270,7 @@ message MsgPlayerScore {
   // 玩家
   required int32 targetChairID = 1;
   // 赢特殊牌类型 可以无效
-  required MsgCardHand specialCardHand = 2;
+  optional MsgCardHand specialCardHand = 2;
   // 总赢 总输
   required int32 totalScore = 3;
   // 与其他玩家关系

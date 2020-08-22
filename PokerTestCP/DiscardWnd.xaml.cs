@@ -36,9 +36,6 @@ namespace PokerTest
         public List<int> SelectedTiles = new List<int>();
         public List<int> HandTiles = new List<int>();
 
-        private MsgCardHand prevCardHand;
-
-        private int specialCardID;
         private List<MsgCardHand> discardAbleTips;
         private int discardAbleTipsIndex;
 
@@ -68,16 +65,37 @@ namespace PokerTest
             foreach (var child in Sp0.Children)
             {
                 var btn = child as Button;
-                if (btn != null)
+                if (btn != null && btn.Visibility != Visibility.Hidden)
                 {
                     btn.Click += OnTileDeSelected;
-                    ButtonsSp0[i++] = btn;
+
+                    if (i < DealCfg.handMax)
+                    {
+                        ButtonsSp0[i] = btn;
+                    }
+                    else
+                    {
+                        btn.Visibility = Visibility.Hidden;
+                    }
+
+                    i++;
                 }
             }
             i = 0;
             foreach (var child in Sp1.Children)
             {
-                ButtonsSp1[i++] = child as Button;
+                var btn = child as Button;
+
+                if (i < DealCfg.handMax)
+                {
+                    ButtonsSp1[i] = btn;
+                }
+                else
+                {
+                    btn.Visibility = Visibility.Hidden;
+                }
+
+                i++;
             }
             i = 0;
             foreach (var child in Sp2.Children)
@@ -86,7 +104,17 @@ namespace PokerTest
                 if (btn != null)
                 {
                     btn.Click += OnTileSelected;
-                    ButtonsSp2[i++] = btn;
+                    
+
+                    if (i < DealCfg.handMax)
+                    {
+                        ButtonsSp2[i] = btn;
+                    }
+                    else
+                    {
+                        btn.Visibility = Visibility.Hidden;
+                    }
+                    i++;
                 }
             }
         }
@@ -179,38 +207,13 @@ namespace PokerTest
                 return;
             }
 
-            if (specialCardID >= 0)
+            if (HandTiles.Count > 0)
             {
-                var found = false;
-                foreach(var c in SelectedTiles)
-                {
-                    if (c == specialCardID)
-                    {
-                        found = true;
-                        break;
-                    }
-                }
 
-                if (!found)
-                {
-                    var cardName =  this.MyOwner.MyOwner.IdNames[specialCardID];
-                    MessageBox.Show(this, $"please select a hand that include {cardName} to discard");
-                    return;
-                }
-            }
-
-            var current = AgariIndex.agariConvertMsgCardHand(SelectedTiles.ToArray());
-            if (current == null)
-            {
-                MessageBox.Show(this, "please select a valid hand");
+                MessageBox.Show(this, "please select all tiles to discard");
                 return;
             }
-
-            if (prevCardHand != null && !AgariIndex.agariGreatThan(prevCardHand, current))
-            {
-                MessageBox.Show(this, "please select a hand great than prev");
-                return;
-            }
+            
 
             DialogResult = true;
         }
@@ -329,7 +332,7 @@ namespace PokerTest
             }
         }
 
-        public static bool ShowDialog(List<int> tileDiscarded, MsgCardHand prevCardHand, int specialCardID, TileStackWnd owner)
+        public static bool ShowDialog(List<int> tileDiscarded, TileStackWnd owner)
         {
             var tiles2Discarded = owner.TilesHandList;
             tileDiscarded.Clear();
@@ -339,11 +342,11 @@ namespace PokerTest
             x.BtnExtra.Visibility = Visibility.Hidden;
             x.BtnExtraXX.Visibility = Visibility.Hidden;
             x.SetReadyHandTips(tiles2Discarded);
-            x.prevCardHand = prevCardHand;
-            x.specialCardID = specialCardID;
+            //x.prevCardHand = prevCardHand;
+            //x.specialCardID = specialCardID;
 
-            if (prevCardHand != null)
-            {
+            //if (prevCardHand != null)
+            //{
                 //var currents = AgariIndex.FindGreatThanCardHand(prevCardHand, tiles2Discarded,specialCardID);
                 //if (null == currents || currents.Count == 0)
                 //{
@@ -367,10 +370,10 @@ namespace PokerTest
                 //x.discardAbleTips = currents;
                 //x.discardAbleTipsIndex = 0;
 
-                x.Hand2UI();
-                x.Selected2UI();
-            }
-            else
+            //    x.Hand2UI();
+            //    x.Selected2UI();
+            //}
+            //else
             {
                 //var current = AgariIndex.SearchLongestDiscardCardHand(tiles2Discarded, specialCardID);
                 //x.SelectedTiles.AddRange(current.cards);

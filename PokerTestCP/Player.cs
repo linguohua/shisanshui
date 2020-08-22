@@ -2,6 +2,7 @@
 using System.Windows;
 using Xproto;
 using WebSocketSharp;
+using Google.Protobuf;
 
 namespace PokerTest
 {
@@ -60,7 +61,7 @@ namespace PokerTest
 
         private void OnMessageThread(object sender, MessageEventArgs messageEventArgs)
         {
-            var gmsg = messageEventArgs.RawData.ToProto<GameMessage>();
+            var gmsg = GameMessage.Parser.ParseFrom(messageEventArgs.RawData);
             //Console.WriteLine($"player got message, ops:{gmsg.Ops}");
 
             Action a = () =>
@@ -76,55 +77,55 @@ namespace PokerTest
             {
                 case (int)MessageCode.OpactionAllowed:
                     {
-                        var msg = gmsg.Data.ToProto<MsgAllowAction>();
+                        var msg = MsgAllowAction.Parser.ParseFrom(gmsg.Data);
                         OnServerMessageActionAllowed(player, msg);
                     }
                     break;
                 case (int)MessageCode.OpreActionAllowed:
                     {
-                        var msg = gmsg.Data.ToProto<MsgAllowReAction>();
+                        var msg = MsgAllowReAction.Parser.ParseFrom(gmsg.Data);
                         OnServerMessageReActionAllowed(player, msg);
                     }
                     break;
                 case (int)MessageCode.OpactionResultNotify:
                     {
-                        var msg = gmsg.Data.ToProto<MsgActionResultNotify>();
+                        var msg = MsgActionResultNotify.Parser.ParseFrom(gmsg.Data);
                         OnServerMessageActionResultNotify(player, msg);
                     }
                     break;
                 case (int)MessageCode.Opdeal:
                     {
-                        var msg = gmsg.Data.ToProto<MsgDeal>();
+                        var msg = MsgDeal.Parser.ParseFrom(gmsg.Data);
                         OnServerMessageDeal(player, msg);
                     }
                     break;
                 case (int)MessageCode.OphandOver:
                     {
-                        var msg = gmsg.Data.ToProto<MsgHandOver>();
+                        var msg = MsgHandOver.Parser.ParseFrom(gmsg.Data);
                         OnServerMessageHandScore(player, msg);
                     }
                     break;
                 case (int)MessageCode.OpplayerEnterTable:
                     {
-                        var msg = gmsg.Data.ToProto<MsgEnterTableResult>();
+                        var msg = MsgEnterTableResult.Parser.ParseFrom(gmsg.Data);
                         OnServerMessageEnterTable(player, msg);
                     }
                     break;
                 case (int)MessageCode.OptableUpdate:
                     {
-                        var msg = gmsg.Data.ToProto<MsgTableInfo>();
+                        var msg = MsgTableInfo.Parser.ParseFrom(gmsg.Data);
                         OnServerMessageTableUpdate(player, msg);
                     }
                     break;
                 case (int)MessageCode.OptableShowTips:
                     {
-                        var msg = gmsg.Data.ToProto<MsgTableShowTips>();
+                        var msg = MsgTableShowTips.Parser.ParseFrom(gmsg.Data);
                         OnServerMessageTableShowTips(player, msg);
                     }
                     break;
                 case (int)MessageCode.OpdisbandNotify:
                     {
-                        var msg = gmsg.Data.ToProto<MsgDisbandNotify>();
+                        var msg = MsgDisbandNotify.Parser.ParseFrom(gmsg.Data);
                         OnServerDisbandNotify(player, msg);
                     }
                     break;
@@ -212,11 +213,23 @@ namespace PokerTest
 
         public void SendMessage(int opAction, byte[] toBytes)
         {
+            ByteString data = null;
+            if (toBytes != null)
+            {
+                data = ByteString.CopyFrom(toBytes);
+            }
+            else
+            {
+                data = ByteString.Empty;
+            }
+
             var gmsg = new GameMessage
             {
                 Code = opAction,
-                Data = Google.Protobuf.ByteString.CopyFrom(toBytes)
+                Data = data
             };
+
+
             var msgBytes = gmsg.ToBytes();
             Ws?.Send(msgBytes);
         }

@@ -854,7 +854,7 @@ namespace PokerTest
                     ManualProtoCoder.EncodeBytes(bw, abc, 2);
 
                     var encoded = ms.ToArray();
-                    var gmsg = encoded.ToProto<GameMessage>();
+                    var gmsg = GameMessage.Parser.ParseFrom(encoded);
                     Debug.Assert(gmsg.Code == (int)MessageCode.Opdeal);
                     Debug.Assert(abc.SequenceEqual(gmsg.Data));
 

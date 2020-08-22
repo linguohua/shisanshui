@@ -18,19 +18,19 @@
                 <Button Height="53" Width="43">A1</Button>
                 <Button Height="53" Width="43">A2</Button>
                 <Button Height="53" Width="43">A3</Button>
-                <Button Height="53" Width="43">A4</Button>
+                <Button Height="53" Width="43" >A4</Button>
                 <Button Height="53" Width="43">A5</Button>
-                <Button Height="53" Width="43">A6</Button>
+                <Button Height="53" Width="43" Visibility="Hidden">A6</Button>
                 <Button Height="53" Width="43">A7</Button>
                 <Button Height="53" Width="43">A8</Button>
                 <Button Height="53" Width="43">A9</Button>
                 <Button Height="53" Width="43">A9</Button>
                 <Button Height="53" Width="43">A9</Button>
+                <Button Height="53" Width="43" Visibility="Hidden">A9</Button>
                 <Button Height="53" Width="43">A9</Button>
                 <Button Height="53" Width="43">A9</Button>
                 <Button Height="53" Width="43">A9</Button>
-                <Button Height="53" Width="43">A9</Button>
-                <Button Height="53" Width="43">A9</Button>
+                <Button Height="53" Width="43" Visibility="Hidden">A9</Button>
             </StackPanel>
             <StackPanel Orientation="Horizontal" Margin="0,2,0,0"  x:Name="Sp1">
                 <Button Height="53" Width="43">A1</Button>

@@ -169,9 +169,6 @@ func (s *statePlaying) gameLoop() {
 	s.playingCtx = nil
 
 	s.cl.Println("gameloop end")
-
-	// state change to waiting
-	s.table.stateTo(waitingStateNew(s.table))
 }
 
 func (s *statePlaying) waitPlayersAction() bool {
@@ -197,6 +194,21 @@ func (s *statePlaying) waitPlayersAction() bool {
 }
 
 func (s *statePlaying) handOver() {
+	// init compare context for each player
+	for _, p := range s.playingPlayers {
+		opponents := s.getOrderPlayers(p)
+		compareContexts := make([]*compareContext, len(opponents))
+
+		for i, op := range opponents {
+			compareContexts[i] = &compareContext{target: op,
+				handTotalScore: make([]int32, 3), // 3 hand
+			}
+		}
+
+		p.rContext.compareContexts = compareContexts
+
+	}
+
 	//计算结果
 	compareAndCalcScore(s)
 
@@ -210,4 +222,94 @@ func (s *statePlaying) sendMonkeyTips(p *Player) {
 
 func (s *statePlaying) getStateConst() xproto.TableState {
 	return xproto.TableState_STablePlaying
+}
+
+// nextPlayreImpl 下一个玩家
+func (s *statePlaying) nextPlayerImpl(p *Player) *Player {
+	var players = s.playingPlayers
+	var length = len(players)
+	for i := 0; i < length; i++ {
+		if players[i] == p {
+			return players[(i+1)%length]
+		}
+	}
+
+	return nil
+}
+
+// prevPlayerImpl 上一个玩家
+func (s *statePlaying) prevPlayerImpl(player *Player) *Player {
+	var players = s.playingPlayers
+	var length = len(players)
+	for i := 0; i < length; i++ {
+		if players[i] == player {
+			return players[(i-1+length)%length]
+		}
+	}
+
+	return nil
+}
+
+// rightOpponent 下家
+func (s *statePlaying) rightOpponent(curPlayer *Player) *Player {
+	return s.nextPlayerImpl(curPlayer)
+}
+
+// leftOpponent 上家
+func (s *statePlaying) leftOpponent(curPlayer *Player) *Player {
+	return s.prevPlayerImpl(curPlayer)
+}
+
+// getOrderPlayers 依据逆时针获得下家，下下家，下下下家
+func (s *statePlaying) getOrderPlayers(curPlayer *Player) []*Player {
+	var length = len(s.playingPlayers)
+	var orderPlayers = make([]*Player, length-1)
+
+	var idx = -1
+	for i := 0; i < length; i++ {
+		if s.playingPlayers[i] != curPlayer {
+			continue
+		}
+
+		idx = i
+		break
+	}
+
+	if idx < 0 {
+		return nil
+	}
+
+	idx++
+	for i := 0; i < (length - 1); i++ {
+		orderPlayers[i] = s.playingPlayers[(i+idx)%length]
+	}
+
+	return orderPlayers
+}
+
+// getOrderPlayersWithFirst 依据逆时针获得下家，下下家，下下下家
+func (s *statePlaying) getOrderPlayersWithFirst(curPlayer *Player) []*Player {
+	var length = len(s.playingPlayers)
+	var orderPlayers = make([]*Player, length)
+	orderPlayers[0] = curPlayer
+
+	var idx = -1
+	for i := 0; i < length; i++ {
+		if s.playingPlayers[i] != curPlayer {
+			continue
+		}
+
+		idx = i
+		break
+	}
+
+	if idx < 0 {
+		return nil
+	}
+
+	for i := 1; i < (length); i++ {
+		orderPlayers[i] = s.playingPlayers[(i+idx)%length]
+	}
+
+	return orderPlayers
 }

@@ -74,6 +74,11 @@ func (s *stateWaiting) onPlayerMsg(p *Player, msg *xproto.GameMessage) {
 
 func (s *stateWaiting) onStateEnter() {
 	s.cl.Println("onStateEnter")
+
+	s.tryCountingDown()
+	if s.inCountingDownState {
+		s.table.updateTableInfo2All(int32(s.countdownTick))
+	}
 }
 
 func (s *stateWaiting) onStateExit() {

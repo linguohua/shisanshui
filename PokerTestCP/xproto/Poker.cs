@@ -25,76 +25,76 @@ namespace Xproto {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "Cgtwb2tlci5wcm90bxIGeHByb3RvIikKC0dhbWVNZXNzYWdlEgwKBGNvZGUY",
-            "ASACKAUSDAoEZGF0YRgCIAEoDCJDCgtNc2dDYXJkSGFuZBIUCgxjYXJkSGFu",
-            "ZFR5cGUYASACKAUSDQoFY2FyZHMYAiADKAUSDwoHaGFuZE51bRgDIAIoBSKO",
-            "AQoRTXNnUGxheWVyQ2FyZExpc3QSDwoHY2hhaXJJRBgBIAIoBRIXCg9jYXJk",
-            "Q291bnRPbkhhbmQYAiACKAUSEwoLY2FyZHNPbkhhbmQYAyADKAUSKwoOZGlz",
-            "Y2FyZGVkSGFuZHMYBCADKAsyEy54cHJvdG8uTXNnQ2FyZEhhbmQSDQoFZXh0",
-            "cmEYBSADKAUiVAoHTXNnRGVhbBIVCg1iYW5rZXJDaGFpcklEGAEgAigFEjIK",
-            "D3BsYXllckNhcmRMaXN0cxgCIAMoCzIZLnhwcm90by5Nc2dQbGF5ZXJDYXJk",
-            "TGlzdCJqCg5Nc2dBbGxvd0FjdGlvbhIPCgdxYUluZGV4GAEgAigFEhUKDWFj",
-            "dGlvbkNoYWlySUQYAiACKAUSFgoOYWxsb3dlZEFjdGlvbnMYAyACKAUSGAoQ",
-            "dGltZW91dEluU2Vjb25kcxgEIAEoBSK0AQoQTXNnQWxsb3dSZUFjdGlvbhIP",
-            "CgdxYUluZGV4GAEgAigFEhUKDWFjdGlvbkNoYWlySUQYAiACKAUSFgoOYWxs",
-            "b3dlZEFjdGlvbnMYAyACKAUSGAoQdGltZW91dEluU2Vjb25kcxgEIAEoBRIZ",
-            "ChFwcmV2QWN0aW9uQ2hhaXJJRBgFIAEoBRIrCg5wcmV2QWN0aW9uSGFuZBgG",
-            "IAEoCzITLnhwcm90by5Nc2dDYXJkSGFuZCJQCg9Nc2dQbGF5ZXJBY3Rpb24S",
-            "DwoHcWFJbmRleBgBIAIoBRIOCgZhY3Rpb24YAiACKAUSDQoFZmxhZ3MYAyAB",
-            "KAUSDQoFY2FyZHMYBCADKAUifAoVTXNnQWN0aW9uUmVzdWx0Tm90aWZ5EhUK",
-            "DXRhcmdldENoYWlySUQYASACKAUSDgoGYWN0aW9uGAIgAigFEicKCmFjdGlv",
-            "bkhhbmQYAyABKAsyEy54cHJvdG8uTXNnQ2FyZEhhbmQSEwoLY2FyZHNJbldh",
-            "bGwYBCABKAUizwEKCk1zZ1Jlc3RvcmUSIAoHbXNnRGVhbBgBIAIoCzIPLnhw",
-            "cm90by5Nc2dEZWFsEhkKEXByZXZBY3Rpb25DaGFpcklEGAIgASgFEisKDnBy",
-            "ZXZBY3Rpb25IYW5kGAMgASgLMhMueHByb3RvLk1zZ0NhcmRIYW5kEhcKD2xh",
-            "bmRsb3JkQ2hhaXJJRBgEIAEoBRIQCghtdWx0aXBsZRgFIAEoBRIWCg5sYXN0",
-            "QXdhcmRDYXJkcxgGIAMoBRIUCgxwbGF5ZXJzTGlzdEEYByADKAUicQoXTXNn",
-            "UGxheWVyQ29tcGFyZUNvbnRleHQSFQoNdGFyZ2V0Q2hhaXJJRBgBIAIoBRIS",
-            "Cgp0b3RhbFNjb3JlGAIgAigFEhMKC2xvc2VIYW5kTnVtGAMgAigFEhYKDmhh",
-            "bmRUb3RhbFNjb3JlGAQgAygFIvUBCg5Nc2dQbGF5ZXJTY29yZRIVCg10YXJn",
-            "ZXRDaGFpcklEGAEgAigFEiwKD3NwZWNpYWxDYXJkSGFuZBgCIAIoCzITLnhw",
-            "cm90by5Nc2dDYXJkSGFuZBISCgp0b3RhbFNjb3JlGAMgAigFEjgKD2NvbXBh",
-            "cmVDb250ZXh0cxgEIAMoCzIfLnhwcm90by5Nc2dQbGF5ZXJDb21wYXJlQ29u",
-            "dGV4dBIQCghpc1dpbkFsbBgFIAIoCBIWCg5pc0ludmVydGVkSGFuZBgGIAIo",
-            "CBImCgljYXJkSGFuZHMYByADKAsyEy54cHJvdG8uTXNnQ2FyZEhhbmQiPAoM",
-            "TXNnSGFuZFNjb3JlEiwKDHBsYXllclNjb3JlcxgBIAMoCzIWLnhwcm90by5N",
-            "c2dQbGF5ZXJTY29yZSKOAQoLTXNnSGFuZE92ZXISDwoHZW5kVHlwZRgBIAIo",
-            "BRIyCg9wbGF5ZXJDYXJkTGlzdHMYAiADKAsyGS54cHJvdG8uTXNnUGxheWVy",
-            "Q2FyZExpc3QSJAoGc2NvcmVzGAMgASgLMhQueHByb3RvLk1zZ0hhbmRTY29y",
-            "ZRIUCgxjb250aW51ZUFibGUYBCABKAgiNQoRTXNnVXBkYXRlTG9jYXRpb24S",
-            "DgoGdXNlcklEGAEgAigJEhAKCGxvY2F0aW9uGAIgAigJIiMKEE1zZ1VwZGF0",
-            "ZVByb3BDZmcSDwoHcHJvcENmZxgBIAIoCSrvAwoGQ2FyZElEEgcKA1IySBAA",
-            "EgcKA1IyRBABEgcKA1IyQxACEgcKA1IyUxADEgcKA1IzSBAEEgcKA1IzRBAF",
-            "EgcKA1IzQxAGEgcKA1IzUxAHEgcKA1I0SBAIEgcKA1I0RBAJEgcKA1I0QxAK",
-            "EgcKA1I0UxALEgcKA1I1SBAMEgcKA1I1RBANEgcKA1I1QxAOEgcKA1I1UxAP",
-            "EgcKA1I2SBAQEgcKA1I2RBAREgcKA1I2QxASEgcKA1I2UxATEgcKA1I3SBAU",
-            "EgcKA1I3RBAVEgcKA1I3QxAWEgcKA1I3UxAXEgcKA1I4SBAYEgcKA1I4RBAZ",
-            "EgcKA1I4QxAaEgcKA1I4UxAbEgcKA1I5SBAcEgcKA1I5RBAdEgcKA1I5QxAe",
-            "EgcKA1I5UxAfEggKBFIxMEgQIBIICgRSMTBEECESCAoEUjEwQxAiEggKBFIx",
-            "MFMQIxIGCgJKSBAkEgYKAkpEECUSBgoCSkMQJhIGCgJKUxAnEgYKAlFIECgS",
-            "BgoCUUQQKRIGCgJRQxAqEgYKAlFTECsSBgoCS0gQLBIGCgJLRBAtEgYKAktD",
-            "EC4SBgoCS1MQLxIGCgJBSBAwEgYKAkFEEDESBgoCQUMQMhIGCgJBUxAzEgcK",
-            "A0pPQhA0EgcKA0pPUhA1EgsKB0NBUkRNQVgQNirAAwoLTWVzc2FnZUNvZGUS",
-            "DQoJT1BJbnZhbGlkEAASDAoIT1BBY3Rpb24QARIYChRPUEFjdGlvblJlc3Vs",
-            "dE5vdGlmeRACEhMKD09QQWN0aW9uQWxsb3dlZBADEhUKEU9QUmVBY3Rpb25B",
-            "bGxvd2VkEAUSCgoGT1BEZWFsEAYSDgoKT1BIYW5kT3ZlchAHEg0KCU9QUmVz",
-            "dG9yZRAIEhYKEk9QUGxheWVyTGVhdmVUYWJsZRAJEhYKEk9QUGxheWVyRW50",
-            "ZXJUYWJsZRAKEhQKEE9QRGlzYmFuZFJlcXVlc3QQCxITCg9PUERpc2JhbmRO",
-            "b3RpZnkQDBITCg9PUERpc2JhbmRBbnN3ZXIQDRIRCg1PUFBsYXllclJlYWR5",
-            "EA4SEgoOT1BUYWJsZURlbGV0ZWQQDxIRCg1PUFRhYmxlVXBkYXRlEBASEwoP",
-            "T1BUYWJsZVNob3dUaXBzEBESDgoKT1BHYW1lT3ZlchASEg0KCU9QS2lja291",
-            "dBATEgwKCE9QRG9uYXRlEBQSFAoQT1BVcGRhdGVMb2NhdGlvbhAVEgwKCE9Q",
-            "MkxvYmJ5EBYSEwoPT1BVcGRhdGVQcm9wQ2ZnEBdCCloILjt4cHJvdG8="));
+            "ASACKAUSDAoEZGF0YRgCIAEoDCIyCgtNc2dDYXJkSGFuZBIUCgxjYXJkSGFu",
+            "ZFR5cGUYASACKAUSDQoFY2FyZHMYAiADKAUijgEKEU1zZ1BsYXllckNhcmRM",
+            "aXN0Eg8KB2NoYWlySUQYASACKAUSFwoPY2FyZENvdW50T25IYW5kGAIgAigF",
+            "EhMKC2NhcmRzT25IYW5kGAMgAygFEisKDmRpc2NhcmRlZEhhbmRzGAQgAygL",
+            "MhMueHByb3RvLk1zZ0NhcmRIYW5kEg0KBWV4dHJhGAUgAygFIlQKB01zZ0Rl",
+            "YWwSFQoNYmFua2VyQ2hhaXJJRBgBIAIoBRIyCg9wbGF5ZXJDYXJkTGlzdHMY",
+            "AiADKAsyGS54cHJvdG8uTXNnUGxheWVyQ2FyZExpc3QiagoOTXNnQWxsb3dB",
+            "Y3Rpb24SDwoHcWFJbmRleBgBIAIoBRIVCg1hY3Rpb25DaGFpcklEGAIgAigF",
+            "EhYKDmFsbG93ZWRBY3Rpb25zGAMgAigFEhgKEHRpbWVvdXRJblNlY29uZHMY",
+            "BCABKAUitAEKEE1zZ0FsbG93UmVBY3Rpb24SDwoHcWFJbmRleBgBIAIoBRIV",
+            "Cg1hY3Rpb25DaGFpcklEGAIgAigFEhYKDmFsbG93ZWRBY3Rpb25zGAMgAigF",
+            "EhgKEHRpbWVvdXRJblNlY29uZHMYBCABKAUSGQoRcHJldkFjdGlvbkNoYWly",
+            "SUQYBSABKAUSKwoOcHJldkFjdGlvbkhhbmQYBiABKAsyEy54cHJvdG8uTXNn",
+            "Q2FyZEhhbmQiUAoPTXNnUGxheWVyQWN0aW9uEg8KB3FhSW5kZXgYASACKAUS",
+            "DgoGYWN0aW9uGAIgAigFEg0KBWZsYWdzGAMgASgFEg0KBWNhcmRzGAQgAygF",
+            "In0KFU1zZ0FjdGlvblJlc3VsdE5vdGlmeRIVCg10YXJnZXRDaGFpcklEGAEg",
+            "AigFEg4KBmFjdGlvbhgCIAIoBRIoCgthY3Rpb25IYW5kcxgDIAMoCzITLnhw",
+            "cm90by5Nc2dDYXJkSGFuZBITCgtjYXJkc0luV2FsbBgEIAEoBSLPAQoKTXNn",
+            "UmVzdG9yZRIgCgdtc2dEZWFsGAEgAigLMg8ueHByb3RvLk1zZ0RlYWwSGQoR",
+            "cHJldkFjdGlvbkNoYWlySUQYAiABKAUSKwoOcHJldkFjdGlvbkhhbmQYAyAB",
+            "KAsyEy54cHJvdG8uTXNnQ2FyZEhhbmQSFwoPbGFuZGxvcmRDaGFpcklEGAQg",
+            "ASgFEhAKCG11bHRpcGxlGAUgASgFEhYKDmxhc3RBd2FyZENhcmRzGAYgAygF",
+            "EhQKDHBsYXllcnNMaXN0QRgHIAMoBSJxChdNc2dQbGF5ZXJDb21wYXJlQ29u",
+            "dGV4dBIVCg10YXJnZXRDaGFpcklEGAEgAigFEhIKCnRvdGFsU2NvcmUYAiAC",
+            "KAUSEwoLbG9zZUhhbmROdW0YAyACKAUSFgoOaGFuZFRvdGFsU2NvcmUYBCAD",
+            "KAUi9QEKDk1zZ1BsYXllclNjb3JlEhUKDXRhcmdldENoYWlySUQYASACKAUS",
+            "LAoPc3BlY2lhbENhcmRIYW5kGAIgAigLMhMueHByb3RvLk1zZ0NhcmRIYW5k",
+            "EhIKCnRvdGFsU2NvcmUYAyACKAUSOAoPY29tcGFyZUNvbnRleHRzGAQgAygL",
+            "Mh8ueHByb3RvLk1zZ1BsYXllckNvbXBhcmVDb250ZXh0EhAKCGlzV2luQWxs",
+            "GAUgAigIEhYKDmlzSW52ZXJ0ZWRIYW5kGAYgAigIEiYKCWNhcmRIYW5kcxgH",
+            "IAMoCzITLnhwcm90by5Nc2dDYXJkSGFuZCI8CgxNc2dIYW5kU2NvcmUSLAoM",
+            "cGxheWVyU2NvcmVzGAEgAygLMhYueHByb3RvLk1zZ1BsYXllclNjb3JlIo4B",
+            "CgtNc2dIYW5kT3ZlchIPCgdlbmRUeXBlGAEgAigFEjIKD3BsYXllckNhcmRM",
+            "aXN0cxgCIAMoCzIZLnhwcm90by5Nc2dQbGF5ZXJDYXJkTGlzdBIkCgZzY29y",
+            "ZXMYAyABKAsyFC54cHJvdG8uTXNnSGFuZFNjb3JlEhQKDGNvbnRpbnVlQWJs",
+            "ZRgEIAEoCCI1ChFNc2dVcGRhdGVMb2NhdGlvbhIOCgZ1c2VySUQYASACKAkS",
+            "EAoIbG9jYXRpb24YAiACKAkiIwoQTXNnVXBkYXRlUHJvcENmZxIPCgdwcm9w",
+            "Q2ZnGAEgAigJKu8DCgZDYXJkSUQSBwoDUjJIEAASBwoDUjJEEAESBwoDUjJD",
+            "EAISBwoDUjJTEAMSBwoDUjNIEAQSBwoDUjNEEAUSBwoDUjNDEAYSBwoDUjNT",
+            "EAcSBwoDUjRIEAgSBwoDUjREEAkSBwoDUjRDEAoSBwoDUjRTEAsSBwoDUjVI",
+            "EAwSBwoDUjVEEA0SBwoDUjVDEA4SBwoDUjVTEA8SBwoDUjZIEBASBwoDUjZE",
+            "EBESBwoDUjZDEBISBwoDUjZTEBMSBwoDUjdIEBQSBwoDUjdEEBUSBwoDUjdD",
+            "EBYSBwoDUjdTEBcSBwoDUjhIEBgSBwoDUjhEEBkSBwoDUjhDEBoSBwoDUjhT",
+            "EBsSBwoDUjlIEBwSBwoDUjlEEB0SBwoDUjlDEB4SBwoDUjlTEB8SCAoEUjEw",
+            "SBAgEggKBFIxMEQQIRIICgRSMTBDECISCAoEUjEwUxAjEgYKAkpIECQSBgoC",
+            "SkQQJRIGCgJKQxAmEgYKAkpTECcSBgoCUUgQKBIGCgJRRBApEgYKAlFDECoS",
+            "BgoCUVMQKxIGCgJLSBAsEgYKAktEEC0SBgoCS0MQLhIGCgJLUxAvEgYKAkFI",
+            "EDASBgoCQUQQMRIGCgJBQxAyEgYKAkFTEDMSBwoDSk9CEDQSBwoDSk9SEDUS",
+            "CwoHQ0FSRE1BWBA2KsADCgtNZXNzYWdlQ29kZRINCglPUEludmFsaWQQABIM",
+            "CghPUEFjdGlvbhABEhgKFE9QQWN0aW9uUmVzdWx0Tm90aWZ5EAISEwoPT1BB",
+            "Y3Rpb25BbGxvd2VkEAMSFQoRT1BSZUFjdGlvbkFsbG93ZWQQBRIKCgZPUERl",
+            "YWwQBhIOCgpPUEhhbmRPdmVyEAcSDQoJT1BSZXN0b3JlEAgSFgoST1BQbGF5",
+            "ZXJMZWF2ZVRhYmxlEAkSFgoST1BQbGF5ZXJFbnRlclRhYmxlEAoSFAoQT1BE",
+            "aXNiYW5kUmVxdWVzdBALEhMKD09QRGlzYmFuZE5vdGlmeRAMEhMKD09QRGlz",
+            "YmFuZEFuc3dlchANEhEKDU9QUGxheWVyUmVhZHkQDhISCg5PUFRhYmxlRGVs",
+            "ZXRlZBAPEhEKDU9QVGFibGVVcGRhdGUQEBITCg9PUFRhYmxlU2hvd1RpcHMQ",
+            "ERIOCgpPUEdhbWVPdmVyEBISDQoJT1BLaWNrb3V0EBMSDAoIT1BEb25hdGUQ",
+            "FBIUChBPUFVwZGF0ZUxvY2F0aW9uEBUSDAoIT1AyTG9iYnkQFhITCg9PUFVw",
+            "ZGF0ZVByb3BDZmcQF0IKWgguO3hwcm90bw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Xproto.CardID), typeof(global::Xproto.MessageCode), }, null, new pbr::GeneratedClrTypeInfo[] {
             new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.GameMessage), global::Xproto.GameMessage.Parser, new[]{ "Code", "Data" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgCardHand), global::Xproto.MsgCardHand.Parser, new[]{ "CardHandType", "Cards", "HandNum" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgCardHand), global::Xproto.MsgCardHand.Parser, new[]{ "CardHandType", "Cards" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgPlayerCardList), global::Xproto.MsgPlayerCardList.Parser, new[]{ "ChairID", "CardCountOnHand", "CardsOnHand", "DiscardedHands", "Extra" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgDeal), global::Xproto.MsgDeal.Parser, new[]{ "BankerChairID", "PlayerCardLists" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgAllowAction), global::Xproto.MsgAllowAction.Parser, new[]{ "QaIndex", "ActionChairID", "AllowedActions", "TimeoutInSeconds" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgAllowReAction), global::Xproto.MsgAllowReAction.Parser, new[]{ "QaIndex", "ActionChairID", "AllowedActions", "TimeoutInSeconds", "PrevActionChairID", "PrevActionHand" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgPlayerAction), global::Xproto.MsgPlayerAction.Parser, new[]{ "QaIndex", "Action", "Flags", "Cards" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgActionResultNotify), global::Xproto.MsgActionResultNotify.Parser, new[]{ "TargetChairID", "Action", "ActionHand", "CardsInWall" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgActionResultNotify), global::Xproto.MsgActionResultNotify.Parser, new[]{ "TargetChairID", "Action", "ActionHands", "CardsInWall" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgRestore), global::Xproto.MsgRestore.Parser, new[]{ "MsgDeal", "PrevActionChairID", "PrevActionHand", "LandlordChairID", "Multiple", "LastAwardCards", "PlayersListA" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgPlayerCompareContext), global::Xproto.MsgPlayerCompareContext.Parser, new[]{ "TargetChairID", "TotalScore", "LoseHandNum", "HandTotalScore" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgPlayerScore), global::Xproto.MsgPlayerScore.Parser, new[]{ "TargetChairID", "SpecialCardHand", "TotalScore", "CompareContexts", "IsWinAll", "IsInvertedHand", "CardHands" }, null, null, null, null),
@@ -220,7 +220,7 @@ namespace Xproto {
     /// joker red，红小丑
     /// </summary>
     [pbr::OriginalName("JOR")] Jor = 53,
-    [pbr::OriginalName("Cardmax")] Cardmax = 54,
+    [pbr::OriginalName("CARDMAX")] Cardmax = 54,
   }
 
   public enum MessageCode {
@@ -541,7 +541,6 @@ namespace Xproto {
       _hasBits0 = other._hasBits0;
       cardHandType_ = other.cardHandType_;
       cards_ = other.cards_.Clone();
-      handNum_ = other.handNum_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -590,33 +589,6 @@ namespace Xproto {
       get { return cards_; }
     }
 
-    /// <summary>Field number for the "handNum" field.</summary>
-    public const int HandNumFieldNumber = 3;
-    private readonly static int HandNumDefaultValue = 0;
-
-    private int handNum_;
-    /// <summary>
-    /// 墩序号
-    /// </summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int HandNum {
-      get { if ((_hasBits0 & 2) != 0) { return handNum_; } else { return HandNumDefaultValue; } }
-      set {
-        _hasBits0 |= 2;
-        handNum_ = value;
-      }
-    }
-    /// <summary>Gets whether the "handNum" field is set</summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool HasHandNum {
-      get { return (_hasBits0 & 2) != 0; }
-    }
-    /// <summary>Clears the value of the "handNum" field</summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void ClearHandNum() {
-      _hasBits0 &= ~2;
-    }
-
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public override bool Equals(object other) {
       return Equals(other as MsgCardHand);
@@ -632,7 +604,6 @@ namespace Xproto {
       }
       if (CardHandType != other.CardHandType) return false;
       if(!cards_.Equals(other.cards_)) return false;
-      if (HandNum != other.HandNum) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -641,7 +612,6 @@ namespace Xproto {
       int hash = 1;
       if (HasCardHandType) hash ^= CardHandType.GetHashCode();
       hash ^= cards_.GetHashCode();
-      if (HasHandNum) hash ^= HandNum.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -660,10 +630,6 @@ namespace Xproto {
         output.WriteInt32(CardHandType);
       }
       cards_.WriteTo(output, _repeated_cards_codec);
-      if (HasHandNum) {
-        output.WriteRawTag(24);
-        output.WriteInt32(HandNum);
-      }
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -676,9 +642,6 @@ namespace Xproto {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(CardHandType);
       }
       size += cards_.CalculateSize(_repeated_cards_codec);
-      if (HasHandNum) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(HandNum);
-      }
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -694,9 +657,6 @@ namespace Xproto {
         CardHandType = other.CardHandType;
       }
       cards_.Add(other.cards_);
-      if (other.HasHandNum) {
-        HandNum = other.HandNum;
-      }
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -715,10 +675,6 @@ namespace Xproto {
           case 18:
           case 16: {
             cards_.AddEntriesFrom(input, _repeated_cards_codec);
-            break;
-          }
-          case 24: {
-            HandNum = input.ReadInt32();
             break;
           }
         }
@@ -2123,7 +2079,7 @@ namespace Xproto {
       _hasBits0 = other._hasBits0;
       targetChairID_ = other.targetChairID_;
       action_ = other.action_;
-      actionHand_ = other.actionHand_ != null ? other.actionHand_.Clone() : null;
+      actionHands_ = other.actionHands_.Clone();
       cardsInWall_ = other.cardsInWall_;
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
@@ -2187,18 +2143,17 @@ namespace Xproto {
       _hasBits0 &= ~2;
     }
 
-    /// <summary>Field number for the "actionHand" field.</summary>
-    public const int ActionHandFieldNumber = 3;
-    private global::Xproto.MsgCardHand actionHand_;
+    /// <summary>Field number for the "actionHands" field.</summary>
+    public const int ActionHandsFieldNumber = 3;
+    private static readonly pb::FieldCodec<global::Xproto.MsgCardHand> _repeated_actionHands_codec
+        = pb::FieldCodec.ForMessage(26, global::Xproto.MsgCardHand.Parser);
+    private readonly pbc::RepeatedField<global::Xproto.MsgCardHand> actionHands_ = new pbc::RepeatedField<global::Xproto.MsgCardHand>();
     /// <summary>
     /// 动作目标牌组
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Xproto.MsgCardHand ActionHand {
-      get { return actionHand_; }
-      set {
-        actionHand_ = value;
-      }
+    public pbc::RepeatedField<global::Xproto.MsgCardHand> ActionHands {
+      get { return actionHands_; }
     }
 
     /// <summary>Field number for the "cardsInWall" field.</summary>
@@ -2243,7 +2198,7 @@ namespace Xproto {
       }
       if (TargetChairID != other.TargetChairID) return false;
       if (Action != other.Action) return false;
-      if (!object.Equals(ActionHand, other.ActionHand)) return false;
+      if(!actionHands_.Equals(other.actionHands_)) return false;
       if (CardsInWall != other.CardsInWall) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
@@ -2253,7 +2208,7 @@ namespace Xproto {
       int hash = 1;
       if (HasTargetChairID) hash ^= TargetChairID.GetHashCode();
       if (HasAction) hash ^= Action.GetHashCode();
-      if (actionHand_ != null) hash ^= ActionHand.GetHashCode();
+      hash ^= actionHands_.GetHashCode();
       if (HasCardsInWall) hash ^= CardsInWall.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
@@ -2276,10 +2231,7 @@ namespace Xproto {
         output.WriteRawTag(16);
         output.WriteInt32(Action);
       }
-      if (actionHand_ != null) {
-        output.WriteRawTag(26);
-        output.WriteMessage(ActionHand);
-      }
+      actionHands_.WriteTo(output, _repeated_actionHands_codec);
       if (HasCardsInWall) {
         output.WriteRawTag(32);
         output.WriteInt32(CardsInWall);
@@ -2298,9 +2250,7 @@ namespace Xproto {
       if (HasAction) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(Action);
       }
-      if (actionHand_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(ActionHand);
-      }
+      size += actionHands_.CalculateSize(_repeated_actionHands_codec);
       if (HasCardsInWall) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(CardsInWall);
       }
@@ -2321,12 +2271,7 @@ namespace Xproto {
       if (other.HasAction) {
         Action = other.Action;
       }
-      if (other.actionHand_ != null) {
-        if (actionHand_ == null) {
-          ActionHand = new global::Xproto.MsgCardHand();
-        }
-        ActionHand.MergeFrom(other.ActionHand);
-      }
+      actionHands_.Add(other.actionHands_);
       if (other.HasCardsInWall) {
         CardsInWall = other.CardsInWall;
       }
@@ -2350,10 +2295,7 @@ namespace Xproto {
             break;
           }
           case 26: {
-            if (actionHand_ == null) {
-              ActionHand = new global::Xproto.MsgCardHand();
-            }
-            input.ReadMessage(ActionHand);
+            actionHands_.AddEntriesFrom(input, _repeated_actionHands_codec);
             break;
           }
           case 32: {

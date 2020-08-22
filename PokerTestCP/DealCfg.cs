@@ -24,7 +24,7 @@ namespace PokerTest
             Index = i;
         }
 
-        public const int handMax = 16;
+        public const int handMax = 13;
         public DealCfgWnd Owner;
         public int Index;
         public bool IsBanker { get; }
