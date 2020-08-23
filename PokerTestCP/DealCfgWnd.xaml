@@ -91,7 +91,7 @@
                     </StackPanel>
                 </Grid>
             </GroupBox>
-            <GroupBox Header="闲家3" Grid.Row="4" Margin="10,0,10,0" x:Name="DGroupBox" Visibility="Collapsed">
+            <GroupBox Header="闲家3" Grid.Row="4" Margin="10,0,10,0" x:Name="DGroupBox">
                 <Grid>
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto"></RowDefinition>

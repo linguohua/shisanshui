@@ -126,3 +126,7 @@ func (aw *actionWaiter) completed(result bool) {
 
 	aw.chanWait <- result
 }
+
+func (aw *actionWaiter) cancel() {
+	aw.completed(false)
+}

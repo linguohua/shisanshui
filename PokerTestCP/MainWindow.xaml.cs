@@ -41,11 +41,8 @@ namespace PokerTest
         }
 
         private readonly List<Player> _players = new List<Player>();
-        public int TileCfgIndex { get; private set; }
 
         public Dictionary<int, BitmapImage> ImageDict { get;  } = new Dictionary<int, BitmapImage>();
-
-        public List<DealCfgSimple> DealCfgs { get; } = new List<DealCfgSimple>();
 
         //private DispatcherTimer _dispatcherTimer;
         private void OnUploadCfgFile_Button_Click(object sender, RoutedEventArgs e)
@@ -75,41 +72,6 @@ namespace PokerTest
             }
         }
 
-        private static DealCfgSimple FromString(JObject x)
-        {
-            var a = x;
-            return new DealCfgSimple() {Name = (string)a["name"], PlayerCount = (int)a["playerRequired"] };
-        }
-
-        public void OnUploaded(string body)
-        {
-            DealCfgs.Clear();
-            var a = JObject.Parse(body);
-            JArray configNames = (JArray) a["cfgs"];
-            DealCfgs.AddRange(configNames.Select(c => FromString((JObject)c)).ToArray());
-
-            if (DealCfgs.Count > 0)
-            {
-                TileCfgIndex = 0;
-                TbCurrentCfg.Text = CurrentDealCfg.Name;
-            }
-        }
-
-        private void BuildPlayers()
-        {
-            var names = new [] {"A","B", "C", "D"};
-            HideTileStackWnds();
-            var wnds = new TileStackWnd[4] { Auc, Buc, Cuc, Duc };
-            var userIds = new string[4] {"1", "2", "3", "4"};
-            // TODO: 为了和unity配合测试，少启动一个
-            for (var i = 0; i < CurrentDealCfg.PlayerCount -1 ; ++i)
-            {
-                var player = new Player(names[i], userIds[i], "monkey-table", wnds[i], this);
-                player.Connect();
-
-                _players.Add(player);
-            }
-        }
         private void OnSinglePlayer_Button_Click(object sender, RoutedEventArgs e)
         {
             if (_players.Count == 4)
@@ -165,28 +127,11 @@ namespace PokerTest
             }
         }
 
-        public DealCfgSimple CurrentDealCfg
-        {
-            get
-            {
-                if (DealCfgs.Count < 1)
-                    return DealCfgSimple.Empty;
-
-                if (TileCfgIndex < 0)
-                    TileCfgIndex = 0;
-
-                if (TileCfgIndex >= DealCfgs.Count)
-                    TileCfgIndex = DealCfgs.Count - 1;
-
-                return DealCfgs[TileCfgIndex];
-            }
-        }
-
         private void OnStartGame_Button_Click(object sender, RoutedEventArgs e)
         {
             if (_players.Count == 0)
             {
-                BuildPlayers();
+                //BuildPlayers();
             }
             else
             {
@@ -209,127 +154,6 @@ namespace PokerTest
             //}
 
             //HttpHandlers.SendPostMethod(@"/start", CurrentDealCfg.Name);
-        }
-
-        private void KillPlayer(Player player)
-        {
-            player.Dispose();
-        }
-
-        private string _saveCfgPrefix;
-        private int _saveCfgIndex;
-        private void OnExportCfg_Button_Click(object sender, RoutedEventArgs e)
-        {
-            var log = TbLogger.Text;
-            if (string.IsNullOrWhiteSpace(log))
-                return;
-            //var log = @"";
-            var log2X = new Log2X();
-            try
-            {
-                if (!log2X.Parse(log))
-                {
-                    MessageBox.Show(this, "log parse error");
-                    return;
-                }
-
-                // write csv file
-                // 名称	庄家手牌	庄家花牌	闲家1手牌	闲家1花牌	闲家2牌	闲家2花牌	闲家3手牌	闲家3花牌	抽牌序列	强制庄家	强制风牌
-                Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
-                if (_saveCfgPrefix != null)
-                {
-                    dlg.FileName = _saveCfgPrefix + _saveCfgIndex;
-                }
-                else
-                {
-                    dlg.FileName = "dealcfg"; // Default file name
-                }
-
-                dlg.DefaultExt = ".csv"; // Default file extension
-                dlg.Filter = "CSV documents (.csv)|*.csv"; // Filter files by extension
-
-                // Show save file dialog box
-                Nullable<bool> result = dlg.ShowDialog();
-                // Process save file dialog box results
-                if (result == true)
-                {
-                    // Save document
-                    string filename = dlg.FileName;
-                    ParsePrefixAndIndex(filename, out _saveCfgPrefix, out _saveCfgIndex);
-                    using (var textWriter = new StreamWriter(new FileStream(filename, FileMode.Create, FileAccess.ReadWrite), Encoding.Default))
-                    {
-                        var headers = new [] {"名称", "庄家手牌", "庄家花牌",
-                            "闲家1手牌", "闲家1花牌", "闲家2牌", "闲家2花牌", "闲家3手牌", "闲家3花牌", "抽牌序列", "强制庄家", "强制风牌" };
-                        var csv = new CsvWriter(textWriter, System.Globalization.CultureInfo.CurrentCulture);
-                        foreach (var header in headers)
-                        {
-                            csv.WriteField(header);
-                        }
-                        csv.NextRecord();
-
-                        csv.WriteField(string.IsNullOrWhiteSpace(CurrentDealCfg.Name) ? "bug" : CurrentDealCfg.Name);
-
-                        var writedDeal = 0;
-                        foreach (var item in log2X.Deals)
-                        {
-                            csv.WriteField(item.HandTiles);
-                            csv.WriteField(item.FlowerTiles);
-                            writedDeal+=2;
-                        }
-
-                        for (; writedDeal < 8; writedDeal++)
-                        {
-                            csv.WriteField("");
-                        }
-
-                        var sb = new StringBuilder();
-                        foreach (var draw in log2X.Draws)
-                        {
-                            sb.Append(draw);
-                            sb.Append(",");
-                        }
-                        csv.WriteField(sb.ToString());
-
-                        if (null != log2X.Banker)
-                        {
-                            csv.WriteField(log2X.Banker);
-                        }
-                        if (null != log2X.Wind)
-                        {
-                            csv.WriteField(log2X.Wind);
-                        }
-
-                        csv.NextRecord();
-                    }
-
-                    // write action file
-                    var actionFileName = filename.Substring(0, filename.LastIndexOf(".", StringComparison.Ordinal)) + ".txt";
-                    using (var textWriter = new StreamWriter(new FileStream(actionFileName, FileMode.Create, FileAccess.ReadWrite), Encoding.Default))
-                    {
-                        foreach (var actionLine in log2X.ActionLines)
-                        {
-                            textWriter.WriteLine(actionLine);
-                        }
-                    }
-
-                    // write result file
-                    var resultMsg = GetScoreWndResult();
-                    if (!string.IsNullOrWhiteSpace(resultMsg))
-                    {
-                        var resultFileName = filename.Substring(0, filename.LastIndexOf(".", StringComparison.Ordinal)) + ".result";
-                        using (var textWriter = new StreamWriter(new FileStream(resultFileName, FileMode.Create, FileAccess.ReadWrite), Encoding.Default))
-                        {
-                            textWriter.Write(resultMsg);
-                        }
-                    }
-
-                }
-            }
-            catch (Exception ex)
-            {
-                MessageBox.Show(this, ex.Message);
-            }
-
         }
 
         private void OnExportTableCfg_Button_Click(object sender, RoutedEventArgs e)
@@ -358,169 +182,8 @@ namespace PokerTest
             ExportTableWnd.ShowExportDialog(ExportTableWnd.ExportTableType.Operations, this);
         }
 
-        private void OnLoadAction_Button_Click(object sender, RoutedEventArgs e)
-        {
-            //Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
-            //dlg.FileName = "dealcfg"; // Default file name
-            //dlg.DefaultExt = ".txt"; // Default file extension
-            //dlg.Filter = "txt documents (.txt)|*.txt"; // Filter files by extension
-
-            //// Show open file dialog box
-            //var result = dlg.ShowDialog();
-
-            //// Process open file dialog box results
-            //if (result == true)
-            //{
-            //    // Open document
-            //    var x = HttpHandlers.WriteSafeReadAllLines(dlg.FileName);
-            //    if (!string.IsNullOrWhiteSpace(x))
-            //    {
-            //        ShowActionListWnd(x);
-            //    }
-            //}
-            TestAutoActionRegex();
-        }
-
-        private void TestAutoActionRegex()
-        {
-            var actionMsgs = new string[]
-            {
-                "[c-kong 8筒 8筒 8筒 8筒]",
-                "[discard 9万]",
-                "[discard 9万 richi true]",
-                "[chow 1条 2条 3条]",
-                "[richi False]",
-                "[skip]",
-                "[e-kong 7条 7条 7条 7条]",
-                "[t-kong 7条 7条 7条 7条]",
-                "[pong 6筒 6筒 6筒]",
-                "[winChuck]",
-                "[winSelf]",
-
-            };
-
-            string pattern;
-            Regex rgx;
-            MatchCollection matches;
-            Match match;
-
-            pattern = @"^\[(?<action>[^\s]+).*\]$";
-
-
-            foreach (var msg in actionMsgs)
-            {
-                rgx = new Regex(pattern, RegexOptions.IgnoreCase);
-                matches = rgx.Matches(msg);
-                if (matches.Count > 0)
-                {
-                    match = matches[0];
-                    var action = match.Groups["action"].Value;
-                    Console.WriteLine(action);
-
-                    var needTileN = true;
-                    switch (action)
-                    {
-                        case "chow":
-                            break;
-                        case "pong":
-                            break;
-                        case "c-kong":
-                            break;
-                        case "e-kong":
-                            break;
-                        case "t-kong":
-                            break;
-                        case "richi":
-                            break;
-                        case "discard":
-                            break;
-                        default:
-                            needTileN = false;
-                            break;
-                    }
-
-                    if (needTileN)
-                    {
-                        var secondPattern = @"^\[[^\s]+\s(?<paramA>[^\s]+).*\]$";
-                        rgx = new Regex(secondPattern, RegexOptions.IgnoreCase);
-                        matches = rgx.Matches(msg);
-                        match = matches[0];
-                        var paramA = match.Groups["paramA"].Value;
-                        Console.WriteLine(paramA);
-                    }
-
-                    if (action == "discard")
-                    {
-                        var secondPattern = @"^\[.*richi\s(?<paramB>[^\s]+).*\]$";
-                        rgx = new Regex(secondPattern, RegexOptions.IgnoreCase);
-                        matches = rgx.Matches(msg);
-                        if (matches.Count > 0)
-                        {
-                            match = matches[0];
-                            var paramB = match.Groups["paramB"].Value;
-                            Console.WriteLine(paramB);
-                        }
-                    }
-                }
-
-            }
-
-        }
-
-        public void SyncActionWnd(string x)
-        {
-            AlWnd?.SelectIfSame(x);
-        }
         public ActionListWnd AlWnd { get; private set; }
-        private void ShowActionListWnd(string x)
-        {
-            if (AlWnd == null)
-            {
-                AlWnd = new ActionListWnd();
-                AlWnd.SetOwner(this);
-            }
 
-            var lines = new List<string>();
-            using (StringReader reader = new StringReader(x))
-            {
-
-                string rline;
-                while ((rline = reader.ReadLine()) != null)
-                {
-                    // Do something with the line
-                    lines.Add(rline);
-                }
-            }
-
-            AlWnd.ShowWithNewActionList(lines);
-            //throw new NotImplementedException();
-        }
-
-        public void ResetActionListWndIndex()
-        {
-            AlWnd?.ResetSelectedIndex();
-        }
-        private static void ParsePrefixAndIndex(string filename, out string savePrefix, out int saveNextIndex)
-        {
-            savePrefix = null;
-            saveNextIndex = 0;
-            var fname = Path.GetFileNameWithoutExtension(filename);
-            if (fname == null)
-                return;
-            for (var i = 0; i < fname.Length; ++i)
-            {
-                if (char.IsDigit(fname[i]))
-                {
-                    savePrefix = fname.Substring(0, i);
-                    if (int.TryParse(fname.Substring(i), out saveNextIndex))
-                    {
-                        saveNextIndex++;
-                    }
-
-                    break;
-                }
-            }
-        }
         private void OnSelectCfg_Button_Click(object sender, RoutedEventArgs e)
         {
             //  选择配置
@@ -608,30 +271,7 @@ namespace PokerTest
             TbLogger.AppendText(logMsg);
             TbLogger.ScrollToEnd();
         }
-        public void AppendActionLog(string logMsg)
-        {
-            TbLogger.AppendText(logMsg);
-            TbLogger.AppendText("\r\n");
-            TbLogger.ScrollToEnd();
-
-            SyncActionWnd(logMsg);
-        }
-
-        public void ClearLog()
-        {
-            TbLogger.Clear();
-        }
-
-        public string TileId2Name(int msgWindFlowerId)
-        {
-            return IdNames[msgWindFlowerId];
-        }
-
-        public int TileId2Name(string name)
-        {
-            return NameIds[name];
-        }
-
+ 
         public Dictionary<int, string> IdNames { get; } = new Dictionary<int, string>();
         public Dictionary<string, int> NameIds { get; } = new Dictionary<string, int>();
         public bool IsPlaying { get; set; }
@@ -777,29 +417,12 @@ namespace PokerTest
         }
 
         private ScoreWnd _scoreWnd;
-        internal int rb111;
-
         public void ShowScoreWnd(string msg)
         {
             if (_scoreWnd == null)
                 _scoreWnd = new ScoreWnd();
 
             _scoreWnd.ShowWithMsg(msg, this);
-        }
-
-        public void ResetScoreWnd()
-        {
-            _scoreWnd?.Clear();
-        }
-
-        private void OnShowScoreWnd_Button_Click(object sender, RoutedEventArgs e)
-        {
-            _scoreWnd?.Show();
-        }
-
-        public string GetScoreWndResult()
-        {
-            return _scoreWnd == null ? "" : _scoreWnd.GetResultMsg();
         }
 
         private void OnAttachDealCfg_Button_Click(object sender, RoutedEventArgs e)
@@ -834,45 +457,6 @@ namespace PokerTest
                 catch (Exception ex)
                 {
                     MessageBox.Show(ex.Message);
-                }
-            }
-        }
-
-        private void TestManualProto()
-        {
-            // 编码
-            using (MemoryStream ms = new MemoryStream(4096))
-            {
-                using (BinaryWriter bw = new BinaryWriter(ms))
-                {
-                    ManualProtoCoder.EncodeInt32(bw, (uint)MessageCode.Opdeal, 1);
-                    var abc = new byte[4000];
-                    abc[0] = 1;
-                    abc[1] = 2;
-                    abc[2] = 3;
-
-                    ManualProtoCoder.EncodeBytes(bw, abc, 2);
-
-                    var encoded = ms.ToArray();
-                    var gmsg = GameMessage.Parser.ParseFrom(encoded);
-                    Debug.Assert(gmsg.Code == (int)MessageCode.Opdeal);
-                    Debug.Assert(abc.SequenceEqual(gmsg.Data));
-
-                    // 解码
-                    using (MemoryStream ms2 = new MemoryStream(encoded))
-                    {
-                        using (BinaryReader br = new BinaryReader(ms2))
-                        {
-                            uint ops = 0;
-                            ManualProtoCoder.DecodeInt32(br, 1, out ops);
-                            Debug.Assert(ops == (uint)MessageCode.Opdeal);
-
-                            byte[] bytes;
-                            ManualProtoCoder.DecodeBytes(br, 2, out bytes);
-
-                            Debug.Assert(bytes.SequenceEqual(abc));
-                        }
-                    }
                 }
             }
         }

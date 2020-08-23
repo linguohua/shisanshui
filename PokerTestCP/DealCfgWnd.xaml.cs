@@ -22,7 +22,7 @@ namespace PokerTest
             public GroupBox GroupBox;
             private readonly DealCfgWnd _owner;
             private readonly string _groupBoxName;
-            public const int MaxXCount = 16;
+            public const int MaxXCount = 13;
             public readonly int _fieldIndex;
             public XTiles(DealCfgWnd owner)
             {
@@ -138,7 +138,7 @@ namespace PokerTest
         // "抽牌序列", "杠后牌", "上楼计数"
         public static string[] Headers = new[] {
             "名称", "类型", "庄家userID", "庄家手牌", "庄家动作提示", "userID2", "手牌", "动作提示", "userID3", "手牌",
-            "动作提示", "userID4", "手牌", "动作提示",  "强制一致", "房间配置ID", "是否连庄"
+            "动作提示", "userID4", "手牌", "动作提示",  "强制一致", "房间配置ID"
         };
 
         private void InitDealCfgs()
@@ -156,20 +156,20 @@ namespace PokerTest
                 _wallTiles[i] = 1;
             }
 
-            for (var i = (int)CardID.R2D; i <= (int)CardID.R2S; i++)
-            {
-                _wallTiles[i] = 0;
-            }
+            //for (var i = (int)CardID.R2D; i <= (int)CardID.R2S; i++)
+            //{
+            //    _wallTiles[i] = 0;
+            //}
 
             for (var i = (int)CardID.Job; i <= (int)CardID.Jor; i++)
             {
                 _wallTiles[i] = 0;
             }
 
-            for (var i = (int)CardID.As; i <= (int)CardID.As; i++)
-            {
-                _wallTiles[i] = 0;
-            }
+            //for (var i = (int)CardID.Ah; i <= (int)CardID.As; i++)
+            //{
+            //    _wallTiles[i] = 0;
+            //}
 
             //for (int i = (int) CardID.Cardmax; i < (int) CardID.Cardmax; i++)
             //{
@@ -726,7 +726,7 @@ namespace PokerTest
 
                         // 第二行
                         csv.WriteField(cfgName); // 名字
-                        csv.WriteField("大丰关张"); // 名字
+                        csv.WriteField("十三水"); // 名字
 
                         foreach (var dealCfg in _dealCfgs)
                         {

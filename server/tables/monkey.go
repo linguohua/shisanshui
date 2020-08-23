@@ -62,19 +62,19 @@ func MonkeyDestroyMonkeyTable(tableID string, cl *log.Entry) error {
 	return nil
 }
 
-// MonkeyAttachTableCfg2Table attach table config to monkey table
-func MonkeyAttachTableCfg2Table(tableNumber string, body string, cl *log.Entry) error {
+// MonkeyAttachDealCfg2Table attach table config to monkey table
+func MonkeyAttachDealCfg2Table(tableNumber string, body string, cl *log.Entry) error {
 	if tableNumber == "" {
 		return fmt.Errorf("must supply tableNumber")
 	}
 
 	table := mgr.GetTableByNumber(tableNumber)
 	if table == nil {
-		cl.Printf("MonkeyAttachTableCfg2Table, no table found for table number:%s", tableNumber)
+		cl.Printf("MonkeyAttachDealCfg2Table, no table found for table number:%s", tableNumber)
 		return fmt.Errorf("no table found for table number:%s", tableNumber)
 	}
 
-	var cfg, errS = monkeyConfigNewFromCSV(body)
+	var cfg, errS = monkeyConfigNewFromCSV(body, cl)
 	if errS != nil {
 		return errS
 	}
@@ -95,7 +95,7 @@ func MonkeyAttachTableCfg2Table(tableNumber string, body string, cl *log.Entry) 
 
 		// 如果是强制要求顺序，则必须所有的userID不能为空
 		if cfg.isForceConsistent {
-			for i, tc := range cfg.monkeyUserCardsCfgList {
+			for i, tc := range cfg.monkeyCardsCfgList {
 				if tc.userID == "" {
 					err = fmt.Errorf("player %d not supply userID", i)
 					cl.Println(err)
@@ -118,7 +118,7 @@ func MonkeyAttachTableCfg2Table(tableNumber string, body string, cl *log.Entry) 
 
 			if cfg.isForceConsistent {
 				for i, p := range table.players {
-					if p.ID != cfg.monkeyUserCardsCfgList[i].userID {
+					if p.ID != cfg.monkeyCardsCfgList[i].userID {
 						err = fmt.Errorf("player userID or sequence not match")
 						break
 					}
@@ -137,8 +137,8 @@ func MonkeyAttachTableCfg2Table(tableNumber string, body string, cl *log.Entry) 
 	return err
 }
 
-// MonkeyAttachDealCfg2Table attach table config to monkey table
-func MonkeyAttachDealCfg2Table(tableNumber string, body string, cl *log.Entry) error {
+// MonkeyAttachTableCfg2Table attach table config to monkey table
+func MonkeyAttachTableCfg2Table(tableNumber string, body string, cl *log.Entry) error {
 	if tableNumber == "" {
 		return fmt.Errorf("table number is empty")
 	}

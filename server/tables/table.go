@@ -135,7 +135,7 @@ func (t *Table) OnPlayerEnter(ws *websocket.Conn, userID string) *Player {
 
 		// 而且玩家进入的顺序必须严格按照配置指定
 		loginSeq := len(t.players)
-		if loginSeq != monkeyUserCardCfg.chairID {
+		if loginSeq != monkeyUserCardCfg.index {
 			SendEnterTableResult(t.cl, ws, userID, xproto.EnterTableStatus_MonkeyTableUserLoginSeqNotMatch)
 			return nil
 		}
@@ -407,7 +407,7 @@ func (t *Table) onHandOver(msgHandOver *xproto.MsgHandOver) {
 	t.stateTo(waitingStateNew(t))
 
 	for _, p := range t.players {
-		p.state = xproto.PlayerState_PSNone
+		// p.state = xproto.PlayerState_PSNone
 
 		// 确保状态已经切换到SWaiting后，才发送手牌结果给客户端
 		p.sendGameMsg(msgHandOver, int32(xproto.MessageCode_OPHandOver))

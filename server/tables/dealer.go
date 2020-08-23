@@ -50,7 +50,53 @@ func dealerNew(t *Table, players []*Player) *dealer {
 }
 
 func (d *dealer) drawForMonkeys() {
-	// TODO:
+	cfg := d.table.monkeyCfg
+	// 按照顺序为其他玩家抽牌
+	for i, player := range d.players {
+		tcfg := cfg.monkeyCardsCfgList[i]
+		d.drawByMonkeyCardsCfg(player, tcfg)
+	}
+
+	// 为不足够牌的玩家补牌
+	for _, player := range d.players {
+		d.padPlayerCards(player)
+	}
+}
+
+// padPlayerCards 如果玩家的手牌不足够13张则为其抽牌补足
+func (d *dealer) padPlayerCards(p *Player) {
+	var total = drawCountEach
+
+	var reamin = total - p.cards.cardCountInHand()
+	for i := 0; i < reamin; i++ {
+		d.drawOne(p, false)
+	}
+}
+
+// drawByMonkeyCardsCfg 为player填充手牌列表
+func (d *dealer) drawByMonkeyCardsCfg(p *Player, cfgUserCards *monkeyCardConfig) {
+	var cards = p.cards
+
+	if len(cfgUserCards.handCards) > 0 {
+		for _, cardID := range cfgUserCards.handCards {
+			var t = d.extractWith(cardID)
+			nt := &card{drawBy: p.ID, cardID: t.cardID}
+
+			cards.addHandCard(nt)
+		}
+	}
+}
+
+// drawWith 从牌墙中抽取指定的牌
+func (d *dealer) extractWith(cardID int) *card {
+	var card = d.removeCardFromWall(cardID)
+
+	if nil == card {
+		d.cl.Panic("DrawWith, no card remain")
+		return nil
+	}
+
+	return card
 }
 
 func (d *dealer) removeCardFromWall(cardID int) *card {
@@ -147,7 +193,7 @@ func (d *dealer) drawForAll() {
 		return
 	}
 
-	// 抽取17张牌
+	// 抽取drawCountEach张牌
 	for i := 0; i < drawCountEach; i++ {
 		for _, player := range d.players {
 			// 不会出现无牌可抽情况

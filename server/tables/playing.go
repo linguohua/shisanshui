@@ -125,6 +125,10 @@ func (s *statePlaying) onStateEnter() {
 
 func (s *statePlaying) onStateExit() {
 	s.cl.Println("onStateExit")
+
+	if s.waiter != nil {
+		s.waiter.cancel()
+	}
 }
 
 func (s *statePlaying) gameLoop() {
@@ -154,7 +158,8 @@ func (s *statePlaying) gameLoop() {
 
 	for {
 		if !s.waitPlayersAction() {
-			s.cl.Panic("waitPlayersAction should not return false")
+			s.cl.Println("waitPlayersAction return false, break game loop")
+			break
 		}
 
 		s.handOver()

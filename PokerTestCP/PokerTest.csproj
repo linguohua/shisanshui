@@ -122,7 +122,6 @@
       <DependentUpon>CfgSelectWnd.xaml</DependentUpon>
     </Compile>
     <Compile Include="DealCfg.cs" />
-    <Compile Include="DealCfgSimple.cs" />
     <Compile Include="DealCfgWnd.xaml.cs">
       <DependentUpon>DealCfgWnd.xaml</DependentUpon>
     </Compile>

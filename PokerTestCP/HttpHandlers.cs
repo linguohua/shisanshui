@@ -16,8 +16,8 @@ namespace PokerTest
         public const string PathExportTableCfg = @"/support/exportTableCfg";
         public const string PathExportTableSIDss = @"/support/exportTableSIDs";
 
-        public const string PathAttachDealCfgFile = @"/support/attachDealCfg";
-        public const string PathAttachTableCfgFile = @"/support/attachTableCfg";
+        public const string PathAttachDealCfgFile = @"/monkey/attach-deal-cfg";
+        public const string PathAttachTableCfgFile = @"/monkey/attach-table-cfg";
 
         public static async void SendFileContent(string filePath, MainWindow wnd)
         {
@@ -39,8 +39,8 @@ namespace PokerTest
                     if (response.StatusCode == HttpStatusCode.OK)
                     {
                         MessageBox.Show(wnd, "Upload OK");
-                        var body = await response.Content.ReadAsStringAsync();
-                        wnd.OnUploaded(body);
+                        //var body = await response.Content.ReadAsStringAsync();
+                        //wnd.OnUploaded(body);
                     }
                     else
                     {

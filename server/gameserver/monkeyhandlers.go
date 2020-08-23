@@ -365,7 +365,7 @@ func registerMonkeyHandlers() {
 	rootRouter.POST(monkeyPath+"/create-monkey-table", authMonkeyHandle(onCreateMonkeyTable))
 	rootRouter.POST(monkeyPath+"/destroy-monkey-table", authMonkeyHandle(onDestroyMonkeyTable))
 	rootRouter.POST(monkeyPath+"/attach-deal-cfg", authMonkeyHandle(onAttachDealCfg2Table))
-	rootRouter.POST(monkeyPath+"/destroy-monkey-cfg", authMonkeyHandle(onAttachTableCfg2Table))
+	rootRouter.POST(monkeyPath+"/attach-table-cfg", authMonkeyHandle(onAttachTableCfg2Table))
 	rootRouter.POST(monkeyPath+"/kick-user", authMonkeyHandle(onKickUser))
 	rootRouter.GET(monkeyPath+"/export-table-ops", authMonkeyHandle(onExportTableOperations))
 	rootRouter.GET(monkeyPath+"/export-table-cfg", authMonkeyHandle(onExportTableCfg))
