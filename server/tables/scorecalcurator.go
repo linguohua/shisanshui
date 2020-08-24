@@ -291,10 +291,12 @@ func getCardsCompareResult(cards1, cards2 []int32) int {
 	}
 	//比较同种牌型大小 用最大牌点数比较 相同就往下一张...
 	for i := 0; i < l1; i++ {
-		if cards1[i] > cards2[i] {
+		c1 := cards1[i] / 4
+		c2 := cards2[i] / 4
+		if c1 > c2 {
 			return 1
 		}
-		if cards2[i] > cards1[i] {
+		if c2 > c1 {
 			return 2
 		}
 	}

@@ -240,8 +240,8 @@ func calc13(hai []int32, cl *logrus.Entry) *xproto.MsgCardHand {
 			ct = xproto.SpecialType_All_StraightFlush
 		}
 	} else {
-		if sum == 1 {
-			//一种花色
+		if redNum == 13 || blackNum == 13 {
+			//一种颜色
 			ct = xproto.SpecialType_Pure_One_Suit
 		} else if redNum == 1 {
 			//其中一种颜色只有1张  就是一点黑或者一点红
