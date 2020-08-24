@@ -403,13 +403,13 @@ func (t *Table) onHandOver(msgHandOver *xproto.MsgHandOver) {
 	// 重置qaIndex
 	t.qaIndex = 0
 
-	// 下一手牌，所以直接进入等待状态而不是空闲状态
-	t.stateTo(waitingStateNew(t))
-
 	for _, p := range t.players {
-		// p.state = xproto.PlayerState_PSNone
+		p.state = xproto.PlayerState_PSNone
 
 		// 确保状态已经切换到SWaiting后，才发送手牌结果给客户端
 		p.sendGameMsg(msgHandOver, int32(xproto.MessageCode_OPHandOver))
 	}
+
+	// 下一手牌，所以直接进入等待状态而不是空闲状态
+	t.stateTo(waitingStateNew(t))
 }

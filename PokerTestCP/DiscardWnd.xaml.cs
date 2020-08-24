@@ -315,10 +315,10 @@ namespace PokerTest
         private void Selected2UI()
         {
             HideSp0Buttons();
-            SelectedTiles.Sort((x, y) =>
-            {
-                return x - y;
-            });
+            //SelectedTiles.Sort((x, y) =>
+            //{
+            //    return x - y;
+            //});
 
             var j = 0;
             foreach (var ri in SelectedTiles)
