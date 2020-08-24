@@ -8,7 +8,7 @@ import (
 // 的牌型大小，得出每个玩家赢取的分数
 func onMessageDiscardHandler(s *statePlaying, p *Player, msg *xproto.MsgPlayerAction) {
 	if len(msg.Cards) != 13 {
-		p.cl.Panic("onMessageDiscardHandler, discard cards len:%d !=13", len(msg.Cards))
+		p.cl.Panicf("onMessageDiscardHandler, discard cards len:%d !=13", len(msg.Cards))
 	}
 
 	// 检查是否拥有这些牌

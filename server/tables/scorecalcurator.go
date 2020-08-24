@@ -2,7 +2,9 @@
 
 package tables
 
-import "shisanshui/xproto"
+import (
+	"shisanshui/xproto"
+)
 
 var (
 	//非以下牌型：每墩赢了会获得1分。
@@ -226,16 +228,14 @@ func comparePlayerResult(p1 *Player, p2 *Player) {
 
 //计算墩的分数
 func calcHandScore(hand int32, handType xproto.CardHandType) int32 {
-	// 没有牌型就1分
-	score := int32(1)
 	if handType != xproto.CardHandType_CardHand_None {
-		score = scoreOfHandType[hand][handType]
+		score := scoreOfHandType[hand][handType]
 		if score > 0 {
 			return score
 		}
 	}
-
-	return score
+	// 没有牌型就1分
+	return 1
 }
 
 //比较墩 并 保存基础分数

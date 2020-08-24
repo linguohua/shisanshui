@@ -164,6 +164,7 @@ func serializeMsgHandOver(s *statePlaying) *xproto.MsgHandOver {
 	msgHandOver.EndType = &endType
 	msgHandOver.PlayerCardLists = serializeCardListsForHandOver(s)
 
+	s.cl.Println("serializeMsgHandOver data : ", msgHandOver)
 	return msgHandOver
 }
 
