@@ -107,7 +107,7 @@ func isInvertedHandWithSpecial(cardHand *xproto.MsgCardHand) bool {
 func isInvertedHand(hand1, hand2, hand3 *xproto.MsgCardHand, p *Player) bool {
 	//先比较 1.2墩
 	if hand1.GetCardHandType() < hand2.GetCardHandType() {
-		p.cl.Println("is InvertedHand handType1 > handType2")
+		p.cl.Println("is InvertedHand handType1 < handType2 : ", hand1.GetCardHandType(), hand2.GetCardHandType())
 		return true
 	}
 	if hand1.GetCardHandType() == hand2.GetCardHandType() {

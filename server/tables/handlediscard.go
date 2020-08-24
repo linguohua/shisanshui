@@ -10,6 +10,7 @@ func onMessageDiscardHandler(s *statePlaying, p *Player, msg *xproto.MsgPlayerAc
 	if len(msg.Cards) != 13 {
 		p.cl.Panicf("onMessageDiscardHandler, discard cards len:%d !=13", len(msg.Cards))
 	}
+	p.cl.Println("onMessageDiscardHandler cards : ", msg.Cards)
 
 	// 检查是否拥有这些牌
 	cardsNum := make([]int, 52)
@@ -43,5 +44,6 @@ func onMessageDiscardHandler(s *statePlaying, p *Player, msg *xproto.MsgPlayerAc
 
 	// 发给自己的 需要加上牌详情 客户端用于显示
 	myNotify := serializeMsgActionResultNotifyForSelfDiscard(int(xproto.ActionType_enumActionType_DISCARD), p)
+	p.cl.Println("onMessageDiscardHandler data : ", myNotify)
 	p.sendActionResultNotify(myNotify)
 }

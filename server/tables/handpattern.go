@@ -187,18 +187,18 @@ func calc13(hai []int32, cl *logrus.Entry) *xproto.MsgCardHand {
 	}
 
 	//保存一份用于判断三顺子三同花
-	oldHai := make([]int32, 13)
+	newHai := make([]int32, 13)
 	for i := 0; i < 13; i++ {
-		oldHai[i] = hai[i]
+		newHai[i] = hai[i]
 	}
 
 	//cl.Printf("calc13, before sort Slice:%+v", hai)
 	// 牌大到小排列
-	sort.Slice(hai, func(i, j int) bool {
-		rankI := hai[i] / 4
-		rankJ := hai[j] / 4
+	sort.Slice(newHai, func(i, j int) bool {
+		rankI := newHai[i] / 4
+		rankJ := newHai[j] / 4
 		if rankI == rankJ {
-			return hai[i] > hai[j]
+			return newHai[i] > newHai[j]
 		}
 
 		return rank2Priority[rankI] > rank2Priority[rankJ]
@@ -208,10 +208,10 @@ func calc13(hai []int32, cl *logrus.Entry) *xproto.MsgCardHand {
 	cardNums := make([]int, 14) //保存每种牌个数
 	slots := make([]int, 4)     //花色数量 0:红桃 1:方块 2:梅花 3:黑桃
 	isStraight := true          //是否是顺子
-	for i := 0; i < len(hai); i++ {
-		card1 := hai[i]
-		if i+1 < len(hai) {
-			card2 := hai[i+1]
+	for i := 0; i < len(newHai); i++ {
+		card1 := newHai[i]
+		if i+1 < len(newHai) {
+			card2 := newHai[i+1]
 			if card1/4-card2/4 != 1 {
 				isStraight = false
 			}
@@ -270,7 +270,7 @@ func calc13(hai []int32, cl *logrus.Entry) *xproto.MsgCardHand {
 	}
 	if ct == xproto.SpecialType_Special_None {
 		//不是上面的牌型就看看是不是三同花跟三顺子
-		hands := [][]int32{oldHai[0:5], oldHai[5:10], oldHai[10:13]}
+		hands := [][]int32{hai[0:5], hai[5:10], hai[10:13]}
 		fNum := 0 //同花墩数
 		sNum := 0 //顺子墩数
 		for _, hand := range hands {
@@ -287,13 +287,13 @@ func calc13(hai []int32, cl *logrus.Entry) *xproto.MsgCardHand {
 		if fNum == 3 {
 			ct = xproto.SpecialType_Three_Flush
 		}
-		hai = oldHai
+		newHai = hai
 	}
 
 	cardHand := &xproto.MsgCardHand{}
 	var cardHandType32 = int32(ct)
 	cardHand.CardHandType = &cardHandType32
-	cardHand.Cards = hai
+	cardHand.Cards = newHai
 	return cardHand
 }
 
