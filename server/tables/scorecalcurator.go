@@ -60,10 +60,10 @@ var (
 // 比较：先看看是不是特殊牌型 不是的话再各个墩比较 并且看看是不是三墩皆输
 // 结算的时候 看看有没三家皆赢 再计算分数
 
-//客户端结果上来后调用 计算结果入口
+// 计算结果入口
 func calcFinalResult(s *statePlaying, p *Player, cards []int32) {
 	//计算结果
-	//判断是否是特殊牌型 (判断函数还没写)
+	//判断是否是特殊牌型
 	cardHand := calc13(cards, p.cl)
 	if cardHand.GetCardHandType() != int32(xproto.SpecialType_Special_None) {
 		//有特殊牌型

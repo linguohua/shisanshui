@@ -3,6 +3,7 @@ package tables
 import (
 	"runtime/debug"
 	"shisanshui/xproto"
+	"time"
 
 	"github.com/sirupsen/logrus"
 	"google.golang.org/protobuf/proto"
@@ -21,7 +22,8 @@ type statePlaying struct {
 	dealer     *dealer
 	playingCtx *playingContext
 
-	waiter *actionWaiter
+	waiter        *actionWaiter
+	countdownTick int
 }
 
 func playingStateNew(t *Table) *statePlaying {
@@ -184,8 +186,8 @@ func (s *statePlaying) waitPlayersAction() bool {
 
 	for _, p := range s.playingPlayers {
 		p.rContext.expectedAction = actions
-		//TODO : 10要写到配置里(理牌时间)
-		msgAllowPlayerAction := serializeMsgAllowedForDiscard(s, p, actions, qaIndex, 10)
+		//TODO : 30 要写到配置里(理牌时间)
+		msgAllowPlayerAction := serializeMsgAllowedForDiscard(s, p, actions, qaIndex, 30)
 		p.sendGameMsg(msgAllowPlayerAction, int32(xproto.MessageCode_OPActionAllowed))
 
 		if s.table.isForceConsistent() {
@@ -195,7 +197,45 @@ func (s *statePlaying) waitPlayersAction() bool {
 
 	// wait playing players reply
 	s.waiter = actionWaiterNew(s)
+	//倒计时 30s 玩家没操作 自动给他排列(按发牌列表)
+	s.countdownTick = 30
+	go s.countdownGoroutine()
+
 	return s.waiter.wait()
+}
+
+func (s *statePlaying) countdownGoroutine() {
+	defer func() {
+		if r := recover(); r != nil {
+			debug.PrintStack()
+			s.cl.Printf("-----PANIC: This Table will die, STACK\n:%v", r)
+			mgr.IncExceptionCount()
+		}
+	}()
+
+	loop := true
+	for loop {
+		time.Sleep(time.Second)
+		loop = s.onCountdownStep()
+	}
+}
+
+func (s *statePlaying) onCountdownStep() bool {
+	if s.countdownTick > 0 {
+		s.countdownTick--
+	}
+
+	if s.countdownTick == 0 {
+		//给没操作的玩家自动理牌
+		for _, p := range s.playingPlayers {
+			if !p.rContext.notAuto {
+				s.waiter.takeAction(p, int(xproto.ActionType_enumActionType_DISCARD), p.cards.hand2IDList(true))
+			}
+		}
+		return false
+	}
+
+	return true
 }
 
 func (s *statePlaying) handOver() {

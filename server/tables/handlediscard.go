@@ -36,8 +36,10 @@ func onMessageDiscardHandler(s *statePlaying, p *Player, msg *xproto.MsgPlayerAc
 			pP.sendActionResultNotify(msgActionNotifyResult)
 		}
 	}
+
+	p.rContext.notAuto = true
 	//计算牌型
-	calcFinalResult(s, p, msg.Cards)
+	// calcFinalResult(s, p, msg.Cards)
 
 	// 发给自己的 需要加上牌详情 客户端用于显示
 	myNotify := serializeMsgActionResultNotifyForSelfDiscard(int(xproto.ActionType_enumActionType_DISCARD), p)

@@ -21,6 +21,8 @@ type roundContext struct {
 	isWinAll bool
 	//总分
 	totalScore int32
+	//是否手动理牌(可能是自动理牌的)
+	notAuto bool
 }
 
 //与每个玩家分数关系
