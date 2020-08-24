@@ -124,7 +124,7 @@ func serializeMsgTableInfo(t *Table, timeout int32) *xproto.MsgTableInfo {
 }
 
 func serializeMsgHandOver(s *statePlaying) *xproto.MsgHandOver {
-	// serializeMsgHandOver 序列化单手牌结束的消息（非流局）给客户端
+	// serializeMsgHandOver 序列化单手牌结束的消息给客户端
 	// 计算分数
 	var msgHandScore = &xproto.MsgHandScore{}
 

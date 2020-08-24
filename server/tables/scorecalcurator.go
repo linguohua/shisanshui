@@ -62,6 +62,7 @@ var (
 
 // 计算结果入口
 func calcFinalResult(s *statePlaying, p *Player, cards []int32) {
+	p.cl.Println("calcFinalResult cards:", cards)
 	//计算结果
 	//判断是否是特殊牌型
 	cardHand := calc13(cards, p.cl)
@@ -84,7 +85,7 @@ func calcFinalResult(s *statePlaying, p *Player, cards []int32) {
 		p.rContext.hands[2] = cardT3
 
 		// 判断是否倒墩
-		p.rContext.isInvertedHand = isInvertedHand(cardT1, cardT2, cardT3)
+		p.rContext.isInvertedHand = isInvertedHand(cardT1, cardT2, cardT3, p)
 	}
 }
 
@@ -101,14 +102,16 @@ func isInvertedHandWithSpecial(cardHand *xproto.MsgCardHand) bool {
 }
 
 //判断是否是倒墩
-func isInvertedHand(hand1, hand2, hand3 *xproto.MsgCardHand) bool {
+func isInvertedHand(hand1, hand2, hand3 *xproto.MsgCardHand, p *Player) bool {
 	//先比较 1.2墩
 	if hand1.GetCardHandType() < hand2.GetCardHandType() {
+		p.cl.Println("is InvertedHand handType1 > handType2")
 		return true
 	}
 	if hand1.GetCardHandType() == hand2.GetCardHandType() {
 		r := getCardsCompareResult(hand1.GetCards(), hand2.GetCards())
 		if r == 2 {
+			p.cl.Println("is InvertedHand hand1 card > hand2 card")
 			return true
 		}
 	}
@@ -118,24 +121,32 @@ func isInvertedHand(hand1, hand2, hand3 *xproto.MsgCardHand) bool {
 		if hand3.GetCardHandType() == hand1.GetCardHandType() {
 			r := getCardsCompareResult(hand1.GetCards(), hand3.GetCards())
 			if r == 2 {
+				p.cl.Println("is InvertedHand hand1 card > hand3 card")
 				return true
 			}
 		}
 		if hand3.GetCardHandType() == hand2.GetCardHandType() {
 			r := getCardsCompareResult(hand2.GetCards(), hand3.GetCards())
 			if r == 2 {
+				p.cl.Println("is InvertedHand hand2 card > hand3 card")
 				return true
 			}
 		}
-		if hand1.GetCardHandType() < hand3.GetCardHandType() ||
-			hand2.GetCardHandType() < hand3.GetCardHandType() {
+		if hand1.GetCardHandType() < hand3.GetCardHandType() {
+			p.cl.Println("is InvertedHand handType1 < handType3")
+			return true
+		}
+		if hand2.GetCardHandType() < hand3.GetCardHandType() {
+			p.cl.Println("is InvertedHand handType2 < handType3")
 			return true
 		}
 	} else {
 		if compareHandAndReturnResult(hand1, hand3) {
+			p.cl.Println("is InvertedHand hand1 card < hand3 card")
 			return true
 		}
 		if compareHandAndReturnResult(hand2, hand3) {
+			p.cl.Println("is InvertedHand hand2 card < hand3 card")
 			return true
 		}
 	}

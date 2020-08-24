@@ -184,10 +184,13 @@ func (s *statePlaying) waitPlayersAction() bool {
 	// 填写客户端可以操作的动作
 	actions := int(xproto.ActionType_enumActionType_DISCARD)
 
+	//倒计时 30s 玩家没操作 自动给他排列(按发牌列表)
+	s.countdownTick = s.table.config.DisCardCountdown
+	go s.countdownGoroutine()
+
 	for _, p := range s.playingPlayers {
 		p.rContext.expectedAction = actions
-		//TODO : 30 要写到配置里(理牌时间)
-		msgAllowPlayerAction := serializeMsgAllowedForDiscard(s, p, actions, qaIndex, 30)
+		msgAllowPlayerAction := serializeMsgAllowedForDiscard(s, p, actions, qaIndex, int32(s.countdownTick))
 		p.sendGameMsg(msgAllowPlayerAction, int32(xproto.MessageCode_OPActionAllowed))
 
 		if s.table.isForceConsistent() {
@@ -197,10 +200,6 @@ func (s *statePlaying) waitPlayersAction() bool {
 
 	// wait playing players reply
 	s.waiter = actionWaiterNew(s)
-	//倒计时 30s 玩家没操作 自动给他排列(按发牌列表)
-	s.countdownTick = 30
-	go s.countdownGoroutine()
-
 	return s.waiter.wait()
 }
 
