@@ -97,7 +97,9 @@ func (aw *actionWaiter) takeAction(player *Player, action int, cardIDs []int32) 
 	wi.cardsList = cardIDs
 
 	//保存排序好的牌到player
-	//wi.player.hcontext.sortCards = cardIDs
+	// wi.player.rContext.sortCards = cardIDs
+	//计算牌型
+	calcFinalResult(aw.s, player, cardIDs)
 
 	allReply := true
 	for e := aw.waitQueue.Front(); e != nil; e = e.Next() {

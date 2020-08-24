@@ -10,7 +10,8 @@ type tableConfig struct {
 	PlayerNumAcquired int `json:"playerAcquired"`
 	PlayerNumMax      int `json:"playerMax"`
 
-	Countdown int `json:"countdown"`
+	Countdown        int `json:"countdown"`
+	DisCardCountdown int `json:"disCardCountdown"`
 }
 
 func tableConfigNew() *tableConfig {
@@ -18,5 +19,6 @@ func tableConfigNew() *tableConfig {
 		PlayerNumAcquired: 2,
 		PlayerNumMax:      4,
 		Countdown:         5,
+		DisCardCountdown:  60,
 	}
 }
