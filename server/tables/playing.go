@@ -245,7 +245,7 @@ func (s *statePlaying) handOver() {
 
 		for i, op := range opponents {
 			compareContexts[i] = &compareContext{target: op,
-				handTotalScore: make([]int32, 3), // 3 hand
+				handScores: make([]int32, 3), // 3 hand
 			}
 		}
 

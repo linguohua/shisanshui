@@ -13,7 +13,7 @@ type roundContext struct {
 	isInvertedHand bool
 	//墩列表 0、1、2 表示 1、2、3墩
 	hands []*xproto.MsgCardHand
-	// 特殊牌型
+	//特殊牌型
 	specialCardHand *xproto.MsgCardHand
 	//与玩家分数关系
 	compareContexts []*compareContext
@@ -23,15 +23,24 @@ type roundContext struct {
 	totalScore int32
 	//是否手动理牌(可能是自动理牌的)
 	notAuto bool
+	//每墩详情
+	// handContext []*handContext
 }
 
-//与每个玩家分数关系
+// type handContext struct {
+// 	//这一墩输赢总数
+// 	score int32
+// 	//这一墩输给我的玩家
+// 	loserChairID []int32
+// }
+
+//与其他玩家分数关系
 type compareContext struct {
 	target            *Player
 	compareTotalScore int32
 	//记录玩家赢了target多少墩 (也就是target输的墩数)
-	loseHandNum    int32
-	handTotalScore []int32 //负分表示输家
+	winHandNum int32
+	handScores []int32 //负分表示输
 }
 
 // pgameContext context for whold game

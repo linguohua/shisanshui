@@ -65,6 +65,16 @@ func serializeCardList(player *Player, isShowDarkCards bool) *xproto.MsgPlayerCa
 	var cardCountInHand = int32(cards.cardCountInHand())
 	playerCardList.CardCountOnHand = &cardCountInHand
 	playerCardList.CardsOnHand = cards.hand2IDList(isShowDarkCards)
+	//出牌列表
+	if isShowDarkCards {
+		disHands := make([]*xproto.MsgCardHand, 0)
+		if player.rContext.specialCardHand != nil {
+			disHands = append(disHands, player.rContext.specialCardHand)
+		} else if player.rContext.hands != nil {
+			disHands = player.rContext.hands
+		}
+		playerCardList.DiscardedHands = disHands
+	}
 	return playerCardList
 }
 
@@ -136,18 +146,18 @@ func serializeMsgHandOver(s *statePlaying) *xproto.MsgHandOver {
 		msgPlayerScore.TotalScore = &rContext.totalScore
 		chairid := int32(player.chairID)
 		msgPlayerScore.TargetChairID = &chairid
-		msgPlayerScore.SpecialCardHand = rContext.specialCardHand
+		if rContext.specialCardHand != nil {
+			msgPlayerScore.SpecialCardType = rContext.specialCardHand.CardHandType
+		}
 		msgPlayerScore.IsWinAll = &rContext.isWinAll
 		msgPlayerScore.IsInvertedHand = &rContext.isInvertedHand
 		//与其他玩家关系
 		compareContexts := make([]*xproto.MsgPlayerCompareContext, 0, 3)
 		for _, cC := range rContext.compareContexts {
 			compareContext := &xproto.MsgPlayerCompareContext{}
-			tc := int32(cC.target.chairID)
-			compareContext.TargetChairID = &tc
-			compareContext.TotalScore = &cC.compareTotalScore
-			compareContext.LoseHandNum = &cC.loseHandNum
-			compareContext.HandTotalScore = cC.handTotalScore
+			// compareContext.TotalScore = &cC.compareTotalScore
+			// compareContext.LoseHandNum = &cC.loseHandNum
+			compareContext.HandScores = cC.handScores
 
 			compareContexts = append(compareContexts, compareContext)
 		}

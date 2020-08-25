@@ -69,6 +69,7 @@ func calcFinalResult(s *statePlaying, p *Player, cards []int32) {
 	//判断是否是特殊牌型
 	cardHand := calc13(cards, p.cl)
 	if cardHand.GetCardHandType() != int32(xproto.SpecialType_Special_None) {
+		p.cl.Println("calcFinalResult specialCardHand:", cardHand.GetCardHandType())
 		//有特殊牌型
 		//TODO 如果有特殊牌型 三顺子 三同花 (是不是也要判断倒墩)
 		p.rContext.specialCardHand = cardHand
@@ -202,6 +203,7 @@ func isBigOfCardsfigure(hand, handThree []int32, isStraight bool) bool {
 //计算墩的牌型 并保存结果到 player.rContext
 func caleAndSaveHand(hand int32, cards []int32, p *Player) *xproto.MsgCardHand {
 	cardHand := patternConvertMsgCardHand(cards, p.cl)
+	p.cl.Printf("caleAndSaveHand hand:%d,cardHand:%d,cards:%d", hand, cardHand.GetCardHandType(), cards)
 	p.rContext.hands[hand] = cardHand
 
 	return cardHand
@@ -270,13 +272,13 @@ func compareHandAndSaveScore(hand int32, ps1, ps2 *xproto.MsgCardHand, p1, p2 *P
 	score = calcHandScore(hand, xproto.CardHandType(winner.rContext.hands[hand].GetCardHandType()))
 	//赢的一方 添加到输的一方的compareContexts列表里
 	winCompareContext := loser.rContext.getTargetCompareContext(winner)
-	winCompareContext.handTotalScore[hand] = score
+	winCompareContext.handScores[hand] = score
 	winCompareContext.compareTotalScore += score
 	winner.rContext.totalScore += score
 	//输的一方 添加到赢的一方的compareContexts列表里
 	loseCompareContext := winner.rContext.getTargetCompareContext(loser)
-	loseCompareContext.handTotalScore[hand] = -score
-	loseCompareContext.loseHandNum++
+	loseCompareContext.handScores[hand] = -score
+	loseCompareContext.winHandNum++
 	loseCompareContext.compareTotalScore -= score
 	loser.rContext.totalScore -= score
 }
@@ -362,7 +364,7 @@ func compareAndCalcScore(s *statePlaying) {
 		if p.rContext.specialCardHand.GetCardHandType() != int32(xproto.SpecialType_Special_None) {
 			loserNum := 0
 			for _, cC := range p.rContext.compareContexts {
-				if cC.loseHandNum == 3 {
+				if cC.winHandNum == 3 {
 					loserNum++
 				}
 			}
@@ -384,21 +386,21 @@ func calcAddedScore(p *Player) {
 	//先看是不是三墩皆输 是的话 就*2
 	//再看看是不是同时满足 倒墩 三家皆赢 是的话 再*2
 	for _, cC := range pr.compareContexts {
-		if cC.loseHandNum == 3 {
+		if cC.winHandNum == 3 {
 			targetP := cC.target
-			for hand, score := range cC.handTotalScore {
+			for hand, score := range cC.handScores {
 				//需要修改的基数
 				changeScore := score
 				if targetP.rContext.isInvertedHand && pr.isWinAll {
 					changeScore = changeScore * 3
 				}
 				//先修改p的
-				cC.handTotalScore[hand] += changeScore
+				cC.handScores[hand] += changeScore
 				cC.compareTotalScore += changeScore
 				pr.totalScore += changeScore
 				//再修改target的
 				tcC := targetP.rContext.getTargetCompareContext(p)
-				tcC.handTotalScore[hand] -= changeScore
+				tcC.handScores[hand] -= changeScore
 				tcC.compareTotalScore -= changeScore
 				targetP.rContext.totalScore -= changeScore
 			}

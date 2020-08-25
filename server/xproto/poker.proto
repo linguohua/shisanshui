@@ -253,16 +253,10 @@ message MsgRestore {
   repeated int32 playersListA = 7;
 }
 
-// 与其他玩家关系
+// 与某个对手玩家关系
 message MsgPlayerCompareContext{
-  // 玩家chairID
-  required int32 targetChairID = 1;
-  // 输赢总分数
-  required int32 totalScore = 2;
-	// 此玩家输了多少墩
-  required int32 loseHandNum = 3;
   // 墩分数详情列表
-  repeated int32 handTotalScore = 4;
+  repeated int32 handScores = 1;
 }
 
 // 一手牌结束后每个玩家的计分
@@ -270,7 +264,7 @@ message MsgPlayerScore {
   // 玩家
   required int32 targetChairID = 1;
   // 赢特殊牌类型 可以无效
-  optional MsgCardHand specialCardHand = 2;
+  optional int32 specialCardType = 2;
   // 总赢 总输
   required int32 totalScore = 3;
   // 与其他玩家关系
@@ -279,8 +273,6 @@ message MsgPlayerScore {
   required bool isWinAll = 5;
   // 是否倒墩
   required bool isInvertedHand = 6;
-  // 墩子牌型
-  repeated MsgCardHand cardHands = 7;
 }
 
 // 一手牌结束后计分

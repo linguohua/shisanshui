@@ -182,6 +182,7 @@ func patternConvertMsgCardHand(hai []int32, cl *logrus.Entry) *xproto.MsgCardHan
 
 // calc13 特殊牌型转换为MsgCardHand
 func calc13(hai []int32, cl *logrus.Entry) *xproto.MsgCardHand {
+
 	if len(hai) != 13 {
 		cl.Panicf("hand cards count should == 13, current:%d", len(hai))
 	}
@@ -219,6 +220,7 @@ func calc13(hai []int32, cl *logrus.Entry) *xproto.MsgCardHand {
 		slots[card1%4]++
 		cardNums[card1/4]++
 	}
+
 	sum := 0      //有几种花色
 	redNum := 0   //红牌张数
 	blackNum := 0 //黑牌张数
@@ -233,6 +235,7 @@ func calc13(hai []int32, cl *logrus.Entry) *xproto.MsgCardHand {
 			blackNum += v
 		}
 	}
+
 	ct := xproto.SpecialType_Special_None
 	if isStraight {
 		ct = xproto.SpecialType_All_Straight
@@ -268,6 +271,7 @@ func calc13(hai []int32, cl *logrus.Entry) *xproto.MsgCardHand {
 			}
 		}
 	}
+
 	if ct == xproto.SpecialType_Special_None {
 		//不是上面的牌型就看看是不是三同花跟三顺子
 		hands := [][]int32{hai[0:5], hai[5:10], hai[10:13]}
@@ -294,6 +298,7 @@ func calc13(hai []int32, cl *logrus.Entry) *xproto.MsgCardHand {
 	var cardHandType32 = int32(ct)
 	cardHand.CardHandType = &cardHandType32
 	cardHand.Cards = newHai
+
 	return cardHand
 }
 
