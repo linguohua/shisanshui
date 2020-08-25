@@ -137,7 +137,7 @@ message GameMessage {
 message MsgCardHand {
   // 牌组类型
   required int32 cardHandType = 1;
-  // 牌列表，对于一些有规律的牌组例如同花顺，可以只写第一个牌
+  // 牌列表
   repeated int32 cards = 2;
 }
 
@@ -149,7 +149,7 @@ message MsgPlayerCardList {
   required int32 cardCountOnHand = 2;
   // 玩家手上的牌（暗牌）
   repeated int32 cardsOnHand = 3;
-  // 打出去的牌组列表
+  // 打出去的牌组列表 （理牌后此项有效）
   repeated MsgCardHand discardedHands = 4;
   // extra data
   repeated int32 extra = 5;
@@ -159,13 +159,10 @@ message MsgPlayerCardList {
 // 服务器下发给客户端
 // 客户端收到消息后，做如下处理：
 // 1. 显示自己的牌
-// 2. 显示其他人的牌（暗牌，庄家14张）
-// 3. 显示庄家
+// 2. 显示其他人的牌
 message MsgDeal {
-  // 庄家座位ID
-  required int32 bankerChairID = 1;
   // 所有玩家的牌列表
-  repeated MsgPlayerCardList playerCardLists = 2;
+  repeated MsgPlayerCardList playerCardLists = 1;
 }
 
 // 服务器准许客户端做游戏动作
@@ -239,18 +236,6 @@ message MsgActionResultNotify {
 message MsgRestore {
   // 所有人的牌数据，复用MsgDeal
   required MsgDeal msgDeal = 1;
-  // 上一个动作的玩家座位ID
-  optional int32 prevActionChairID = 2;
-  // 上一动作玩家打出牌组
-  optional MsgCardHand prevActionHand = 3;
-  // 地主的座位ID
-  optional int32 landlordChairID = 4;
-  // 当前房间的倍数，由抢地主翻倍而改变，默认是1
-  optional int32 multiple = 5;
-  // 当前房间奖励给地主的3张底牌，如果处于抢地主阶段，有可能为空
-  repeated int32 lastAwardCards = 6;
-  // 服务器通过这个额外的玩家座位ID列表，下发一些额外内容，例如斗地主用于下发加注的玩家
-  repeated int32 playersListA = 7;
 }
 
 // 与某个对手玩家关系

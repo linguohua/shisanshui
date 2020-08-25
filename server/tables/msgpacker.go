@@ -34,8 +34,6 @@ func serializeMsgDeal(s *statePlaying, my *Player) *xproto.MsgDeal {
 	}
 
 	msg.PlayerCardLists = playerCardLists
-	bankerChairID := int32(s.table.bankerChairID)
-	msg.BankerChairID = &bankerChairID
 
 	return msg
 }
@@ -65,7 +63,7 @@ func serializeCardList(player *Player, isShowDarkCards bool) *xproto.MsgPlayerCa
 	var cardCountInHand = int32(cards.cardCountInHand())
 	playerCardList.CardCountOnHand = &cardCountInHand
 	playerCardList.CardsOnHand = cards.hand2IDList(isShowDarkCards)
-	//出牌列表
+	//出牌列表 (理牌后才有)
 	if isShowDarkCards {
 		disHands := make([]*xproto.MsgCardHand, 0)
 		if player.rContext.specialCardHand != nil {
