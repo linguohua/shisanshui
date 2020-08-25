@@ -47,43 +47,41 @@ namespace Xproto {
             "cHJldkFjdGlvbkNoYWlySUQYAiABKAUSKwoOcHJldkFjdGlvbkhhbmQYAyAB",
             "KAsyEy54cHJvdG8uTXNnQ2FyZEhhbmQSFwoPbGFuZGxvcmRDaGFpcklEGAQg",
             "ASgFEhAKCG11bHRpcGxlGAUgASgFEhYKDmxhc3RBd2FyZENhcmRzGAYgAygF",
-            "EhQKDHBsYXllcnNMaXN0QRgHIAMoBSJxChdNc2dQbGF5ZXJDb21wYXJlQ29u",
-            "dGV4dBIVCg10YXJnZXRDaGFpcklEGAEgAigFEhIKCnRvdGFsU2NvcmUYAiAC",
-            "KAUSEwoLbG9zZUhhbmROdW0YAyACKAUSFgoOaGFuZFRvdGFsU2NvcmUYBCAD",
-            "KAUi9QEKDk1zZ1BsYXllclNjb3JlEhUKDXRhcmdldENoYWlySUQYASACKAUS",
-            "LAoPc3BlY2lhbENhcmRIYW5kGAIgAigLMhMueHByb3RvLk1zZ0NhcmRIYW5k",
-            "EhIKCnRvdGFsU2NvcmUYAyACKAUSOAoPY29tcGFyZUNvbnRleHRzGAQgAygL",
-            "Mh8ueHByb3RvLk1zZ1BsYXllckNvbXBhcmVDb250ZXh0EhAKCGlzV2luQWxs",
-            "GAUgAigIEhYKDmlzSW52ZXJ0ZWRIYW5kGAYgAigIEiYKCWNhcmRIYW5kcxgH",
-            "IAMoCzITLnhwcm90by5Nc2dDYXJkSGFuZCI8CgxNc2dIYW5kU2NvcmUSLAoM",
-            "cGxheWVyU2NvcmVzGAEgAygLMhYueHByb3RvLk1zZ1BsYXllclNjb3JlIo4B",
-            "CgtNc2dIYW5kT3ZlchIPCgdlbmRUeXBlGAEgAigFEjIKD3BsYXllckNhcmRM",
-            "aXN0cxgCIAMoCzIZLnhwcm90by5Nc2dQbGF5ZXJDYXJkTGlzdBIkCgZzY29y",
-            "ZXMYAyABKAsyFC54cHJvdG8uTXNnSGFuZFNjb3JlEhQKDGNvbnRpbnVlQWJs",
-            "ZRgEIAEoCCI1ChFNc2dVcGRhdGVMb2NhdGlvbhIOCgZ1c2VySUQYASACKAkS",
-            "EAoIbG9jYXRpb24YAiACKAkiIwoQTXNnVXBkYXRlUHJvcENmZxIPCgdwcm9w",
-            "Q2ZnGAEgAigJKu8DCgZDYXJkSUQSBwoDUjJIEAASBwoDUjJEEAESBwoDUjJD",
-            "EAISBwoDUjJTEAMSBwoDUjNIEAQSBwoDUjNEEAUSBwoDUjNDEAYSBwoDUjNT",
-            "EAcSBwoDUjRIEAgSBwoDUjREEAkSBwoDUjRDEAoSBwoDUjRTEAsSBwoDUjVI",
-            "EAwSBwoDUjVEEA0SBwoDUjVDEA4SBwoDUjVTEA8SBwoDUjZIEBASBwoDUjZE",
-            "EBESBwoDUjZDEBISBwoDUjZTEBMSBwoDUjdIEBQSBwoDUjdEEBUSBwoDUjdD",
-            "EBYSBwoDUjdTEBcSBwoDUjhIEBgSBwoDUjhEEBkSBwoDUjhDEBoSBwoDUjhT",
-            "EBsSBwoDUjlIEBwSBwoDUjlEEB0SBwoDUjlDEB4SBwoDUjlTEB8SCAoEUjEw",
-            "SBAgEggKBFIxMEQQIRIICgRSMTBDECISCAoEUjEwUxAjEgYKAkpIECQSBgoC",
-            "SkQQJRIGCgJKQxAmEgYKAkpTECcSBgoCUUgQKBIGCgJRRBApEgYKAlFDECoS",
-            "BgoCUVMQKxIGCgJLSBAsEgYKAktEEC0SBgoCS0MQLhIGCgJLUxAvEgYKAkFI",
-            "EDASBgoCQUQQMRIGCgJBQxAyEgYKAkFTEDMSBwoDSk9CEDQSBwoDSk9SEDUS",
-            "CwoHQ0FSRE1BWBA2KsADCgtNZXNzYWdlQ29kZRINCglPUEludmFsaWQQABIM",
-            "CghPUEFjdGlvbhABEhgKFE9QQWN0aW9uUmVzdWx0Tm90aWZ5EAISEwoPT1BB",
-            "Y3Rpb25BbGxvd2VkEAMSFQoRT1BSZUFjdGlvbkFsbG93ZWQQBRIKCgZPUERl",
-            "YWwQBhIOCgpPUEhhbmRPdmVyEAcSDQoJT1BSZXN0b3JlEAgSFgoST1BQbGF5",
-            "ZXJMZWF2ZVRhYmxlEAkSFgoST1BQbGF5ZXJFbnRlclRhYmxlEAoSFAoQT1BE",
-            "aXNiYW5kUmVxdWVzdBALEhMKD09QRGlzYmFuZE5vdGlmeRAMEhMKD09QRGlz",
-            "YmFuZEFuc3dlchANEhEKDU9QUGxheWVyUmVhZHkQDhISCg5PUFRhYmxlRGVs",
-            "ZXRlZBAPEhEKDU9QVGFibGVVcGRhdGUQEBITCg9PUFRhYmxlU2hvd1RpcHMQ",
-            "ERIOCgpPUEdhbWVPdmVyEBISDQoJT1BLaWNrb3V0EBMSDAoIT1BEb25hdGUQ",
-            "FBIUChBPUFVwZGF0ZUxvY2F0aW9uEBUSDAoIT1AyTG9iYnkQFhITCg9PUFVw",
-            "ZGF0ZVByb3BDZmcQF0IKWgguO3hwcm90bw=="));
+            "EhQKDHBsYXllcnNMaXN0QRgHIAMoBSJEChdNc2dQbGF5ZXJDb21wYXJlQ29u",
+            "dGV4dBIVCg10YXJnZXRDaGFpcklEGAEgAigFEhIKCmhhbmRTY29yZXMYAiAD",
+            "KAUiuAEKDk1zZ1BsYXllclNjb3JlEhUKDXRhcmdldENoYWlySUQYASACKAUS",
+            "FwoPc3BlY2lhbENhcmRUeXBlGAIgASgFEhIKCnRvdGFsU2NvcmUYAyACKAUS",
+            "OAoPY29tcGFyZUNvbnRleHRzGAQgAygLMh8ueHByb3RvLk1zZ1BsYXllckNv",
+            "bXBhcmVDb250ZXh0EhAKCGlzV2luQWxsGAUgAigIEhYKDmlzSW52ZXJ0ZWRI",
+            "YW5kGAYgAigIIjwKDE1zZ0hhbmRTY29yZRIsCgxwbGF5ZXJTY29yZXMYASAD",
+            "KAsyFi54cHJvdG8uTXNnUGxheWVyU2NvcmUijgEKC01zZ0hhbmRPdmVyEg8K",
+            "B2VuZFR5cGUYASACKAUSMgoPcGxheWVyQ2FyZExpc3RzGAIgAygLMhkueHBy",
+            "b3RvLk1zZ1BsYXllckNhcmRMaXN0EiQKBnNjb3JlcxgDIAEoCzIULnhwcm90",
+            "by5Nc2dIYW5kU2NvcmUSFAoMY29udGludWVBYmxlGAQgASgIIjUKEU1zZ1Vw",
+            "ZGF0ZUxvY2F0aW9uEg4KBnVzZXJJRBgBIAIoCRIQCghsb2NhdGlvbhgCIAIo",
+            "CSIjChBNc2dVcGRhdGVQcm9wQ2ZnEg8KB3Byb3BDZmcYASACKAkq7wMKBkNh",
+            "cmRJRBIHCgNSMkgQABIHCgNSMkQQARIHCgNSMkMQAhIHCgNSMlMQAxIHCgNS",
+            "M0gQBBIHCgNSM0QQBRIHCgNSM0MQBhIHCgNSM1MQBxIHCgNSNEgQCBIHCgNS",
+            "NEQQCRIHCgNSNEMQChIHCgNSNFMQCxIHCgNSNUgQDBIHCgNSNUQQDRIHCgNS",
+            "NUMQDhIHCgNSNVMQDxIHCgNSNkgQEBIHCgNSNkQQERIHCgNSNkMQEhIHCgNS",
+            "NlMQExIHCgNSN0gQFBIHCgNSN0QQFRIHCgNSN0MQFhIHCgNSN1MQFxIHCgNS",
+            "OEgQGBIHCgNSOEQQGRIHCgNSOEMQGhIHCgNSOFMQGxIHCgNSOUgQHBIHCgNS",
+            "OUQQHRIHCgNSOUMQHhIHCgNSOVMQHxIICgRSMTBIECASCAoEUjEwRBAhEggK",
+            "BFIxMEMQIhIICgRSMTBTECMSBgoCSkgQJBIGCgJKRBAlEgYKAkpDECYSBgoC",
+            "SlMQJxIGCgJRSBAoEgYKAlFEECkSBgoCUUMQKhIGCgJRUxArEgYKAktIECwS",
+            "BgoCS0QQLRIGCgJLQxAuEgYKAktTEC8SBgoCQUgQMBIGCgJBRBAxEgYKAkFD",
+            "EDISBgoCQVMQMxIHCgNKT0IQNBIHCgNKT1IQNRILCgdDQVJETUFYEDYqwAMK",
+            "C01lc3NhZ2VDb2RlEg0KCU9QSW52YWxpZBAAEgwKCE9QQWN0aW9uEAESGAoU",
+            "T1BBY3Rpb25SZXN1bHROb3RpZnkQAhITCg9PUEFjdGlvbkFsbG93ZWQQAxIV",
+            "ChFPUFJlQWN0aW9uQWxsb3dlZBAFEgoKBk9QRGVhbBAGEg4KCk9QSGFuZE92",
+            "ZXIQBxINCglPUFJlc3RvcmUQCBIWChJPUFBsYXllckxlYXZlVGFibGUQCRIW",
+            "ChJPUFBsYXllckVudGVyVGFibGUQChIUChBPUERpc2JhbmRSZXF1ZXN0EAsS",
+            "EwoPT1BEaXNiYW5kTm90aWZ5EAwSEwoPT1BEaXNiYW5kQW5zd2VyEA0SEQoN",
+            "T1BQbGF5ZXJSZWFkeRAOEhIKDk9QVGFibGVEZWxldGVkEA8SEQoNT1BUYWJs",
+            "ZVVwZGF0ZRAQEhMKD09QVGFibGVTaG93VGlwcxAREg4KCk9QR2FtZU92ZXIQ",
+            "EhINCglPUEtpY2tvdXQQExIMCghPUERvbmF0ZRAUEhQKEE9QVXBkYXRlTG9j",
+            "YXRpb24QFRIMCghPUDJMb2JieRAWEhMKD09QVXBkYXRlUHJvcENmZxAXQgpa",
+            "CC47eHByb3Rv"));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedClrTypeInfo(new[] {typeof(global::Xproto.CardID), typeof(global::Xproto.MessageCode), }, null, new pbr::GeneratedClrTypeInfo[] {
@@ -96,8 +94,8 @@ namespace Xproto {
             new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgPlayerAction), global::Xproto.MsgPlayerAction.Parser, new[]{ "QaIndex", "Action", "Flags", "Cards" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgActionResultNotify), global::Xproto.MsgActionResultNotify.Parser, new[]{ "TargetChairID", "Action", "ActionHands", "CardsInWall" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgRestore), global::Xproto.MsgRestore.Parser, new[]{ "MsgDeal", "PrevActionChairID", "PrevActionHand", "LandlordChairID", "Multiple", "LastAwardCards", "PlayersListA" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgPlayerCompareContext), global::Xproto.MsgPlayerCompareContext.Parser, new[]{ "TargetChairID", "TotalScore", "LoseHandNum", "HandTotalScore" }, null, null, null, null),
-            new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgPlayerScore), global::Xproto.MsgPlayerScore.Parser, new[]{ "TargetChairID", "SpecialCardHand", "TotalScore", "CompareContexts", "IsWinAll", "IsInvertedHand", "CardHands" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgPlayerCompareContext), global::Xproto.MsgPlayerCompareContext.Parser, new[]{ "TargetChairID", "HandScores" }, null, null, null, null),
+            new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgPlayerScore), global::Xproto.MsgPlayerScore.Parser, new[]{ "TargetChairID", "SpecialCardType", "TotalScore", "CompareContexts", "IsWinAll", "IsInvertedHand" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgHandScore), global::Xproto.MsgHandScore.Parser, new[]{ "PlayerScores" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgHandOver), global::Xproto.MsgHandOver.Parser, new[]{ "EndType", "PlayerCardLists", "Scores", "ContinueAble" }, null, null, null, null),
             new pbr::GeneratedClrTypeInfo(typeof(global::Xproto.MsgUpdateLocation), global::Xproto.MsgUpdateLocation.Parser, new[]{ "UserID", "Location" }, null, null, null, null),
@@ -2669,7 +2667,7 @@ namespace Xproto {
   }
 
   /// <summary>
-  /// 与其他玩家关系
+  /// 与某个对手玩家关系
   /// </summary>
   public sealed partial class MsgPlayerCompareContext : pb::IMessage<MsgPlayerCompareContext> {
     private static readonly pb::MessageParser<MsgPlayerCompareContext> _parser = new pb::MessageParser<MsgPlayerCompareContext>(() => new MsgPlayerCompareContext());
@@ -2699,9 +2697,7 @@ namespace Xproto {
     public MsgPlayerCompareContext(MsgPlayerCompareContext other) : this() {
       _hasBits0 = other._hasBits0;
       targetChairID_ = other.targetChairID_;
-      totalScore_ = other.totalScore_;
-      loseHandNum_ = other.loseHandNum_;
-      handTotalScore_ = other.handTotalScore_.Clone();
+      handScores_ = other.handScores_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -2716,7 +2712,7 @@ namespace Xproto {
 
     private int targetChairID_;
     /// <summary>
-    /// 玩家chairID
+    /// 对手id玩家
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int TargetChairID {
@@ -2737,71 +2733,17 @@ namespace Xproto {
       _hasBits0 &= ~1;
     }
 
-    /// <summary>Field number for the "totalScore" field.</summary>
-    public const int TotalScoreFieldNumber = 2;
-    private readonly static int TotalScoreDefaultValue = 0;
-
-    private int totalScore_;
-    /// <summary>
-    /// 输赢总分数
-    /// </summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int TotalScore {
-      get { if ((_hasBits0 & 2) != 0) { return totalScore_; } else { return TotalScoreDefaultValue; } }
-      set {
-        _hasBits0 |= 2;
-        totalScore_ = value;
-      }
-    }
-    /// <summary>Gets whether the "totalScore" field is set</summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool HasTotalScore {
-      get { return (_hasBits0 & 2) != 0; }
-    }
-    /// <summary>Clears the value of the "totalScore" field</summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void ClearTotalScore() {
-      _hasBits0 &= ~2;
-    }
-
-    /// <summary>Field number for the "loseHandNum" field.</summary>
-    public const int LoseHandNumFieldNumber = 3;
-    private readonly static int LoseHandNumDefaultValue = 0;
-
-    private int loseHandNum_;
-    /// <summary>
-    /// 此玩家输了多少墩
-    /// </summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public int LoseHandNum {
-      get { if ((_hasBits0 & 4) != 0) { return loseHandNum_; } else { return LoseHandNumDefaultValue; } }
-      set {
-        _hasBits0 |= 4;
-        loseHandNum_ = value;
-      }
-    }
-    /// <summary>Gets whether the "loseHandNum" field is set</summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public bool HasLoseHandNum {
-      get { return (_hasBits0 & 4) != 0; }
-    }
-    /// <summary>Clears the value of the "loseHandNum" field</summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public void ClearLoseHandNum() {
-      _hasBits0 &= ~4;
-    }
-
-    /// <summary>Field number for the "handTotalScore" field.</summary>
-    public const int HandTotalScoreFieldNumber = 4;
-    private static readonly pb::FieldCodec<int> _repeated_handTotalScore_codec
-        = pb::FieldCodec.ForInt32(32);
-    private readonly pbc::RepeatedField<int> handTotalScore_ = new pbc::RepeatedField<int>();
+    /// <summary>Field number for the "handScores" field.</summary>
+    public const int HandScoresFieldNumber = 2;
+    private static readonly pb::FieldCodec<int> _repeated_handScores_codec
+        = pb::FieldCodec.ForInt32(16);
+    private readonly pbc::RepeatedField<int> handScores_ = new pbc::RepeatedField<int>();
     /// <summary>
     /// 墩分数详情列表
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<int> HandTotalScore {
-      get { return handTotalScore_; }
+    public pbc::RepeatedField<int> HandScores {
+      get { return handScores_; }
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -2818,9 +2760,7 @@ namespace Xproto {
         return true;
       }
       if (TargetChairID != other.TargetChairID) return false;
-      if (TotalScore != other.TotalScore) return false;
-      if (LoseHandNum != other.LoseHandNum) return false;
-      if(!handTotalScore_.Equals(other.handTotalScore_)) return false;
+      if(!handScores_.Equals(other.handScores_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -2828,9 +2768,7 @@ namespace Xproto {
     public override int GetHashCode() {
       int hash = 1;
       if (HasTargetChairID) hash ^= TargetChairID.GetHashCode();
-      if (HasTotalScore) hash ^= TotalScore.GetHashCode();
-      if (HasLoseHandNum) hash ^= LoseHandNum.GetHashCode();
-      hash ^= handTotalScore_.GetHashCode();
+      hash ^= handScores_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -2848,15 +2786,7 @@ namespace Xproto {
         output.WriteRawTag(8);
         output.WriteInt32(TargetChairID);
       }
-      if (HasTotalScore) {
-        output.WriteRawTag(16);
-        output.WriteInt32(TotalScore);
-      }
-      if (HasLoseHandNum) {
-        output.WriteRawTag(24);
-        output.WriteInt32(LoseHandNum);
-      }
-      handTotalScore_.WriteTo(output, _repeated_handTotalScore_codec);
+      handScores_.WriteTo(output, _repeated_handScores_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -2868,13 +2798,7 @@ namespace Xproto {
       if (HasTargetChairID) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(TargetChairID);
       }
-      if (HasTotalScore) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(TotalScore);
-      }
-      if (HasLoseHandNum) {
-        size += 1 + pb::CodedOutputStream.ComputeInt32Size(LoseHandNum);
-      }
-      size += handTotalScore_.CalculateSize(_repeated_handTotalScore_codec);
+      size += handScores_.CalculateSize(_repeated_handScores_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -2889,13 +2813,7 @@ namespace Xproto {
       if (other.HasTargetChairID) {
         TargetChairID = other.TargetChairID;
       }
-      if (other.HasTotalScore) {
-        TotalScore = other.TotalScore;
-      }
-      if (other.HasLoseHandNum) {
-        LoseHandNum = other.LoseHandNum;
-      }
-      handTotalScore_.Add(other.handTotalScore_);
+      handScores_.Add(other.handScores_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -2911,17 +2829,9 @@ namespace Xproto {
             TargetChairID = input.ReadInt32();
             break;
           }
+          case 18:
           case 16: {
-            TotalScore = input.ReadInt32();
-            break;
-          }
-          case 24: {
-            LoseHandNum = input.ReadInt32();
-            break;
-          }
-          case 34:
-          case 32: {
-            handTotalScore_.AddEntriesFrom(input, _repeated_handTotalScore_codec);
+            handScores_.AddEntriesFrom(input, _repeated_handScores_codec);
             break;
           }
         }
@@ -2961,12 +2871,11 @@ namespace Xproto {
     public MsgPlayerScore(MsgPlayerScore other) : this() {
       _hasBits0 = other._hasBits0;
       targetChairID_ = other.targetChairID_;
-      specialCardHand_ = other.specialCardHand_ != null ? other.specialCardHand_.Clone() : null;
+      specialCardType_ = other.specialCardType_;
       totalScore_ = other.totalScore_;
       compareContexts_ = other.compareContexts_.Clone();
       isWinAll_ = other.isWinAll_;
       isInvertedHand_ = other.isInvertedHand_;
-      cardHands_ = other.cardHands_.Clone();
       _unknownFields = pb::UnknownFieldSet.Clone(other._unknownFields);
     }
 
@@ -3002,18 +2911,31 @@ namespace Xproto {
       _hasBits0 &= ~1;
     }
 
-    /// <summary>Field number for the "specialCardHand" field.</summary>
-    public const int SpecialCardHandFieldNumber = 2;
-    private global::Xproto.MsgCardHand specialCardHand_;
+    /// <summary>Field number for the "specialCardType" field.</summary>
+    public const int SpecialCardTypeFieldNumber = 2;
+    private readonly static int SpecialCardTypeDefaultValue = 0;
+
+    private int specialCardType_;
     /// <summary>
     /// 赢特殊牌类型 可以无效
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public global::Xproto.MsgCardHand SpecialCardHand {
-      get { return specialCardHand_; }
+    public int SpecialCardType {
+      get { if ((_hasBits0 & 2) != 0) { return specialCardType_; } else { return SpecialCardTypeDefaultValue; } }
       set {
-        specialCardHand_ = value;
+        _hasBits0 |= 2;
+        specialCardType_ = value;
       }
+    }
+    /// <summary>Gets whether the "specialCardType" field is set</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public bool HasSpecialCardType {
+      get { return (_hasBits0 & 2) != 0; }
+    }
+    /// <summary>Clears the value of the "specialCardType" field</summary>
+    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
+    public void ClearSpecialCardType() {
+      _hasBits0 &= ~2;
     }
 
     /// <summary>Field number for the "totalScore" field.</summary>
@@ -3026,21 +2948,21 @@ namespace Xproto {
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public int TotalScore {
-      get { if ((_hasBits0 & 2) != 0) { return totalScore_; } else { return TotalScoreDefaultValue; } }
+      get { if ((_hasBits0 & 4) != 0) { return totalScore_; } else { return TotalScoreDefaultValue; } }
       set {
-        _hasBits0 |= 2;
+        _hasBits0 |= 4;
         totalScore_ = value;
       }
     }
     /// <summary>Gets whether the "totalScore" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasTotalScore {
-      get { return (_hasBits0 & 2) != 0; }
+      get { return (_hasBits0 & 4) != 0; }
     }
     /// <summary>Clears the value of the "totalScore" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearTotalScore() {
-      _hasBits0 &= ~2;
+      _hasBits0 &= ~4;
     }
 
     /// <summary>Field number for the "compareContexts" field.</summary>
@@ -3066,21 +2988,21 @@ namespace Xproto {
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool IsWinAll {
-      get { if ((_hasBits0 & 4) != 0) { return isWinAll_; } else { return IsWinAllDefaultValue; } }
+      get { if ((_hasBits0 & 8) != 0) { return isWinAll_; } else { return IsWinAllDefaultValue; } }
       set {
-        _hasBits0 |= 4;
+        _hasBits0 |= 8;
         isWinAll_ = value;
       }
     }
     /// <summary>Gets whether the "isWinAll" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasIsWinAll {
-      get { return (_hasBits0 & 4) != 0; }
+      get { return (_hasBits0 & 8) != 0; }
     }
     /// <summary>Clears the value of the "isWinAll" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearIsWinAll() {
-      _hasBits0 &= ~4;
+      _hasBits0 &= ~8;
     }
 
     /// <summary>Field number for the "isInvertedHand" field.</summary>
@@ -3093,34 +3015,21 @@ namespace Xproto {
     /// </summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool IsInvertedHand {
-      get { if ((_hasBits0 & 8) != 0) { return isInvertedHand_; } else { return IsInvertedHandDefaultValue; } }
+      get { if ((_hasBits0 & 16) != 0) { return isInvertedHand_; } else { return IsInvertedHandDefaultValue; } }
       set {
-        _hasBits0 |= 8;
+        _hasBits0 |= 16;
         isInvertedHand_ = value;
       }
     }
     /// <summary>Gets whether the "isInvertedHand" field is set</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public bool HasIsInvertedHand {
-      get { return (_hasBits0 & 8) != 0; }
+      get { return (_hasBits0 & 16) != 0; }
     }
     /// <summary>Clears the value of the "isInvertedHand" field</summary>
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
     public void ClearIsInvertedHand() {
-      _hasBits0 &= ~8;
-    }
-
-    /// <summary>Field number for the "cardHands" field.</summary>
-    public const int CardHandsFieldNumber = 7;
-    private static readonly pb::FieldCodec<global::Xproto.MsgCardHand> _repeated_cardHands_codec
-        = pb::FieldCodec.ForMessage(58, global::Xproto.MsgCardHand.Parser);
-    private readonly pbc::RepeatedField<global::Xproto.MsgCardHand> cardHands_ = new pbc::RepeatedField<global::Xproto.MsgCardHand>();
-    /// <summary>
-    /// 墩子牌型
-    /// </summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
-    public pbc::RepeatedField<global::Xproto.MsgCardHand> CardHands {
-      get { return cardHands_; }
+      _hasBits0 &= ~16;
     }
 
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute]
@@ -3137,12 +3046,11 @@ namespace Xproto {
         return true;
       }
       if (TargetChairID != other.TargetChairID) return false;
-      if (!object.Equals(SpecialCardHand, other.SpecialCardHand)) return false;
+      if (SpecialCardType != other.SpecialCardType) return false;
       if (TotalScore != other.TotalScore) return false;
       if(!compareContexts_.Equals(other.compareContexts_)) return false;
       if (IsWinAll != other.IsWinAll) return false;
       if (IsInvertedHand != other.IsInvertedHand) return false;
-      if(!cardHands_.Equals(other.cardHands_)) return false;
       return Equals(_unknownFields, other._unknownFields);
     }
 
@@ -3150,12 +3058,11 @@ namespace Xproto {
     public override int GetHashCode() {
       int hash = 1;
       if (HasTargetChairID) hash ^= TargetChairID.GetHashCode();
-      if (specialCardHand_ != null) hash ^= SpecialCardHand.GetHashCode();
+      if (HasSpecialCardType) hash ^= SpecialCardType.GetHashCode();
       if (HasTotalScore) hash ^= TotalScore.GetHashCode();
       hash ^= compareContexts_.GetHashCode();
       if (HasIsWinAll) hash ^= IsWinAll.GetHashCode();
       if (HasIsInvertedHand) hash ^= IsInvertedHand.GetHashCode();
-      hash ^= cardHands_.GetHashCode();
       if (_unknownFields != null) {
         hash ^= _unknownFields.GetHashCode();
       }
@@ -3173,9 +3080,9 @@ namespace Xproto {
         output.WriteRawTag(8);
         output.WriteInt32(TargetChairID);
       }
-      if (specialCardHand_ != null) {
-        output.WriteRawTag(18);
-        output.WriteMessage(SpecialCardHand);
+      if (HasSpecialCardType) {
+        output.WriteRawTag(16);
+        output.WriteInt32(SpecialCardType);
       }
       if (HasTotalScore) {
         output.WriteRawTag(24);
@@ -3190,7 +3097,6 @@ namespace Xproto {
         output.WriteRawTag(48);
         output.WriteBool(IsInvertedHand);
       }
-      cardHands_.WriteTo(output, _repeated_cardHands_codec);
       if (_unknownFields != null) {
         _unknownFields.WriteTo(output);
       }
@@ -3202,8 +3108,8 @@ namespace Xproto {
       if (HasTargetChairID) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(TargetChairID);
       }
-      if (specialCardHand_ != null) {
-        size += 1 + pb::CodedOutputStream.ComputeMessageSize(SpecialCardHand);
+      if (HasSpecialCardType) {
+        size += 1 + pb::CodedOutputStream.ComputeInt32Size(SpecialCardType);
       }
       if (HasTotalScore) {
         size += 1 + pb::CodedOutputStream.ComputeInt32Size(TotalScore);
@@ -3215,7 +3121,6 @@ namespace Xproto {
       if (HasIsInvertedHand) {
         size += 1 + 1;
       }
-      size += cardHands_.CalculateSize(_repeated_cardHands_codec);
       if (_unknownFields != null) {
         size += _unknownFields.CalculateSize();
       }
@@ -3230,11 +3135,8 @@ namespace Xproto {
       if (other.HasTargetChairID) {
         TargetChairID = other.TargetChairID;
       }
-      if (other.specialCardHand_ != null) {
-        if (specialCardHand_ == null) {
-          SpecialCardHand = new global::Xproto.MsgCardHand();
-        }
-        SpecialCardHand.MergeFrom(other.SpecialCardHand);
+      if (other.HasSpecialCardType) {
+        SpecialCardType = other.SpecialCardType;
       }
       if (other.HasTotalScore) {
         TotalScore = other.TotalScore;
@@ -3246,7 +3148,6 @@ namespace Xproto {
       if (other.HasIsInvertedHand) {
         IsInvertedHand = other.IsInvertedHand;
       }
-      cardHands_.Add(other.cardHands_);
       _unknownFields = pb::UnknownFieldSet.MergeFrom(_unknownFields, other._unknownFields);
     }
 
@@ -3262,11 +3163,8 @@ namespace Xproto {
             TargetChairID = input.ReadInt32();
             break;
           }
-          case 18: {
-            if (specialCardHand_ == null) {
-              SpecialCardHand = new global::Xproto.MsgCardHand();
-            }
-            input.ReadMessage(SpecialCardHand);
+          case 16: {
+            SpecialCardType = input.ReadInt32();
             break;
           }
           case 24: {
@@ -3283,10 +3181,6 @@ namespace Xproto {
           }
           case 48: {
             IsInvertedHand = input.ReadBool();
-            break;
-          }
-          case 58: {
-            cardHands_.AddEntriesFrom(input, _repeated_cardHands_codec);
             break;
           }
         }
