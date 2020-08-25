@@ -283,8 +283,8 @@ func compareHandAndSaveScore(hand int32, ps1, ps2 *xproto.MsgCardHand, p1, p2 *P
 	loser.rContext.totalScore -= score
 	winner.rContext.totalScore += score
 
-	winner.cl.Println("compareHandAndSaveScore winner context : ", winner.rContext)
-	loser.cl.Println("compareHandAndSaveScore loser context : ", loser.rContext)
+	// winner.cl.Println("compareHandAndSaveScore winner context : ", winner.rContext)
+	// loser.cl.Println("compareHandAndSaveScore loser context : ", loser.rContext)
 }
 
 //比较牌组点数大小 返回 0：相等 1：第一个参数大  2：第二个参数大
@@ -346,8 +346,8 @@ func haveSpecialCardTypeAndSaveScore(p1, p2 *Player) bool {
 	loser.rContext.totalScore -= score
 	winner.rContext.totalScore += score
 
-	winner.cl.Println("haveSpecialCardTypeAndSaveScore winner context : ", winner.rContext)
-	loser.cl.Println("haveSpecialCardTypeAndSaveScore loser context : ", loser.rContext)
+	// winner.cl.Println("haveSpecialCardTypeAndSaveScore winner context : ", winner.rContext)
+	// loser.cl.Println("haveSpecialCardTypeAndSaveScore loser context : ", loser.rContext)
 
 	return true
 }
@@ -369,13 +369,14 @@ func compareAndCalcScore(s *statePlaying) {
 	//看看是不是三家皆赢
 	for _, p := range s.playingPlayers {
 		//非特殊牌型才看三家皆赢
-		if p.rContext.specialCardHand.GetCardHandType() != int32(xproto.SpecialType_Special_None) {
+		if p.rContext.specialCardHand.GetCardHandType() == int32(xproto.SpecialType_Special_None) {
 			loserNum := 0
 			for _, cC := range p.rContext.compareContexts {
 				if cC.winHandNum == 3 {
 					loserNum++
 				}
 			}
+			//TODO 是否需要 赢三家才有这个
 			if loserNum == 3 {
 				p.rContext.isWinAll = true
 			}
