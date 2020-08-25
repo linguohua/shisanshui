@@ -155,6 +155,8 @@ func serializeMsgHandOver(s *statePlaying) *xproto.MsgHandOver {
 		compareContexts := make([]*xproto.MsgPlayerCompareContext, 0, 3)
 		for _, cC := range rContext.compareContexts {
 			compareContext := &xproto.MsgPlayerCompareContext{}
+			tchairid := int32(cC.target.chairID)
+			compareContext.TargetChairID = &tchairid
 			// compareContext.TotalScore = &cC.compareTotalScore
 			// compareContext.LoseHandNum = &cC.loseHandNum
 			compareContext.HandScores = cC.handScores

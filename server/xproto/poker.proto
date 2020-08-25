@@ -255,8 +255,10 @@ message MsgRestore {
 
 // 与某个对手玩家关系
 message MsgPlayerCompareContext{
+  // 对手id玩家
+  required int32 targetChairID = 1;
   // 墩分数详情列表
-  repeated int32 handScores = 1;
+  repeated int32 handScores = 2;
 }
 
 // 一手牌结束后每个玩家的计分
