@@ -40,7 +40,7 @@ type compareContext struct {
 	compareTotalScore int32
 	//记录玩家赢了target多少墩 (也就是target输的墩数)
 	winHandNum int32
-	handScores []int32 //负分表示输
+	handScores []int32 //负分表示对手玩家赢了
 }
 
 // pgameContext context for whold game

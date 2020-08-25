@@ -119,58 +119,61 @@ func isInvertedHand(hand1, hand2, hand3 *xproto.MsgCardHand, p *Player) bool {
 		}
 	}
 	//比较 第三墩
-	if hand3.GetCardHandType() < int32(xproto.CardHandType_Straight) {
-		//三条 对子 单张 (如果第三墩比其他两墩大 都是倒墩)
-		if hand3.GetCardHandType() == hand1.GetCardHandType() {
-			r := getCardsCompareResult(hand1.GetCards(), hand3.GetCards())
-			if r == 2 {
-				p.cl.Println("is InvertedHand hand1 card > hand3 card")
-				return true
-			}
-		}
-		if hand3.GetCardHandType() == hand2.GetCardHandType() {
-			r := getCardsCompareResult(hand2.GetCards(), hand3.GetCards())
-			if r == 2 {
-				p.cl.Println("is InvertedHand hand2 card > hand3 card")
-				return true
-			}
-		}
-		if hand1.GetCardHandType() < hand3.GetCardHandType() {
-			p.cl.Println("is InvertedHand handType1 < handType3")
-			return true
-		}
-		if hand2.GetCardHandType() < hand3.GetCardHandType() {
-			p.cl.Println("is InvertedHand handType2 < handType3")
-			return true
-		}
-	} else {
-		if compareHandAndReturnResult(hand1, hand3) {
-			p.cl.Println("is InvertedHand hand1 card < hand3 card")
-			return true
-		}
-		if compareHandAndReturnResult(hand2, hand3) {
-			p.cl.Println("is InvertedHand hand2 card < hand3 card")
-			return true
-		}
+	if compareHandAndReturnResult(hand1, hand3, p) {
+		p.cl.Println("is InvertedHand hand1 card < hand3 card")
+		return true
+	}
+	if compareHandAndReturnResult(hand2, hand3, p) {
+		p.cl.Println("is InvertedHand hand2 card < hand3 card")
+		return true
 	}
 	return false
 }
 
 //第三墩 跟 第一二墩比较 (返回true 说明倒墩)
-func compareHandAndReturnResult(hand, hand3 *xproto.MsgCardHand) bool {
-	// 第三墩是顺子 并且 跟另外两墩相连 则第三墩应该是最小的那三张
-	// 第三墩是同花 并且 跟另外两墩花色相同 则第三墩应该是最小的三张
-	if hand3.GetCardHandType() == hand.GetCardHandType() {
-		if hand3.GetCardHandType() == int32(xproto.CardHandType_Flush) {
-			if hand3.Cards[0]%4 == hand.Cards[0]%4 {
+func compareHandAndReturnResult(hand, hand3 *xproto.MsgCardHand, p *Player) bool {
+	if hand3.GetCardHandType() < int32(xproto.CardHandType_Straight) {
+		//第三墩牌型大于 一二墩
+		if hand.GetCardHandType() < hand3.GetCardHandType() {
+			p.cl.Println("is InvertedHand handType < handType3")
+			return true
+		}
+		//三条 对子 单张 (如果第三墩比其他两墩大 都是倒墩)
+		if hand3.GetCardHandType() == hand.GetCardHandType() {
+			if hand3.GetCardHandType() == int32(xproto.CardHandType_HighCard) {
+				//单张的话 第三墩的所有牌都应该小于第一二墩的最小牌
 				return isBigOfCardsfigure(hand.GetCards(), hand3.GetCards(), false)
 			}
+			r := getCardsCompareResult(hand.GetCards(), hand3.GetCards())
+			if r == 2 {
+				p.cl.Println("is InvertedHand hand card > hand3 card")
+				return true
+			}
 		}
-		if hand3.GetCardHandType() == int32(xproto.CardHandType_Straight) {
-			hai := append(hand3.GetCards(), hand.GetCards()...)
-			if patternVerifyStraight(hai) {
-				//两墩牌合起来如果是顺子 说明是相连的
-				return isBigOfCardsfigure(hand.GetCards(), hand3.GetCards(), true)
+		//如果第三墩是三条 第一二墩是葫芦 那第三墩的牌 也不能大于第一二墩的牌
+		if hand3.GetCardHandType() == int32(xproto.CardHandType_ThreeOfAKind) &&
+			hand.GetCardHandType() == int32(xproto.CardHandType_FullHouse) {
+			r := getCardsCompareResult(hand.GetCards(), hand3.GetCards())
+			if r == 2 {
+				p.cl.Println("is InvertedHand hand card > hand3 card")
+				return true
+			}
+		}
+	} else {
+		// 第三墩是顺子 并且 跟另外两墩相连 则第三墩应该是最小的那三张
+		// 第三墩是同花 并且 跟另外两墩花色相同 则第三墩应该是最小的三张
+		if hand3.GetCardHandType() == hand.GetCardHandType() {
+			if hand3.GetCardHandType() == int32(xproto.CardHandType_Flush) {
+				if hand3.Cards[0]%4 == hand.Cards[0]%4 {
+					return isBigOfCardsfigure(hand.GetCards(), hand3.GetCards(), false)
+				}
+			}
+			if hand3.GetCardHandType() == int32(xproto.CardHandType_Straight) {
+				hai := append(hand3.GetCards(), hand.GetCards()...)
+				if patternVerifyStraight(hai) {
+					//两墩牌合起来如果是顺子 说明是相连的
+					return isBigOfCardsfigure(hand.GetCards(), hand3.GetCards(), true)
+				}
 			}
 		}
 	}
@@ -180,19 +183,19 @@ func compareHandAndReturnResult(hand, hand3 *xproto.MsgCardHand) bool {
 //第三墩 是不是有的牌大于 第一二墩的最小牌 (返回true 说明倒墩)
 func isBigOfCardsfigure(hand, handThree []int32, isStraight bool) bool {
 	//最小牌
-	smallCard := hand[4]
+	smallCard := hand[4] / 4
 	if isStraight {
 		//顺子要考虑A
 		if hand[0]/4 == int32(xproto.CardID_AC)/4 && hand[len(hand)-1]/4 == int32(xproto.CardID_R2C)/4 {
 			// A, 5, ...
-			smallCard = hand[len(hand)-1]
+			smallCard = hand[len(hand)-1] / 4
 		}
 		if handThree[0]/4 == int32(xproto.CardID_AC)/4 && handThree[len(handThree)-1]/4 == int32(xproto.CardID_R2C)/4 {
 			handThree = handThree[1:]
 		}
 	}
 	for _, v := range handThree {
-		if v > smallCard {
+		if v/4 > smallCard {
 			return true
 		}
 	}
@@ -211,10 +214,6 @@ func caleAndSaveHand(hand int32, cards []int32, p *Player) *xproto.MsgCardHand {
 
 //两两比较结果
 func comparePlayerResult(p1 *Player, p2 *Player) {
-	//创建彼此比较对象
-	// compareContext2 := p1.rContext.getTargetCompareContext(p2)
-	// compareContext1 := p2.rContext.getTargetCompareContext(p1)
-
 	//先比较特殊牌型
 	haveSpecialCard := haveSpecialCardTypeAndSaveScore(p1, p2)
 	if !haveSpecialCard {
@@ -240,7 +239,7 @@ func calcHandScore(hand int32, handType xproto.CardHandType) int32 {
 	return 1
 }
 
-//比较墩 并 保存基础分数
+//比较墩 并 保存分数
 func compareHandAndSaveScore(hand int32, ps1, ps2 *xproto.MsgCardHand, p1, p2 *Player) {
 	score := int32(0)
 	winner := p1
@@ -272,15 +271,20 @@ func compareHandAndSaveScore(hand int32, ps1, ps2 *xproto.MsgCardHand, p1, p2 *P
 	score = calcHandScore(hand, xproto.CardHandType(winner.rContext.hands[hand].GetCardHandType()))
 	//赢的一方 添加到输的一方的compareContexts列表里
 	winCompareContext := loser.rContext.getTargetCompareContext(winner)
-	winCompareContext.handScores[hand] = score
-	winCompareContext.compareTotalScore += score
-	winner.rContext.totalScore += score
+	//输家相对于赢家 就是-分
+	winCompareContext.handScores[hand] = -score
+	winCompareContext.compareTotalScore -= score
 	//输的一方 添加到赢的一方的compareContexts列表里
 	loseCompareContext := winner.rContext.getTargetCompareContext(loser)
-	loseCompareContext.handScores[hand] = -score
+	loseCompareContext.handScores[hand] = score
+	loseCompareContext.compareTotalScore += score
 	loseCompareContext.winHandNum++
-	loseCompareContext.compareTotalScore -= score
+	//总分
 	loser.rContext.totalScore -= score
+	winner.rContext.totalScore += score
+
+	winner.cl.Println("compareHandAndSaveScore winner context : ", winner.rContext)
+	loser.cl.Println("compareHandAndSaveScore loser context : ", loser.rContext)
 }
 
 //比较牌组点数大小 返回 0：相等 1：第一个参数大  2：第二个参数大
@@ -333,13 +337,17 @@ func haveSpecialCardTypeAndSaveScore(p1, p2 *Player) bool {
 	score = scoreOfSpecialType[xproto.SpecialType(winner.rContext.specialCardHand.GetCardHandType())]
 	winCompareContext := loser.rContext.getTargetCompareContext(winner)
 	winCompareContext.target = winner
-	winCompareContext.compareTotalScore += score
-	winner.rContext.totalScore += score
+	winCompareContext.compareTotalScore -= score
 
 	loseCompareContext := winner.rContext.getTargetCompareContext(loser)
 	loseCompareContext.target = loser
-	loseCompareContext.compareTotalScore -= score
+	loseCompareContext.compareTotalScore += score
+
 	loser.rContext.totalScore -= score
+	winner.rContext.totalScore += score
+
+	winner.cl.Println("haveSpecialCardTypeAndSaveScore winner context : ", winner.rContext)
+	loser.cl.Println("haveSpecialCardTypeAndSaveScore loser context : ", loser.rContext)
 
 	return true
 }
@@ -386,10 +394,11 @@ func calcAddedScore(p *Player) {
 	//先看是不是三墩皆输 是的话 就*2
 	//再看看是不是同时满足 倒墩 三家皆赢 是的话 再*2
 	for _, cC := range pr.compareContexts {
+		//p 赢三墩
 		if cC.winHandNum == 3 {
 			targetP := cC.target
 			for hand, score := range cC.handScores {
-				//需要修改的基数
+				//需要修改的基数(这里的score 是正的)
 				changeScore := score
 				if targetP.rContext.isInvertedHand && pr.isWinAll {
 					changeScore = changeScore * 3
