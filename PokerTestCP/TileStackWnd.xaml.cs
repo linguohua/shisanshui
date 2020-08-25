@@ -1017,13 +1017,13 @@ namespace PokerTest
                 switch (handoverType)
                 {
                     case (int)HandOverType.EnumHandOverTypeNone:
-                        MyOwner.AppendLog("流局\r\n");
+                        MyOwner.AppendLog("平局\r\n");
                         break;
                     case (int)HandOverType.EnumHandOverTypeWin:
-                        MyOwner.AppendLog("自摸胡牌\r\n");
+                        MyOwner.AppendLog("赢牌\r\n");
                         break;
                     case (int)HandOverType.EnumHandOverTypeLoss:
-                        MyOwner.AppendLog("放铳胡牌\r\n");
+                        MyOwner.AppendLog("输牌\r\n");
                         break;
                 }
             }
@@ -1062,65 +1062,35 @@ namespace PokerTest
                 sb.Append(Enum2StrHelper.ChairId2Name(playerScore.TargetChairID));
                 sb.Append(":");
                 sb.Append(playerScore.TotalScore);
-                //if (playerScore.TotalScore != 0)
-                //{
-                //    sb.Append(",");
-                //    sb.Append(Enum2StrHelper.WinType2String(playerScore.winType));
-                //}
 
                 sb.AppendLine();
             }
 
             // 每个玩家得分详细信息
             sb.AppendLine("------------------Details:---------------------");
-            //foreach (var playerScore in handScore.playerScores)
-            //{
-            //    sb.AppendLine($"名字：{Enum2StrHelper.ChairId2Name(playerScore.targetChairID)}");
-            //    sb.AppendLine($"得分：{playerScore.score}");
-            //    sb.AppendLine($"得分类型：{Enum2StrHelper.WinType2String(playerScore.winType)}");
-            //    sb.AppendLine($"墩子分：{playerScore.specialScore}");
+            foreach (var playerScore in handScore.PlayerScores)
+            {
+                sb.AppendLine($"座位：{Enum2StrHelper.ChairId2Name(playerScore.TargetChairID)}");
+                sb.AppendLine($"得分：{playerScore.TotalScore}");
+                sb.AppendLine($"是否倒墩：{playerScore.IsInvertedHand}");
+                sb.AppendLine($"是否全赢：{playerScore.IsWinAll}");
+                
+                // 与其他玩家的比较
+                foreach(var cc in playerScore.CompareContexts)
+                {
+                    sb.AppendLine($"与对手(座位：{cc.TargetChairID})的每墩得分:");
+                    var i = 0;
+                    foreach (var h in cc.HandScores)
+                    {
+                        sb.AppendLine($"第{i}墩：{h}");
+                        i++;
+                    }
+                    sb.AppendLine();
+                    sb.AppendLine();
+                }
 
-            //    if (playerScore.winType != (int)HandOverType.enumHandOverType_None
-            //        && playerScore.winType != (int)HandOverType.enumHandOverType_Chucker)
-            //    {
-            //        if (playerScore.greatWin != null)
-            //        {
-            //            var greatWin = playerScore.greatWin;
-            //            sb.AppendLine($"胡牌类型：大胡");
-            //            sb.AppendLine($"辣子数：{greatWin.greatWinPoints}");
-            //            sb.AppendLine($"包含辣子：{Enum2StrHelper.GreatWinType2String(greatWin.greatWinType)}");
-            //            sb.AppendLine($"限制后辣子数：{greatWin.trimGreatWinPoints}");
-            //            sb.AppendLine($"应得分数：{greatWin.baseWinScore}");
-            //        }
-            //        else
-            //        {
-            //            var miniWin = playerScore.miniWin;
-            //            sb.AppendLine($"胡牌类型：小胡");
-            //            sb.AppendLine($"倍数：{miniWin.miniMultiple}");
-            //            sb.AppendLine($"包含翻倍：{Enum2StrHelper.MiniWinType2String(miniWin.miniWinType)}");
-            //            sb.AppendLine($"花分：{miniWin.miniWinFlowerScore}");
-            //            sb.AppendLine($"底分：{miniWin.miniWinBasicScore}");
-            //            sb.AppendLine($"限制后分数：{miniWin.miniWinTrimScore}");
-
-            //            sb.AppendLine($"连庄得失分：{miniWin.continuousBankerExtra}");
-            //        }
-            //    }
-
-            //    // 包牌
-            //    sb.AppendLine($"包牌得失分：{playerScore.fakeWinScore}");
-            //    if (playerScore.fakeList.Count > 0)
-            //    {
-            //        sb.Append("包牌关系：");
-            //        foreach (var chairId in playerScore.fakeList)
-            //        {
-            //            sb.Append(Enum2StrHelper.ChairId2Name(chairId));
-            //            sb.Append(",");
-            //        }
-            //        sb.AppendLine();
-            //    }
-
-                //sb.AppendLine();
-            //}
+                sb.AppendLine();
+            }
 
             return sb.ToString();
         }
