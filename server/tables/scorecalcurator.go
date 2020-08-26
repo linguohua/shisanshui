@@ -89,6 +89,7 @@ func calcFinalResult(s *statePlaying, p *Player, cards []int32) {
 
 		// 判断是否倒墩
 		p.rContext.isInvertedHand = isInvertedHand(cardT1, cardT2, cardT3, p)
+		p.cl.Println("calcFinalResult hands:", p.rContext.hands)
 	}
 }
 

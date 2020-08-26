@@ -159,10 +159,13 @@ message MsgPlayerCardList {
 // 服务器下发给客户端
 // 客户端收到消息后，做如下处理：
 // 1. 显示自己的牌
-// 2. 显示其他人的牌
+// 2. 显示其他人的牌（暗牌，庄家14张）
+// 3. 显示庄家
 message MsgDeal {
+  // 庄家座位ID
+  required int32 bankerChairID = 1;
   // 所有玩家的牌列表
-  repeated MsgPlayerCardList playerCardLists = 1;
+  repeated MsgPlayerCardList playerCardLists = 2;
 }
 
 // 服务器准许客户端做游戏动作
